@@ -6,6 +6,7 @@ authors = ["Roland Siegbert <roland@siegbert.info>", "David Goedecke", "Philipp 
 
 [tool.poetry.dependencies]
 python = "^3.7"
+kivy = "^1.11.1"
 
 [tool.poetry.dev-dependencies]
 
