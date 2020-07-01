@@ -5,3 +5,5 @@ Code for the geomlab
 
 - [ ] GUI
 - [ ] Help Philipp transfer his project here
+- [ ] probability distrubtions
+- [ ] transfer covid-19 dataset here
