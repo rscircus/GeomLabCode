@@ -31,13 +31,13 @@ class GeomLabApp(tk.Tk):
         self.frames = {}
 
         # Create
-        for page in (SymbolicMapsPage, AboutPage):
+        for page in (SymbolicMapsPage, PaintingProgramPage, AboutPage):
             frame = page(container, self)
             frame.grid(row=0, column=0, sticky="nswe")
             self.frames[page] = frame
 
         # Display
-        self.show_frame(SymbolicMapsPage)
+        self.show_frame(PaintingProgramPage)
 
 
     def show_frame(self, container):
@@ -62,8 +62,6 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm['values'] = ("MinMxSumK", "Painter", "Random")
         self.algorithm.current(1)
         self.algorithm.pack(side="top")
-        # TODO: Later orientation/gridding
-        #self.algorithm.grid(column=0, row=0)
 
         self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
         self.about.pack(side="bottom")
@@ -74,11 +72,31 @@ class PaintingProgramPage(tk.Frame):
         super().__init__(parent)
         self.parent = parent
         self.controller = controller
+
+        self.old_x = None
+        self.old_y = None
+
         self.create_widgets()
 
     def create_widgets(self):
-        self.painter = tk.Button(self, text="Back to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
+        self.canvas = tk.Canvas(self, bg='white')
+        self.canvas.pack(side="top", fill="both", expand=True)
+        self.canvas.bind('<B1-Motion>', self.paint)
+        self.canvas.bind('<ButtonRelease-1>', self.reset)
+
+        self.painter = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
         self.painter.pack(side="bottom")
+
+    def paint(self, event):
+        if self.old_x and self.old_y:
+            self.canvas.create_line(self.old_x, self.old_y, event.x, event.y,
+                               width=2, fill='black',
+                               capstyle=tk.ROUND, smooth=tk.TRUE, splinesteps=36)
+        self.old_x = event.x
+        self.old_y = event.y
+
+    def reset(self, event):
+        self.old_x, self.old_y = None, None
 
 
 class AboutPage(tk.Frame):
@@ -90,7 +108,7 @@ class AboutPage(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.painter = tk.Button(self, text="Back to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
+        self.painter = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
         self.painter.pack(side="bottom")
 
 def quit():
