@@ -111,6 +111,9 @@ class AboutPage(tk.Frame):
         self.painter = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
         self.painter.pack(side="bottom")
 
+        self.label = tk.Label(self, text="Some info about the algos, complexity, us, maybe link to paper...")
+        self.label.pack(side="top")
+
 def quit():
     print('Hi')
 
