@@ -17,7 +17,7 @@ class GeomLabApp(tk.Tk):
         file_menu.add_command(label='Symbolic Maps', command=lambda: self.show_frame(SymbolicMapsPage))
         file_menu.add_command(label='Painting Program', command=lambda: self.show_frame(PaintingProgramPage))
         file_menu.add_command(label='About', command=lambda: self.show_frame(AboutPage))
-        file_menu.add_command(label='Quit')
+        file_menu.add_command(label='Quit', command=lambda: self.destroy())
         menubar.add_cascade(label='File', menu=file_menu)
         self.config(menu=menubar)
 
