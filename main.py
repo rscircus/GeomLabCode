@@ -1,42 +1,60 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 
-# Draw on canvas
-lastx, lasty = 0, 0
+# Main Window
+class GeomLabApp(tk.Tk):
+    def __init__(self, *args, **kwargs):
 
-def xy(event):
-    global lastx, lasty
-    lastx, lasty = event.x, event.y
+        tk.Tk.__init__(self, *args, **kwargs)
 
-def addLine(event):
-    global lastx, lasty
-    canvas.create_line((lastx, lasty, event.x, event.y))
-    lastx, lasty = event.x, event.y
+        # Configure self
+        self.geometry('800x600')
+        self.title('Symbolic Maps')
 
-# Main Frame
-class Application(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        # Canvas
-        self.canvas = tk.Canvas()
-        self.canvas.pack(side='top', fill='both', expand='yes')
-        self.canvas.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
-        self.canvas.bind("<Button-1>", xy)
-        self.canvas.bind("<B1-Motion>", addLine)
+        # Menu
+        menu = tk.Menu(self)
+        file_menu = tk.Menu(menu)
+        file_menu.add_command(label='About')
+        file_menu.add_command(label='Quit')
+        menu.add_cascade(label='File', menu=file_menu)
+        self.config(menu=menu)
 
-        self.master = master
-        #self.pack()
+        # Configure content
+        container = tk.Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        # Create "pages"
+        self.frames = {}
+
+        # Create
+        for page in (PainterPage, AboutPage):
+            frame = page(container, self)
+            frame.grid(row=0, column=0, sticky="nswe")
+            self.frames[page] = frame
+
+        # Display
+        self.show_frame(PainterPage)
+
+
+    def show_frame(self, container):
+        '''Show a specific frame in the window.'''
+
+        frame = self.frames[container]
+        frame.tkraise()
+
+
+class PainterPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.parent = parent
+        self.controller = controller
         self.create_widgets()
 
 
     def create_widgets(self):
-
-        # Hi there button
-        self.hi_there = tk.Button(self)
-        self.hi_there["text"] = "Hello World\n(click me)"
-        self.hi_there["command"] = self.say_hi
-        self.hi_there.pack(side="top")
-
         # Combobox (to select algo, input data, cost function)
         self.algorithm = ttk.Combobox(self)
         self.algorithm['values'] = ("MinMxSumK", "Painter", "Random")
@@ -45,36 +63,28 @@ class Application(tk.Frame):
         # TODO: Later orientation/gridding
         #self.algorithm.grid(column=0, row=0)
 
-
-        # Quit Button
-        self.quit = tk.Button(self, text="QUIT", fg="red",
-                              command=self.master.destroy)
-        self.quit.pack(side="bottom")
-
-    def say_hi(self):
-        print("hi there, everyone!")
+        self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
+        self.about.pack(side="bottom")
 
 
+class AboutPage(tk.Frame):
 
-# Define window props
-window = tk.Tk()
-window.geometry('800x600')
-window.title('Symbolic Maps')
-window.columnconfigure(0, weight=1)
-window.rowconfigure(0, weight=1)
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.parent = parent
+        self.controller = controller
+        self.create_widgets()
 
-# Menu
-menu = tk.Menu(window)
-menu_item = tk.Menu(menu)
-menu_item.add_command(label='Quit')
-menu.add_cascade(label='File', menu=menu_item)
-window.config(menu=menu)
+    def create_widgets(self):
+        self.painter = tk.Button(self, text="Back to Painter Page", command=lambda: self.controller.show_frame(PainterPage))
+        self.painter.pack(side="bottom")
+
+def quit():
+    print('Hi')
+
 
 # Create application
-app = Application(master=window)
-
-# TODO: Ugly
-canvas = app.canvas #Canvas(root)
+app = GeomLabApp()
 
 # Run application
 app.mainloop()
