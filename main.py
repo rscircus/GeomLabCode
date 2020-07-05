@@ -12,12 +12,14 @@ class GeomLabApp(tk.Tk):
         self.title('Symbolic Maps')
 
         # Menu
-        menu = tk.Menu(self)
-        file_menu = tk.Menu(menu)
-        file_menu.add_command(label='About')
+        menubar = tk.Menu(self)
+        file_menu = tk.Menu(menubar, tearoff=0)
+        file_menu.add_command(label='Symbolic Maps', command=lambda: self.show_frame(SymbolicMapsPage))
+        file_menu.add_command(label='Painting Program', command=lambda: self.show_frame(PaintingProgramPage))
+        file_menu.add_command(label='About', command=lambda: self.show_frame(AboutPage))
         file_menu.add_command(label='Quit')
-        menu.add_cascade(label='File', menu=file_menu)
-        self.config(menu=menu)
+        menubar.add_cascade(label='File', menu=file_menu)
+        self.config(menu=menubar)
 
         # Configure content
         container = tk.Frame(self)
@@ -29,13 +31,13 @@ class GeomLabApp(tk.Tk):
         self.frames = {}
 
         # Create
-        for page in (PainterPage, AboutPage):
+        for page in (SymbolicMapsPage, AboutPage):
             frame = page(container, self)
             frame.grid(row=0, column=0, sticky="nswe")
             self.frames[page] = frame
 
         # Display
-        self.show_frame(PainterPage)
+        self.show_frame(SymbolicMapsPage)
 
 
     def show_frame(self, container):
@@ -45,7 +47,7 @@ class GeomLabApp(tk.Tk):
         frame.tkraise()
 
 
-class PainterPage(tk.Frame):
+class SymbolicMapsPage(tk.Frame):
 
     def __init__(self, parent, controller):
         super().__init__(parent)
@@ -66,6 +68,18 @@ class PainterPage(tk.Frame):
         self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
         self.about.pack(side="bottom")
 
+class PaintingProgramPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.parent = parent
+        self.controller = controller
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.painter = tk.Button(self, text="Back to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
+        self.painter.pack(side="bottom")
+
 
 class AboutPage(tk.Frame):
 
@@ -76,7 +90,7 @@ class AboutPage(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.painter = tk.Button(self, text="Back to Painter Page", command=lambda: self.controller.show_frame(PainterPage))
+        self.painter = tk.Button(self, text="Back to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
         self.painter.pack(side="bottom")
 
 def quit():
