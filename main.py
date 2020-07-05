@@ -1,3 +1,9 @@
+import matplotlib
+matplotlib.use("TkAgg")
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.figure import Figure
+
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -16,6 +22,7 @@ class GeomLabApp(tk.Tk):
         file_menu = tk.Menu(menubar, tearoff=0)
         file_menu.add_command(label='Symbolic Maps', command=lambda: self.show_frame(SymbolicMapsPage))
         file_menu.add_command(label='Painting Program', command=lambda: self.show_frame(PaintingProgramPage))
+        file_menu.add_command(label='Matplotlib', command=lambda: self.show_frame(MatplotlibPage))
         file_menu.add_command(label='About', command=lambda: self.show_frame(AboutPage))
         file_menu.add_command(label='Quit', command=lambda: self.destroy())
         menubar.add_cascade(label='File', menu=file_menu)
@@ -31,7 +38,7 @@ class GeomLabApp(tk.Tk):
         self.frames = {}
 
         # Create
-        for page in (SymbolicMapsPage, PaintingProgramPage, AboutPage):
+        for page in (SymbolicMapsPage, PaintingProgramPage, MatplotlibPage, AboutPage):
             frame = page(container, self)
             frame.grid(row=0, column=0, sticky="nswe")
             self.frames[page] = frame
@@ -46,7 +53,7 @@ class GeomLabApp(tk.Tk):
         frame = self.frames[container]
         frame.tkraise()
 
-
+# Frames
 class SymbolicMapsPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -98,6 +105,27 @@ class PaintingProgramPage(tk.Frame):
     def reset(self, event):
         self.old_x, self.old_y = None, None
 
+class MatplotlibPage(tk.Frame):
+
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.parent = parent
+        self.controller = controller
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.label = tk.Label(self, text="Matplotlib... plotting a simple data series")
+        self.label.pack(side="top")
+
+        self.fig = Figure(figsize=(5,5), dpi=100)
+        self.subfig = self.fig.add_subplot(111)
+        self.subfig.plot([1,2,3,4,5,6],[1,3,2,5,3,6])
+
+        self.canvas = FigureCanvasTkAgg(self.fig, self)
+        self.canvas.draw()
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.toolbar.update()
+        self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
 class AboutPage(tk.Frame):
 
