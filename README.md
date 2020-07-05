@@ -31,7 +31,7 @@ Code for the geomlab.
 
 # TODOs
 
-  - [ ] GUI
+  - [X] GUI
+  - [ ] Transfer covid-19 dataset here
   - [ ] Help Philipp transfer his project here
-  - [ ] probability distrubtions
-  - [ ] transfer covid-19 dataset here
+  - [ ] Probability Distributions
