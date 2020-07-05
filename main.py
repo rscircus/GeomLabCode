@@ -84,8 +84,8 @@ class PaintingProgramPage(tk.Frame):
         self.canvas.bind('<B1-Motion>', self.paint)
         self.canvas.bind('<ButtonRelease-1>', self.reset)
 
-        self.painter = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
-        self.painter.pack(side="bottom")
+        self.symbolic_button = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
+        self.symbolic_button.pack(side="bottom")
 
     def paint(self, event):
         if self.old_x and self.old_y:
@@ -108,11 +108,11 @@ class AboutPage(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.painter = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
-        self.painter.pack(side="bottom")
-
         self.label = tk.Label(self, text="Some info about the algos, complexity, us, maybe link to paper...")
         self.label.pack(side="top")
+
+        self.symbolic_button = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
+        self.symbolic_button.pack(side="bottom")
 
 def quit():
     print('Hi')
