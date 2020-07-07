@@ -67,6 +67,9 @@ class SymbolicMapsPage(tk.Frame):
         self.controller = controller
         self.create_widgets()
 
+        # Code
+        self.prepare_data()
+
 
     def create_widgets(self):
         # Combobox (to select algo, input data, cost function)
@@ -77,6 +80,112 @@ class SymbolicMapsPage(tk.Frame):
 
         self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
         self.about.pack(side="bottom")
+
+        # Dispplay objects
+        self.circles=[]
+        self.pies=[]
+        self.piePieces=[]
+
+    def prepare_data(self):
+        def latLongToPoint(lat,long,h,w):
+            '''Return (x,y) for lat, long inside a box.'''
+            lat=-lat+90
+            long=long+180 #längengerade oben unten
+            y=lat/180
+            x=long/360
+            x=int(x*w)
+            y=int(y*h)
+            return x,y
+
+
+                
+        def calculatePointOnCircle(c,angle):
+            '''Return pos in interval (0,1) on circumference of circle.'''
+            cosangle=np.cos(angle)
+            sinangle=np.sin(angle)
+            return cosangle*c[2]+c[0], sinangle*c[2]+c[1] 
+        #structure: loc,loc,lat,long,conf,dead,recovered
+        myworldmap=np.load("data/testData.npy", allow_pickle=True)
+        worldmap = cv2.imread('assets/test4.png')
+        h=len(worldmap)
+        w=len(worldmap[0])
+        myData=[]
+        
+        for case in myworldmap:
+            tmp=[]
+            for slot in case:
+                tmp.append(slot)
+            myData.append(tmp)
+
+
+        for case in list(myData):
+            if(case[4]<5000):
+                myData.remove(case)
+            
+
+        maximum=1
+        for case in myData:
+            if(case[4]<1):
+                tmp=1
+            else:
+                tmp=case[4]
+            if(tmp>maximum):
+                maximumsecond=maximum
+                maximum=tmp
+                maximum2=np.log(4+case[4]*100/maximumsecond)
+
+        for case in myData:
+            lat=case[2]
+            long=case[3]
+            x,y=latLongToPoint(lat, long, h, w)
+            case[4]=case[4]+5
+            case[5]=case[5]+5
+            case[6]=case[6]+5
+                
+            if(case[4]<case[6]):
+                continue
+
+            if(case[4]==0):
+                conf=1
+            else:
+                conf=np.log(4+case[4]*100/maximumsecond)
+                
+            if(case[5]==0 or math.isnan(case[5])):
+                dead=1
+            else:
+                dead=(case[5])
+                
+                
+            if(case[6]==0 or math.isnan(case[6])):
+                rec=1
+            else:
+                rec=(case[6])
+                
+            conf=125*conf/maximum2
+            dead=np.sqrt(conf*conf*(dead/case[4]))
+            rec=np.sqrt(conf*conf*(rec/case[4])+dead*dead)
+            
+            
+            r=conf
+            rprime2=dead
+            rprime1=rec
+            rprime0=1
+            self.circles.append([int(y),int(x),int(r),int(rprime1),int(rprime2)])
+
+
+            self.pies.append([int(y),int(x),int(r)])
+            a0=rprime0*rprime0
+            a1=rprime1*rprime1
+            a2=rprime2*rprime2
+            a=r*r  
+            p1=(case[5]/case[4]) *2*np.pi
+            p2=(((case[6]/case[4]))*2*np.pi )+p1
+
+            self.piePieces.append([p1,p2])    
+
+            # TODO: Have a look at the data in the console
+            print(self.circles)
+    
 
 class PaintingProgramPage(tk.Frame):
 
