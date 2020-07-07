@@ -34,7 +34,7 @@ class GeomLabApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         # Configure self
-        self.geometry('800x600')
+        self.geometry('1800x868')
         self.title('Symbolic Maps')
 
         # Menu
@@ -64,7 +64,7 @@ class GeomLabApp(tk.Tk):
             self.frames[page] = frame
 
         # Display
-        self.show_frame(PaintingProgramPage)
+        self.show_frame(SymbolicMapsPage)
 
 
     def show_frame(self, container):
@@ -216,6 +216,15 @@ class PaintingProgramPage(tk.Frame):
         self.old_y = None
 
         self.create_widgets()
+
+        # Single circle
+        self.canvas.create_circle(150, 40 ,20 ,fill='#bbb', outline='')
+
+        # Arcs
+        self.canvas.create_circle(100, 120, 50, fill="blue", outline="#DDD", width=4)
+        self.canvas.create_circle_arc(100, 120, 48, fill="green", outline="", start=45, end=140)
+        self.canvas.create_circle_arc(100, 120, 48, fill="green", outline="", start=275, end=305)
+        self.canvas.create_circle_arc(100, 120, 45, style="arc", outline="white", width=6, start=270-25, end=270+25)
 
     def create_widgets(self):
         self.canvas = tk.Canvas(self, bg='white')
