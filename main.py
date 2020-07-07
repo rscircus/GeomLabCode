@@ -142,10 +142,6 @@ class AboutPage(tk.Frame):
         self.symbolic_button = tk.Button(self, text="Go to Symbolic Maps Page", command=lambda: self.controller.show_frame(SymbolicMapsPage))
         self.symbolic_button.pack(side="bottom")
 
-def quit():
-    print('Hi')
-
-
 # Create application
 app = GeomLabApp()
 
