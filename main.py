@@ -96,8 +96,16 @@ class SymbolicMapsPage(tk.Frame):
     def change_algorithm(self):
         '''Update Canvas upon algo change.'''
 
-        # Painter's Algorithm:
-        self.circles = st.painterAlgorithm(self.circles)
+        algo = self.algorithm.current()
+
+        if algo == 0: #MinMaxSumK
+            self.circles = st.maxMinMinKStacking(self.circles, "absolute")
+        elif algo == 1: #Painters
+            self.circles = st.painterAlgorithm(self.circles)
+        elif algo == 2: #Random
+            pass
+        else:
+            print("You shouldn't see me.")
 
         # Draw
         self.draw_circles()
@@ -141,6 +149,7 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm['values'] = ("MinMxSumK", "Painter", "Random")
         self.algorithm.current(1)
         self.algorithm.grid(column=1, row=1)
+        self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
 
         # Add about button
         self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
