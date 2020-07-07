@@ -1,4 +1,5 @@
 import matplotlib
+import random
 
 matplotlib.use("TkAgg")
 
@@ -13,7 +14,7 @@ import numpy as np
 import cv2
 import math
 
-import symbolicstacking as st
+from . import symbolicstacking as st
 
 # Expand TK's oval:
 def _create_circle(self, x, y, r, **kwargs):
@@ -108,16 +109,34 @@ class SymbolicMapsPage(tk.Frame):
         """Update Canvas upon algo change."""
 
         algo = self.algorithm.current()
+            # "Painter", #0
+            # "Random", #1
+            # "Pie stacking", #2
+            # "hawaiian stacking", #3
+            # "maxMinMinK Stacking (absolute)", #4
+            # "maxMinMinK Stacking (relative)", #5
+            # "maxMinSumK Stacking (absolute)", #6
+            # "maxMinSumK Stacking (relative)", #7
+            # "maxMinSumK Stacking (weighted)", #8
 
-        # This algorithms have basically also variations
-        if algo == 0:  # MinMaxSumK
-            self.circles = st.maxMinMinKStacking(self.circles, "absolute")
-        elif algo == 1:  # Painters
+        if algo == 0:
             self.circles = st.painterAlgorithm(self.circles)
-        elif algo == 2:  # Random
+        elif algo == 1:
+            random.shuffle(self.circles)
+        elif algo == 2:
             pass
         elif algo == 3:
-            self.circles = set.maxMinSumKStacking(self.circles, "absolute")
+            pass
+        elif algo == 4:
+            self.circles = st.maxMinMinKStacking(self.circles, "absolute")
+        elif algo == 5:
+            self.circles = st.maxMinMinKStacking(self.circles, "relative")
+        elif algo == 6:
+            self.circles = st.maxMinSumKStacking(self.circles, "relative")
+        elif algo == 7:
+            self.circles = st.maxMinSumKStacking(self.circles, "relative")
+        elif algo == 8:
+            self.circles = st.maxMinSumKStacking(self.circles, "weighted")
         else:
             print("You shouldn't see me.")
 
@@ -160,8 +179,18 @@ class SymbolicMapsPage(tk.Frame):
         self.datalabel.grid(column=0, row=1)
 
         self.algorithm = ttk.Combobox(self.frame)
-        self.algorithm["values"] = ("MinMxSumK", "Painter", "Random")
-        self.algorithm.current(1)
+        self.algorithm["values"] = (
+            "Painter", #0
+            "Random", #1
+            "Pie stacking", #2
+            "hawaiian stacking", #3
+            "maxMinMinK Stacking (absolute)", #4
+            "maxMinMinK Stacking (relative)", #5
+            "maxMinSumK Stacking (absolute)", #6
+            "maxMinSumK Stacking (relative)", #7
+            "maxMinSumK Stacking (weighted)", #8
+        )
+        self.algorithm.current(0)
         self.algorithm.grid(column=1, row=1)
         self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
 
@@ -171,6 +200,7 @@ class SymbolicMapsPage(tk.Frame):
         )
         self.about.grid(column=2, row=0)
 
+    # TODO: split this into {initialize, flush}
     def prepare_data(self):
         def latLongToPoint(lat, long, h, w):
             """Return (x,y) for lat, long inside a box."""
