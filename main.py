@@ -67,6 +67,11 @@ class SymbolicMapsPage(tk.Frame):
         self.controller = controller
         self.create_widgets()
 
+        # Display objects
+        self.circles=[]
+        self.pies=[]
+        self.piePieces=[]
+
         # Code
         self.prepare_data()
 
@@ -78,13 +83,13 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm.current(1)
         self.algorithm.pack(side="top")
 
+        # Add canvas
+        self.canvas = tk.Canvas(self, bg='white')
+        self.canvas.pack(side="top", fill="both", expand=True)
+
+        # Add about button
         self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
         self.about.pack(side="bottom")
-
-        # Dispplay objects
-        self.circles=[]
-        self.pies=[]
-        self.piePieces=[]
 
     def prepare_data(self):
         def latLongToPoint(lat,long,h,w):
@@ -178,7 +183,6 @@ class SymbolicMapsPage(tk.Frame):
 
             # TODO: Have a look at the data in the console
             print(self.circles)
-    
 
 class PaintingProgramPage(tk.Frame):
 
