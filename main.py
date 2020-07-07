@@ -106,22 +106,46 @@ class SymbolicMapsPage(tk.Frame):
 
         for c in self.circles:
             # x, y ,r
-            self.canvas.create_circle(c[0], c[1] ,c[2] ,fill='#bbb', outline='')
+            self.canvas.create_circle(c[0], c[1] ,c[2] ,fill='#bbb', outline='#000')
+
+    def data_algo_change(self, event):
+        self.canvas.delete("all")
+        self.prepare_data()
+        self.change_algorithm()
+        self.draw_circles()
 
     def create_widgets(self):
-        # Combobox (to select algo, input data, cost function)
-        self.algorithm = ttk.Combobox(self)
-        self.algorithm['values'] = ("MinMxSumK", "Painter", "Random")
-        self.algorithm.current(1)
-        self.algorithm.pack(side="top")
+        # Top widgets
+
+        self.frame = tk.Frame(self, self.parent)
+        self.frame.grid(column=0, row=0, sticky='w')
 
         # Add canvas
-        self.canvas = tk.Canvas(self, bg='white')
-        self.canvas.pack(side="top", fill="both", expand=True)
+        self.canvas = tk.Canvas(self, bg='white', width=1800, height=900)
+        self.canvas.grid(column=0,row=1,sticky='nsew')
+
+        # Combobox (to select algo, input data, cost function)
+        self.datalabel = tk.Label(self.frame, text ="Chose input data: ")
+        self.datalabel.grid(column=0, row=0)
+
+        self.data = ttk.Combobox(self.frame)
+        self.data['values'] = ("test", "May", "June")
+        self.data.current(1)
+        self.data.grid(column=1, row=0)
+        self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
+
+        self.datalabel = tk.Label(self.frame, text ="Chose algorithm :")
+        self.datalabel.grid(column=0, row=1)
+
+        self.algorithm = ttk.Combobox(self.frame)
+        self.algorithm['values'] = ("MinMxSumK", "Painter", "Random")
+        self.algorithm.current(1)
+        self.algorithm.grid(column=1, row=1)
 
         # Add about button
         self.about = tk.Button(self, text="About", command=lambda: self.controller.show_frame(AboutPage))
-        self.about.pack(side="bottom")
+        self.about.grid(column=2, row=0)
+
 
     def prepare_data(self):
         def latLongToPoint(lat,long,h,w):
@@ -142,7 +166,14 @@ class SymbolicMapsPage(tk.Frame):
 
         #structure: loc,loc,lat,long,conf,dead,recovered
         # TODO: Give this reasonable names
-        myworldmap=np.load("data/testDataEndeMai.npy", allow_pickle=True)
+        maps = {}
+        self.circles = []
+        self.piePieces = []
+        self.pies = []
+        maps[0] = np.load("data/testData.npy", allow_pickle=True)
+        maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
+        maps[2] = np.load("data/testDataJuni.npy", allow_pickle=True)
+        myworldmap = maps[self.data.current()]
         worldmap = cv2.imread('assets/test4.png')
         h=len(worldmap)
         w=len(worldmap[0])
