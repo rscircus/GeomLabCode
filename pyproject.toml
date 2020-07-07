@@ -11,6 +11,9 @@ matplotlib = "^3.2.2"
 pillow = "^7.2.0"
 opencv-python = "4.2.0.34"
 
+[tool.poetry.scripts]
+geomlab = "geomlab.main:main"
+
 [tool.poetry.dev-dependencies]
 pytest = "^5.4.3"
 nox = "^2020.5.24"

@@ -384,8 +384,10 @@ class AboutPage(tk.Frame):
         self.symbolic_button.pack(side="bottom")
 
 
-# Create application
-app = GeomLabApp()
+def main():
+    """The main function of the geomlab."""
+    # Create application
+    app = GeomLabApp()
 
-# Run application
-app.mainloop()
+    # Run application
+    app.mainloop()
