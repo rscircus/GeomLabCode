@@ -565,7 +565,7 @@ def maxMinSumKStacking(circles,mode):
     return solution
  
 #painter only defined for circles without subcircles           
-def painterAlgorithm(circle):
+def painterAlgorithm(circles):
     local=circles.copy()
     local.sort(key=lambda x: x[2],reverse=True)
     return local

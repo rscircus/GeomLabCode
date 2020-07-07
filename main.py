@@ -95,7 +95,18 @@ class SymbolicMapsPage(tk.Frame):
 
     def change_algorithm(self):
         '''Update Canvas upon algo change.'''
-        pass
+
+        # Painter's Algorithm:
+        self.circles = st.painterAlgorithm(self.circles)
+
+        # Draw
+        self.draw_circles()
+
+    def draw_circles(self):
+
+        for c in self.circles:
+            # x, y ,r
+            self.canvas.create_circle(c[0], c[1] ,c[2] ,fill='#bbb', outline='')
 
     def create_widgets(self):
         # Combobox (to select algo, input data, cost function)
@@ -131,10 +142,12 @@ class SymbolicMapsPage(tk.Frame):
 
         #structure: loc,loc,lat,long,conf,dead,recovered
         # TODO: Give this reasonable names
-        myworldmap=np.load("data/testData.npy", allow_pickle=True)
+        myworldmap=np.load("data/testDataEndeMai.npy", allow_pickle=True)
         worldmap = cv2.imread('assets/test4.png')
         h=len(worldmap)
         w=len(worldmap[0])
+        print(h)
+        print(w)
         myData=[]
         
         for case in myworldmap:
@@ -191,8 +204,8 @@ class SymbolicMapsPage(tk.Frame):
             rprime2=dead
             rprime1=rec
             rprime0=1
-            self.circles.append([int(y),int(x),int(r),int(rprime1),int(rprime2)])
-            self.pies.append([int(y),int(x),int(r)])
+            self.circles.append([int(x),int(y),int(r),int(rprime1),int(rprime2)])
+            self.pies.append([int(x),int(y),int(r)])
 
             a0=rprime0*rprime0
             a1=rprime1*rprime1
@@ -203,7 +216,7 @@ class SymbolicMapsPage(tk.Frame):
             self.piePieces.append([p1,p2])    
 
             # TODO: Have a look at the data in the console
-            print(self.circles)
+            #print(self.circles)
 
 class PaintingProgramPage(tk.Frame):
 
