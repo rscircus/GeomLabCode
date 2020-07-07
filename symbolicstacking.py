@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May  9 13:25:34 2020
-
-@author: Philip
-"""
-
 from PIL import Image
 import numpy as np
 import time
@@ -12,8 +5,6 @@ import cv2
 import math
 import random
 from PIL import Image, ImageDraw
-
-
 
 color3PIL="rgb(100, 100, 100)" #grau
 color2PIL='rgb(249, 102, 94)'  #rot
@@ -25,25 +16,6 @@ color2=[249, 102, 94]  #rot
 color1=[254, 201, 201]# blau
 color4=[200, 239, 245] #grün
 
-
-
-
-
-def latLongToPoint(lat,long,h,w):
-    lat=-lat+90
-    long=long+180 #längengerade oben unten
-    y=lat/180
-    x=long/360
-    x=int(x*w)
-    y=int(y*h)
-    return x,y
-
-
-        
-def calculatePointOnCircle(c,angle):
-    cosangle=np.cos(angle)
-    sinangle=np.sin(angle)
-    return cosangle*c[2]+c[0], sinangle*c[2]+c[1] 
           
           
 #############################################################################
@@ -752,168 +724,86 @@ def drawPie2(circle,pieces,angle,image):
 ###############################################################################
 
 
-#Init some Images
-start_time = time.time()
-w, h = 1280, 720
-data1 = np.zeros((h, w, 3), dtype=np.uint8)
-data1[:,:,:]=254
-data1[500,10,:]=125
-dataAll=np.zeros((1,w,3),dtype=np.uint8)
-dataAll[:,:,:]=254
-imgTest = Image.open(r"C:\Users\Mayer\Desktop\SS2020\LAB\Programme\test4.png")
-
-
-circles=[]
-pies=[]
-piePieces=[]
-
-################################initialize Data###############################
-##############################################################################
-
-#structure: loc,loc,lat,long,conf,dead,recovered
-myData1=np.load("testdata.npy", allow_pickle=True)
-data1 = cv2.imread('test4.png')
-h=len(data1)
-w=len(data1[0])
-
-circles=[]
-pies=[]
-piePieces=[]
-myData=[]
- 
-for case in myData1:
-    tmp=[]
-    for slot in case:
-        tmp.append(slot)
-    myData.append(tmp)
-
-
-for case in list(myData):
-    if(case[4]<5000):
-        myData.remove(case)
-    
-
-maximum=1
-for case in myData:
-    if(case[4]<1):
-        tmp=1
-    else:
-        tmp=case[4]
-    if(tmp>maximum):
-        maximumsecond=maximum
-        maximum=tmp
-        maximum2=np.log(4+case[4]*100/maximumsecond)
-
-for case in myData:
-    lat=case[2]
-    long=case[3]
-    x,y=latLongToPoint(lat, long, h, w)
-    case[4]=case[4]+5
-    case[5]=case[5]+5
-    case[6]=case[6]+5
-        
-    if(case[4]<case[6]):
-        continue
-
-    if(case[4]==0):
-        conf=1
-    else:
-        conf=np.log(4+case[4]*100/maximumsecond)
-        
-    if(case[5]==0 or math.isnan(case[5])):
-        dead=1
-    else:
-        dead=(case[5])
-        
-        
-    if(case[6]==0 or math.isnan(case[6])):
-        rec=1
-    else:
-        rec=(case[6])
-        
-    conf=125*conf/maximum2
-    dead=np.sqrt(conf*conf*(dead/case[4]))
-    rec=np.sqrt(conf*conf*(rec/case[4])+dead*dead)
-    
-    
-    r=conf
-    rprime2=dead
-    rprime1=rec
-    rprime0=1
-    circles.append([int(y),int(x),int(r),int(rprime1),int(rprime2)])
-
-
-    pies.append([int(y),int(x),int(r)])
-    a0=rprime0*rprime0
-    a1=rprime1*rprime1
-    a2=rprime2*rprime2
-    a=r*r  
-    p1=(case[5]/case[4]) *2*np.pi
-    p2=(((case[6]/case[4]))*2*np.pi )+p1
-
-    piePieces.append([p1,p2])    
-    
-
-
-###############################################################################
-########################doing some Algorithms and Drawing######################
-
-print("started drawing")  
-drawing4Normal(maxMinSumKStacking(circles,"absolute"), data1)
-cv2.putText(data1,"MaxMinSumK_absolute:", (40,40),cv2.FONT_HERSHEY_SIMPLEX, 1,  (255, 0, 0, 255), 3)
-data1[h-1,:,:]=0 
-data1[h-2,:,:]=0 
-data1[h-3,:,:]=0 
-dataAll = cv2.vconcat([data1])
-img22 = Image.fromarray(data1, 'RGB')
-
-data1 = cv2.imread('test4.png')
-
-
-drawing4H(hawaiianStacking(circles), data1)
-cv2.putText(data1,"Hawaiian:", (40,40),cv2.FONT_HERSHEY_SIMPLEX, 1,  (255, 0, 0, 255), 3)
-data1[h-1,:,:]=0 
-data1[h-2,:,:]=0 
-data1[h-3,:,:]=0 
-dataAll = cv2.vconcat([dataAll,data1])
-data1 = cv2.imread('test4.png')
-
-
-circlesToDraw,piecesToDraw,anglesToDraw=pieStacking(pies,piePieces)
-
-
-drawPieSolution2(circlesToDraw,piecesToDraw,anglesToDraw,imgTest)
-imgTest.save("PieChartsTmp.png")
-np_im3=cv2.imread('PieChartsTmp.png')
-
-
-np_im3 = cv2.cvtColor(np_im3, cv2.COLOR_BGR2RGB)
-
-cv2.putText(np_im3,"PieCharts:", (40,40),cv2.FONT_HERSHEY_SIMPLEX, 1,  (255, 0, 0, 255), 3)
-np_im3[h-1,:,:]=0 
-np_im3[h-2,:,:]=0 
-np_im3[h-3,:,:]=0 
-dataAll = cv2.vconcat([dataAll,np_im3])
-     
-img4 = Image.fromarray(dataAll, 'RGB')
-img4.save('All.png')
-img4.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
-
+#  #Init some Images
+#  start_time = time.time()
+#  w, h = 1280, 720
+#  data1 = np.zeros((h, w, 3), dtype=np.uint8)
+#  data1[:,:,:]=254
+#  data1[500,10,:]=125
+#  dataAll=np.zeros((1,w,3),dtype=np.uint8)
+#  dataAll[:,:,:]=254
+#  imgTest = Image.open(r"C:\Users\Mayer\Desktop\SS2020\LAB\Programme\test4.png")
+#  
+#  
+#  # TODO: incorporate these in some kind of class
+#  circles=[]
+#  pies=[]
+#  piePieces=[]
+#  
+#  ################################initialize Data###############################
+#  ##############################################################################
+#  
+#  
+#  
+#  ###############################################################################
+#  ########################doing some Algorithms and Drawing######################
+#  
+#  print("started drawing")  
+#  drawing4Normal(maxMinSumKStacking(circles,"absolute"), data1)
+#  cv2.putText(data1,"MaxMinSumK_absolute:", (40,40),cv2.FONT_HERSHEY_SIMPLEX, 1,  (255, 0, 0, 255), 3)
+#  data1[h-1,:,:]=0 
+#  data1[h-2,:,:]=0 
+#  data1[h-3,:,:]=0 
+#  dataAll = cv2.vconcat([data1])
+#  img22 = Image.fromarray(data1, 'RGB')
+#  
+#  data1 = cv2.imread('test4.png')
+#  
+#  
+#  drawing4H(hawaiianStacking(circles), data1)
+#  cv2.putText(data1,"Hawaiian:", (40,40),cv2.FONT_HERSHEY_SIMPLEX, 1,  (255, 0, 0, 255), 3)
+#  data1[h-1,:,:]=0 
+#  data1[h-2,:,:]=0 
+#  data1[h-3,:,:]=0 
+#  dataAll = cv2.vconcat([dataAll,data1])
+#  data1 = cv2.imread('test4.png')
+#  
+#  
+#  circlesToDraw,piecesToDraw,anglesToDraw=pieStacking(pies,piePieces)
+#  
+#  
+#  drawPieSolution2(circlesToDraw,piecesToDraw,anglesToDraw,imgTest)
+#  imgTest.save("PieChartsTmp.png")
+#  np_im3=cv2.imread('PieChartsTmp.png')
+#  
+#  
+#  np_im3 = cv2.cvtColor(np_im3, cv2.COLOR_BGR2RGB)
+#  
+#  cv2.putText(np_im3,"PieCharts:", (40,40),cv2.FONT_HERSHEY_SIMPLEX, 1,  (255, 0, 0, 255), 3)
+#  np_im3[h-1,:,:]=0 
+#  np_im3[h-2,:,:]=0 
+#  np_im3[h-3,:,:]=0 
+#  dataAll = cv2.vconcat([dataAll,np_im3])
+#       
+#  img4 = Image.fromarray(dataAll, 'RGB')
+#  img4.save('All.png')
+#  img4.show()
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#  
+#              
+#  
 
 
 

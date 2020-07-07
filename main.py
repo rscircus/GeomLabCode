@@ -12,6 +12,8 @@ import numpy as np
 import cv2
 import math
 
+import symbolicstacking as st
+
 # Main Window
 class GeomLabApp(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -75,6 +77,12 @@ class SymbolicMapsPage(tk.Frame):
         # Code
         self.prepare_data()
 
+        # Execute symbolic algo
+        self.change_algorithm()
+
+    def change_algorithm(self):
+        '''Update Canvas upon algo change.'''
+        pass
 
     def create_widgets(self):
         # Combobox (to select algo, input data, cost function)
