@@ -12,6 +12,7 @@ pillow = "^7.2.0"
 opencv-python = "4.2.0.34"
 
 [tool.poetry.dev-dependencies]
+pytest = "^5.4.3"
 
 [build-system]
 requires = ["poetry>=0.12"]
