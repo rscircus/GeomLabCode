@@ -98,12 +98,15 @@ class SymbolicMapsPage(tk.Frame):
 
         algo = self.algorithm.current()
 
+        # This algorithms have basically also variations
         if algo == 0: #MinMaxSumK
             self.circles = st.maxMinMinKStacking(self.circles, "absolute")
         elif algo == 1: #Painters
             self.circles = st.painterAlgorithm(self.circles)
         elif algo == 2: #Random
             pass
+        elif algo == 3:
+            self.circles = set.maxMinSumKStacking(self.circles, "absolute")
         else:
             print("You shouldn't see me.")
 

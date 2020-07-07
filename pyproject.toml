@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "geomlab2020"
+name = "geomlab"
 version = "0.1.0"
 description = ""
 authors = ["Roland Siegbert <roland@siegbert.info>", "David Goedecke", "Philipp Mayer"]

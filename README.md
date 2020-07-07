@@ -14,14 +14,26 @@ Code for the geomlab.
 
   Then simply run:
 
-  ```
+  ```bash
   $ poetry install
   ```
 
   let it install all deps and then
 
-  ```
+  ```bash
   $ poetry shell
+  ```
+
+  To test if everything got installed correctly you can do the following:
+
+  ```shell
+  $ python
+  Python 3.7.5 (default, May 23 2020, 15:44:44) 
+  [GCC 9.3.0] on linux
+  Type "help", "copyright", "credits" or "license" for more information.
+  >>> import geomlab
+  >>> geomlab.__version__
+  '0.1.0'
   ```
 
   will create a virtual environment for you with everything working out
