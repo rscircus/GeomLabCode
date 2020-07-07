@@ -480,8 +480,10 @@ def calculateLowestCircleMaxMinMinK(Circles, mode):
             tmpCircle = [Circles[i][0], Circles[i][1], Circles[i][2 + k]]
             if mode == "absolute":
                 tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
-            else:
+            elif mode == "relative":
                 tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)
+            else:
+                print("You shouldn't see this") # TODO
 
             if tmpValue < tmpMin:
                 tmpMin = tmpValue
