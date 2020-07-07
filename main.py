@@ -7,6 +7,11 @@ from matplotlib.figure import Figure
 import tkinter as tk
 import tkinter.ttk as ttk
 
+# Philipp's deps:
+import numpy as np
+import cv2
+import math
+
 # Main Window
 class GeomLabApp(tk.Tk):
     def __init__(self, *args, **kwargs):
