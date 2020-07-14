@@ -41,6 +41,10 @@ Code for the geomlab.
   integration, feel free to drop anything into slack. As always, I'm most
   likely to respond on `WEEKDAY not in (Wed,Thu,Fri)`, YouRS.
 
+  ## Logging
+
+  You can specify the visible log-level via appending `--log={INFO, DEBUG, CRITICAL}` in the cmd line.
+
 # TODOs
 
   - [X] GUI
