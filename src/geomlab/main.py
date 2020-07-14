@@ -209,7 +209,7 @@ class SymbolicMapsPage(tk.Frame):
         self.canvas.grid(column=0, row=1, sticky="nsew")
 
         # Combobox (to select algo, input data, cost function)
-        self.datalabel = tk.Label(self.frame, text="Chose input data: ")
+        self.datalabel = tk.Label(self.frame, text="Choose input data: ")
         self.datalabel.grid(column=0, row=0)
 
         self.data = ttk.Combobox(self.frame)
@@ -218,7 +218,7 @@ class SymbolicMapsPage(tk.Frame):
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
 
-        self.datalabel = tk.Label(self.frame, text="Chose algorithm :")
+        self.datalabel = tk.Label(self.frame, text="Choose algorithm :")
         self.datalabel.grid(column=0, row=1)
 
         self.algorithm = ttk.Combobox(self.frame)
