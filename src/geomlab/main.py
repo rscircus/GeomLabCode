@@ -1,5 +1,6 @@
 import matplotlib
 import random
+import logging
 
 matplotlib.use("TkAgg")
 
@@ -15,6 +16,9 @@ import cv2
 import math
 
 from . import symbolicstacking as st
+
+# Basic settings
+logging.basicConfig(filename="log.txt", level=logging.DEBUG)
 
 # Expand TK's oval:
 def _create_circle(self, x, y, r, **kwargs):
@@ -109,15 +113,15 @@ class SymbolicMapsPage(tk.Frame):
         """Update Canvas upon algo change."""
 
         algo = self.algorithm.current()
-            # "Painter", #0
-            # "Random", #1
-            # "Pie stacking", #2
-            # "hawaiian stacking", #3
-            # "maxMinMinK Stacking (absolute)", #4
-            # "maxMinMinK Stacking (relative)", #5
-            # "maxMinSumK Stacking (absolute)", #6
-            # "maxMinSumK Stacking (relative)", #7
-            # "maxMinSumK Stacking (weighted)", #8
+        # "Painter", #0
+        # "Random", #1
+        # "Pie stacking", #2
+        # "hawaiian stacking", #3
+        # "maxMinMinK Stacking (absolute)", #4
+        # "maxMinMinK Stacking (relative)", #5
+        # "maxMinSumK Stacking (absolute)", #6
+        # "maxMinSumK Stacking (relative)", #7
+        # "maxMinSumK Stacking (weighted)", #8
 
         if algo == 0:
             self.circles = st.painterAlgorithm(self.circles)
@@ -138,7 +142,7 @@ class SymbolicMapsPage(tk.Frame):
         elif algo == 8:
             self.circles = st.maxMinSumKStacking(self.circles, "weighted")
         else:
-            print("You shouldn't see me.")
+            logging.critical("You shouldn't see me.")
 
         # Draw
         self.draw_circles()
@@ -180,15 +184,15 @@ class SymbolicMapsPage(tk.Frame):
 
         self.algorithm = ttk.Combobox(self.frame)
         self.algorithm["values"] = (
-            "Painter", #0
-            "Random", #1
-            "Pie stacking", #2
-            "hawaiian stacking", #3
-            "maxMinMinK Stacking (absolute)", #4
-            "maxMinMinK Stacking (relative)", #5
-            "maxMinSumK Stacking (absolute)", #6
-            "maxMinSumK Stacking (relative)", #7
-            "maxMinSumK Stacking (weighted)", #8
+            "Painter",  # 0
+            "Random",  # 1
+            "Pie stacking",  # 2
+            "hawaiian stacking",  # 3
+            "maxMinMinK Stacking (absolute)",  # 4
+            "maxMinMinK Stacking (relative)",  # 5
+            "maxMinSumK Stacking (absolute)",  # 6
+            "maxMinSumK Stacking (relative)",  # 7
+            "maxMinSumK Stacking (weighted)",  # 8
         )
         self.algorithm.current(0)
         self.algorithm.grid(column=1, row=1)
@@ -231,8 +235,8 @@ class SymbolicMapsPage(tk.Frame):
         worldmap = cv2.imread("assets/test4.png")
         h = len(worldmap)
         w = len(worldmap[0])
-        print(h)
-        print(w)
+        logging.info(h)
+        logging.info(w)
         myData = []
 
         for case in myworldmap:
@@ -300,8 +304,7 @@ class SymbolicMapsPage(tk.Frame):
             p2 = (((case[6] / case[4])) * 2 * np.pi) + p1
             self.piePieces.append([p1, p2])
 
-            # TODO: Have a look at the data in the console
-            # print(self.circles)
+            logging.debug(self.circles)
 
 
 class PaintingProgramPage(tk.Frame):
