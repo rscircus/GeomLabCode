@@ -1,6 +1,7 @@
 import matplotlib
 import random
 import logging
+import datetime
 
 matplotlib.use("TkAgg")
 
@@ -105,9 +106,38 @@ class SymbolicMapsPage(tk.Frame):
 
         # Code
         self.prepare_data()
+        #self.timer_running = False
+        self.timer_start_timestamp = 0
 
         # Execute symbolic algo
         self.change_algorithm()
+
+    # TODO: Shift into own object - probably needs an own thread for display updates
+    def timer_update_label(self):
+        def count():
+            if self.timer_running:
+                if self.counter == 123456:
+                    timestr = "Starting..."
+                else:
+                    timestamp = datetime.date.fromtimestamp(self.counter)
+                    timestr = timestamp.strftime("%H:%M:%S")
+                self.timerlabel['text'] = timestr
+
+                self.timerlabel.after(1000, count)
+                self.counter += 1
+
+        # timer is running
+        count()
+
+    def timer_start(self):
+        self.timer_start_timestamp = datetime.datetime.now()
+        #self.timer_update_label()
+
+    def timer_stop(self):
+        self.timerlabel['text'] = str(int((datetime.datetime.now() - self.timer_start_timestamp).total_seconds() * 1000)) + " milliseconds"
+
+        #self.timer_running = False
+        #self.counter = 123456
 
     def change_algorithm(self):
         """Update Canvas upon algo change."""
@@ -122,6 +152,9 @@ class SymbolicMapsPage(tk.Frame):
         # "maxMinSumK Stacking (absolute)", #6
         # "maxMinSumK Stacking (relative)", #7
         # "maxMinSumK Stacking (weighted)", #8
+
+        # Timer start
+        self.timer_start()
 
         if algo == 0:
             self.circles = st.painterAlgorithm(self.circles)
@@ -144,6 +177,9 @@ class SymbolicMapsPage(tk.Frame):
         else:
             logging.critical("You shouldn't see me.")
 
+        # Timer end
+        self.timer_stop()
+
         # Draw
         self.draw_circles()
 
@@ -161,9 +197,12 @@ class SymbolicMapsPage(tk.Frame):
 
     def create_widgets(self):
         # Top widgets
-
         self.frame = tk.Frame(self, self.parent)
         self.frame.grid(column=0, row=0, sticky="w")
+
+        # Add algo timer
+        self.timerlabel = tk.Label(self.frame, text="Timer...", fg='red')
+        self.timerlabel.grid(column=2, row=1)
 
         # Add canvas
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
