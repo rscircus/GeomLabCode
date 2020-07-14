@@ -131,3 +131,7 @@ dmypy.json
 # Linux
 scratch.vim
 tags
+.vscode
+
+# Logs
+log.txt
