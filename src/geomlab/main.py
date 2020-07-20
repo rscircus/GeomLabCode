@@ -148,10 +148,16 @@ class SymbolicMapsPage(tk.Frame):
         count()
 
     def timer_start(self):
+        self.timer_running_label["bg"] = ("red")
+        self.timer_running_label["text"] = ("Timer running")
+        self.timer_running_label.update_idletasks()
         self.timer_start_timestamp = datetime.datetime.now()
         # self.timer_update_label()
 
     def timer_stop(self):
+        self.timer_running_label["bg"] = ("green")
+        self.timer_running_label["text"] = ("Timer not running")
+        self.timer_running_label.update_idletasks()
         self.timerlabel["text"] = (
             "Runtime (wall): "
             + str(
@@ -231,7 +237,10 @@ class SymbolicMapsPage(tk.Frame):
 
         # Add algo timer
         self.timerlabel = tk.Label(self.frame, text="Timer...", fg="red")
-        self.timerlabel.grid(column=2, row=1)
+        self.timerlabel.grid(column=2, row=1, sticky=tk.W+tk.E)
+
+        self.timer_running_label = tk.Label(self.frame, text="Timer not running", bg="red", fg="white")
+        self.timer_running_label.grid(column=2, row=0, sticky=tk.W+tk.E)
 
         # Add canvas
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
