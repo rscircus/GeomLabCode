@@ -132,6 +132,7 @@ dmypy.json
 scratch.vim
 tags
 .vscode
+.idea
 
 # Logs
 log.txt
