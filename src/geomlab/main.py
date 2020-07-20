@@ -106,13 +106,15 @@ class SymbolicMapsPage(tk.Frame):
 
         # Code
         self.prepare_data()
-        #self.timer_running = False
+        # self.timer_running = False
         self.timer_start_timestamp = 0
 
         # Execute symbolic algo
         self.change_algorithm()
 
-    # TODO: Shift into own object - probably needs an own thread for display updates
+    # TODO: Shift into own object
+    # TODO: Timer is defunct - probably needs an own thread for display updates
+    # TODO: Using wallclock timestamps for now
     def timer_update_label(self):
         def count():
             if self.timer_running:
@@ -121,7 +123,7 @@ class SymbolicMapsPage(tk.Frame):
                 else:
                     timestamp = datetime.date.fromtimestamp(self.counter)
                     timestr = timestamp.strftime("%H:%M:%S")
-                self.timerlabel['text'] = timestr
+                self.timerlabel["text"] = timestr
 
                 self.timerlabel.after(1000, count)
                 self.counter += 1
@@ -131,13 +133,24 @@ class SymbolicMapsPage(tk.Frame):
 
     def timer_start(self):
         self.timer_start_timestamp = datetime.datetime.now()
-        #self.timer_update_label()
+        # self.timer_update_label()
 
     def timer_stop(self):
-        self.timerlabel['text'] = str(int((datetime.datetime.now() - self.timer_start_timestamp).total_seconds() * 1000)) + " milliseconds"
+        self.timerlabel["text"] = (
+            "Runtime (wall): "
+            + str(
+                int(
+                    (
+                        datetime.datetime.now() - self.timer_start_timestamp
+                    ).total_seconds()
+                    * 1000
+                )
+            )
+            + " milliseconds"
+        )
 
-        #self.timer_running = False
-        #self.counter = 123456
+        # self.timer_running = False
+        # self.counter = 123456
 
     def change_algorithm(self):
         """Update Canvas upon algo change."""
@@ -201,7 +214,7 @@ class SymbolicMapsPage(tk.Frame):
         self.frame.grid(column=0, row=0, sticky="w")
 
         # Add algo timer
-        self.timerlabel = tk.Label(self.frame, text="Timer...", fg='red')
+        self.timerlabel = tk.Label(self.frame, text="Timer...", fg="red")
         self.timerlabel.grid(column=2, row=1)
 
         # Add canvas

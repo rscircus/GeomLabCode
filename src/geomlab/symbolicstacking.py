@@ -483,7 +483,7 @@ def calculateLowestCircleMaxMinMinK(Circles, mode):
             elif mode == "relative":
                 tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)
             else:
-                print("You shouldn't see this") # TODO
+                print("You shouldn't see this")  # TODO
 
             if tmpValue < tmpMin:
                 tmpMin = tmpValue
