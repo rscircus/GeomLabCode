@@ -1,4 +1,4 @@
-# geomlab2020
+# GeomLabCode - 2020
 
 Code for the geomlab.
 
