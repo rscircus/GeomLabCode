@@ -118,15 +118,17 @@ class SymbolicMapsPage(tk.Frame):
         self.circles = []
         self.pies = []
         self.piePieces = []
+        self.data_sets = {}
 
         # Code
+        self.initialize_data()
         self.prepare_data()
         self.timer_running = False
         self.counter = 123456
         self.timer_start_timestamp = datetime.datetime.now()
 
         # Execute symbolic algo
-        self.change_algorithm()
+        self.apply_algorithm()
 
     # TODO: Shift into own object
     # TODO: Timer is defunct - probably needs an own thread for display updates
@@ -174,8 +176,14 @@ class SymbolicMapsPage(tk.Frame):
         # self.timer_running = False
         # self.counter = 123456
 
-    def change_algorithm(self):
+    def apply_algorithm(self):
         """Update Canvas upon algo change."""
+
+        # Set current dataset
+        print("Current data set:")
+        print(self.data.current())
+        self.circles = self.data_sets[self.data.current()]
+        print(len(self.circles))
 
         algo = self.algorithm.current()
         # "Painter", #0
@@ -225,9 +233,9 @@ class SymbolicMapsPage(tk.Frame):
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
 
     def data_algo_change(self, event):
+        print("Change algorithm.")
         self.canvas.delete("all")
-        self.prepare_data()
-        self.change_algorithm()
+        self.apply_algorithm()
         self.draw_circles()
 
     def create_widgets(self):
@@ -251,7 +259,12 @@ class SymbolicMapsPage(tk.Frame):
         self.datalabel.grid(column=0, row=0)
 
         self.data = ttk.Combobox(self.frame, width=50)
-        self.data["values"] = ("test", "May", "June")
+        self.data["values"] = (
+            "test",
+            "May",
+            "June",
+            "Random"
+        )
         self.data.current(1)
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
@@ -285,6 +298,23 @@ class SymbolicMapsPage(tk.Frame):
         self.about.grid(column=2, row=0)
 
     # TODO: split this into {initialize, flush}
+
+    def initialize_data(self):
+        self._maps = {}
+        self.circles = []
+        self.piePieces = []
+        self.pies = []
+        self._maps[0] = np.load("data/testData.npy", allow_pickle=True)
+        self._maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
+        self._maps[2] = np.load("data/testDataJuni.npy", allow_pickle=True)
+
+        self._worldmap = cv2.imread("assets/test4.png") # Todo paint worldmap in background
+        self._screen_height = len(self._worldmap)
+        self._screen_width = len(self._worldmap[0])
+
+        logging.info(self._screen_height)
+        logging.info(self._screen_width)
+
     def prepare_data(self):
         def latLongToPoint(lat, long, h, w):
             """Return (x,y) for lat, long inside a box."""
@@ -303,89 +333,104 @@ class SymbolicMapsPage(tk.Frame):
             return cosangle * c[2] + c[0], sinangle * c[2] + c[1]
 
         # structure: loc,loc,lat,long,conf,dead,recovered
-        # TODO: Give this reasonable names
-        maps = {}
-        self.circles = []
-        self.piePieces = []
-        self.pies = []
-        maps[0] = np.load("data/testData.npy", allow_pickle=True)
-        maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
-        maps[2] = np.load("data/testDataJuni.npy", allow_pickle=True)
-        myworldmap = maps[self.data.current()]
-        worldmap = cv2.imread("assets/test4.png")
-        h = len(worldmap)
-        w = len(worldmap[0])
-        logging.info(h)
-        logging.info(w)
-        myData = []
 
-        maximumsecond = -1
-        maximum2 = -1
+        # Prepare npy or create circles
+        # TODO: Talk to Philip about this
+        for i in range(3):
 
-        for case in myworldmap:
-            tmp = []
-            for slot in case:
-                tmp.append(slot)
-            myData.append(tmp)
+            # flush previous set of circles
+            circles = []
+            pies = []
+            piePieces = []
+            my_data = []
+            maximum_second = -1
+            maximum = -1
+            maximum_2 = -1
 
-        for case in list(myData):
-            if case[4] < 5000:
-                myData.remove(case)
+            my_worldmap = self._maps[i]
 
-        maximum = 1
-        for case in myData:
-            if case[4] < 1:
-                tmp = 1
-            else:
-                tmp = case[4]
-            if tmp > maximum:
-                maximumsecond = maximum
-                maximum = tmp
-                maximum2 = np.log(4 + case[4] * 100 / maximumsecond)
+            for case in my_worldmap:
+                tmp = []
+                for slot in case:
+                    tmp.append(slot)
+                my_data.append(tmp)
 
-        for case in myData:
-            lat = case[2]
-            long = case[3]
-            x, y = latLongToPoint(lat, long, h, w)
-            case[4] = case[4] + 5
-            case[5] = case[5] + 5
-            case[6] = case[6] + 5
+            for case in list(my_data):
+                if case[4] < 5000:
+                    my_data.remove(case)
 
-            if case[4] < case[6]:
-                continue
+            for case in my_data:
+                if case[4] < 1:
+                    tmp = 1
+                else:
+                    tmp = case[4]
+                if tmp > maximum:
+                    maximum_second = maximum
+                    maximum = tmp
+                    maximum_2 = np.log(4 + case[4] * 100 / maximum_second)
 
-            if case[4] == 0:
-                conf = 1
-            else:
-                conf = np.log(4 + case[4] * 100 / maximumsecond)
+            for case in my_data:
+                lat = case[2]
+                long = case[3]
+                x, y = latLongToPoint(lat, long, self._screen_height, self._screen_width)
+                case[4] = case[4] + 5
+                case[5] = case[5] + 5
+                case[6] = case[6] + 5
 
-            if case[5] == 0 or math.isnan(case[5]):
-                dead = 1
-            else:
-                dead = case[5]
+                if case[4] < case[6]:
+                    continue
 
-            if case[6] == 0 or math.isnan(case[6]):
-                rec = 1
-            else:
-                rec = case[6]
+                if case[4] == 0:
+                    conf = 1
+                else:
+                    conf = np.log(4 + case[4] * 100 / maximum_second)
 
-            conf = 125 * conf / maximum2
-            dead = np.sqrt(conf * conf * (dead / case[4]))
-            rec = np.sqrt(conf * conf * (rec / case[4]) + dead * dead)
-            r = conf
-            rprime2 = dead
-            rprime1 = rec
-            rprime0 = 1
-            self.circles.append([int(x), int(y), int(r), int(rprime1), int(rprime2)])
-            self.pies.append([int(x), int(y), int(r)])
+                if case[5] == 0 or math.isnan(case[5]):
+                    dead = 1
+                else:
+                    dead = case[5]
 
-            a0 = rprime0 * rprime0
-            a1 = rprime1 * rprime1
-            a2 = rprime2 * rprime2
-            a = r * r
-            p1 = (case[5] / case[4]) * 2 * np.pi
-            p2 = (((case[6] / case[4])) * 2 * np.pi) + p1
-            self.piePieces.append([p1, p2])
+                if case[6] == 0 or math.isnan(case[6]):
+                    rec = 1
+                else:
+                    rec = case[6]
+
+                conf = 125 * conf / maximum_2
+                dead = np.sqrt(conf * conf * (dead / case[4]))
+                rec = np.sqrt(conf * conf * (rec / case[4]) + dead * dead)
+                r = conf
+                rprime2 = dead
+                rprime1 = rec
+                rprime0 = 1
+
+                # appending circles with pie radii
+                circles.append([int(x), int(y), int(r), int(rprime1), int(rprime2)])
+                pies.append([int(x), int(y), int(r)])
+
+                # appending pie pieces
+                a0 = rprime0 * rprime0
+                a1 = rprime1 * rprime1
+                a2 = rprime2 * rprime2
+                a = r * r
+                p1 = (case[5] / case[4]) * 2 * np.pi
+                p2 = (((case[6] / case[4])) * 2 * np.pi) + p1
+                piePieces.append([p1, p2])
+
+                # TODO: Think about datastructure for pies and piePieces = probably a class
+                self.data_sets[i] = circles
+
+            # Generate random set
+            circles = []
+            MAX_RADIUS = 100
+            for _ in range(100):
+                x = random.randint(0, self._screen_width - MAX_RADIUS)
+                y = random.randint(0, self._screen_height - MAX_RADIUS)
+                r = random.randint(1, MAX_RADIUS)
+                circles.append([x, y, r])
+
+            self.data_sets[3] = circles
+
+            print(len(self.data_sets))
 
             logging.debug(self.circles)
 
