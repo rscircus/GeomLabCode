@@ -10,6 +10,7 @@ from matplotlib.figure import Figure
 
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.font as tkfont
 
 # Philipp's deps:
 import numpy as np
@@ -37,6 +38,20 @@ def _create_circle_arc(self, x, y, r, **kwargs):
 
 
 tk.Canvas.create_circle_arc = _create_circle_arc
+
+
+def on_combo_configure(event):
+    """Adjust width of combobox based on values."""
+    combo = event.widget
+    style = ttk.Style()
+
+    long = max(combo.cget('values'), key=len)
+
+    font = tkfont.nametofont(str(combo.cget('font')))
+    width = max(0,font.measure(long.strip() + '0') - combo.winfo_width())
+
+    style.configure('TCombobox', postoffset=(0,0,width,0))
+
 
 # Main Window
 class GeomLabApp(tk.Tk):
@@ -226,16 +241,17 @@ class SymbolicMapsPage(tk.Frame):
         self.datalabel = tk.Label(self.frame, text="Choose input data: ")
         self.datalabel.grid(column=0, row=0)
 
-        self.data = ttk.Combobox(self.frame)
+        self.data = ttk.Combobox(self.frame, width=50)
         self.data["values"] = ("test", "May", "June")
         self.data.current(1)
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
+        self.data.bind("<<Configure>>", on_combo_configure)
 
         self.datalabel = tk.Label(self.frame, text="Choose algorithm :")
         self.datalabel.grid(column=0, row=1)
 
-        self.algorithm = ttk.Combobox(self.frame)
+        self.algorithm = ttk.Combobox(self.frame, width=50)
         self.algorithm["values"] = (
             "Painter",  # 0
             "Random",  # 1
@@ -250,6 +266,8 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm.current(0)
         self.algorithm.grid(column=1, row=1)
         self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
+        self.algorithm.bind("<<Configure>>", on_combo_configure)
+
 
         # Add about button
         self.about = tk.Button(
@@ -448,7 +466,7 @@ class MatplotlibPage(tk.Frame):
         self.canvas.draw()
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
-        self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
+        #self.canvas._tkcanvas.pack(side="top", fill="both", expand=True)
 
 
 class AboutPage(tk.Frame):
@@ -471,7 +489,6 @@ class AboutPage(tk.Frame):
             command=lambda: self.controller.show_frame(SymbolicMapsPage),
         )
         self.symbolic_button.pack(side="bottom")
-
 
 def main():
     """The main function of the geomlab."""
