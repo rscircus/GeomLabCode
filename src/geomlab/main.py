@@ -106,8 +106,9 @@ class SymbolicMapsPage(tk.Frame):
 
         # Code
         self.prepare_data()
-        # self.timer_running = False
-        self.timer_start_timestamp = 0
+        self.timer_running = False
+        self.counter = 123456
+        self.timer_start_timestamp = datetime.datetime.now()
 
         # Execute symbolic algo
         self.change_algorithm()
@@ -290,6 +291,9 @@ class SymbolicMapsPage(tk.Frame):
         logging.info(h)
         logging.info(w)
         myData = []
+
+        maximumsecond = -1
+        maximum2 = -1
 
         for case in myworldmap:
             tmp = []
