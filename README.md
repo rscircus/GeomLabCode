@@ -37,9 +37,17 @@ Code for the geomlab.
   ```
 
   will create a virtual environment for you with everything working out
-  smoothly and no interference with the host. If you guys need help with
-  integration, feel free to drop anything into slack. As always, I'm most
-  likely to respond on `WEEKDAY not in (Wed,Thu,Fri)`, YouRS.
+  smoothly and no interference with the host.
+
+  To run the GUI after installing all dependencies use
+
+  ```shell
+  $ poetry run geomlab
+  ```
+
+  If you guys need help with integration, feel free to drop anything into
+  slack. As always, I'm most likely to respond on `WEEKDAY not in
+  (Wed,Thu,Fri)`, YouRS.
 
   ## Logging
 
@@ -47,7 +55,8 @@ Code for the geomlab.
 
 # TODOs
 
-  - [X] GUI
-  - [ ] Transfer covid-19 dataset here
-  - [ ] Help Philipp transfer his project here
-  - [ ] Probability Distributions
+- [ ] Probability Distributions
+  - [X] Uniform
+  - [ ] Gaussian
+  - [ ] Poisson
+  - [ ] ???
