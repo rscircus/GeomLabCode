@@ -199,6 +199,9 @@ class SymbolicMapsPage(tk.Frame):
         # Timer start
         self.timer_start()
 
+        # TODO: Assuming objective values are positive
+        objective_value = -1
+
         if algo == 0:
             self.circles = st.painterAlgorithm(self.circles)
         elif algo == 1:
@@ -208,20 +211,30 @@ class SymbolicMapsPage(tk.Frame):
         elif algo == 3:
             pass
         elif algo == 4:
-            self.circles = st.maxMinMinKStacking(self.circles, "absolute")
+            self.circles, objective_value = st.maxMinMinKStacking(self.circles, "absolute")
         elif algo == 5:
-            self.circles = st.maxMinMinKStacking(self.circles, "relative")
+            self.circles, objective_value = st.maxMinMinKStacking(self.circles, "relative")
         elif algo == 6:
-            self.circles = st.maxMinSumKStacking(self.circles, "relative")
+            self.circles, objective_value = st.maxMinSumKStacking(self.circles, "relative")
         elif algo == 7:
-            self.circles = st.maxMinSumKStacking(self.circles, "relative")
+            self.circles, objective_value = st.maxMinSumKStacking(self.circles, "relative")
         elif algo == 8:
-            self.circles = st.maxMinSumKStacking(self.circles, "weighted")
+            self.circles, objective_value = st.maxMinSumKStacking(self.circles, "weighted")
         else:
             logging.critical("You shouldn't see me.")
 
         # Timer end
         self.timer_stop()
+
+        # Objective update
+        if objective_value != -1:
+            self.objective_running_label["text"] = "Objective"
+            self.objectivelabel["text"] = str(objective_value)
+            self.objective_running_label["bg"] = ("green")
+        else:
+            self.objective_running_label["bg"] = ("red")
+            self.objective_running_label["text"] = "No objective"
+            self.objectivelabel["text"] = "N/A"
 
         # Draw
         self.draw_circles()
@@ -249,6 +262,13 @@ class SymbolicMapsPage(tk.Frame):
 
         self.timer_running_label = tk.Label(self.frame, text="Timer not running", bg="red", fg="white")
         self.timer_running_label.grid(column=2, row=0, sticky=tk.W+tk.E)
+
+        # Add objective value display
+        self.objectivelabel = tk.Label(self.frame, text="Objective...", fg="red")
+        self.objectivelabel.grid(column=3, row=1, sticky=tk.W+tk.E)
+
+        self.objective_running_label = tk.Label(self.frame, text="No objective", bg="red", fg="white")
+        self.objective_running_label.grid(column=3, row=0, sticky=tk.W+tk.E)
 
         # Add canvas
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
@@ -551,3 +571,6 @@ def main():
 
     # Run application
     app.mainloop()
+
+
+# TODO: Convert solution drawings for pies and movable circles

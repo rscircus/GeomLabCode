@@ -538,11 +538,15 @@ def calculateLowestCircleMaxMinSumK(Circles, mode):
 def maxMinMinKStacking(circles, mode):
     local = circles.copy()
     solution = []
+    objective = 0
+    cur_objective = 0
+
     for i in range(0, len(circles)):
-        index, value = calculateLowestCircleMaxMinMinK(local, mode)
+        index, cur_objective = calculateLowestCircleMaxMinMinK(local, mode)
         tmp = local.pop(index)
         solution.append(tmp)
-    return solution
+        objective += cur_objective
+    return solution, objective
 
 
 # input: circles nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
@@ -551,11 +555,15 @@ def maxMinMinKStacking(circles, mode):
 def maxMinSumKStacking(circles, mode):
     local = circles.copy()
     solution = []
+    objective = 0
+    cur_objective = 0
+
     for i in range(0, len(circles)):
-        index, value = calculateLowestCircleMaxMinSumK(local, mode)
+        index, cur_objective = calculateLowestCircleMaxMinSumK(local, mode)
         tmp = local.pop(index)
         solution.append(tmp)
-    return solution
+        objective += cur_objective
+    return solution, objective
 
 
 # painter only defined for circles without subcircles
