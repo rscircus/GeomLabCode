@@ -375,6 +375,36 @@ def pieStacking(circles, piePieces):
     return resultOrder, resultPieces, resultAngles
 
 
+#used for Hawaiian
+def calculateLargestContinousCirc(circle,neighbours):
+    x=caculateVisibleIntervall(circle,neighbours)
+    maximum=-1
+    
+    if(x==None):
+        return 0
+    
+    for i in x:
+        if (i[0]>i[1]):
+            i[1]=i[1]+2*np.pi
+        tmpvalue=i[1]-i[0]
+        if(maximum<tmpvalue):
+            maximum=tmpvalue
+    return maximum
+        
+        
+def calculateLowestHawaiian(Circles):
+    maximum=-1
+    for i in range(0,len(Circles)):
+        tmp=Circles[:i]+Circles[i+1:]
+        tmpValue=calculateLargestContinousCirc(Circles[i],tmp)
+        if(tmpValue*Circles[i][2]>maximum):
+            index=i
+            maximum=tmpValue*Circles[i][2]
+    return index, maximum    
+    
+
+
+
 # given some circles of the form (x,y,r1,r2,...) where r1>r2>...
 # returns a hawaiianStacking
 # form: for each circle with subcircles there are now multiple circles
@@ -384,7 +414,8 @@ def hawaiianStacking(circles):
     stacking = []
     stackingAllCircles = []
     for i in range(0, len(circles)):
-        index, value = calculateLowestCircleMaxMin(local, "absolute")
+        index,value=calculateLowestHawaiian(local)
+        #index,value=calculateLowestCircleMaxMin(local,"absolute")
         tmp = local.pop(index)
         stacking.append(tmp)
 
