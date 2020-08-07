@@ -17,6 +17,11 @@ color1 = [254, 201, 201]  # blau
 color4 = [200, 239, 245]  # grün
 
 
+def calculatePointOnCircle(c,angle):
+    cosangle=np.cos(angle)
+    sinangle=np.sin(angle)
+    return cosangle*c[2]+c[0], sinangle*c[2]+c[1]
+
 #############################################################################
 ###############caculating of the occluded circumference of a Circle##########
 ###################given the circles which lie above it######################
@@ -602,6 +607,173 @@ def painterAlgorithm(circles):
     local = circles.copy()
     local.sort(key=lambda x: x[2], reverse=True)
     return local
+
+
+########################################################################
+#####Algorithms for comparison########################################## 
+########################################################################
+    
+def nestedPainter(circles):
+    local=circles.copy()
+    local.sort(key=lambda x: x[2],reverse=True)
+    return local
+
+
+def nestedLeftToRight(circles):
+    local=circles.copy()
+    local.sort(key=lambda x: x[1],reverse=False)
+    return local
+
+def nestedRightToLeft(circles):
+    local=circles.copy()
+    local.sort(key=lambda x: x[1],reverse=True)
+    return local
+    
+def nestedRandom(circles):
+    local=circles.copy()
+    random.shuffle(local)
+    return local
+
+
+def hawaiianLeftToRight(circles):
+    local=circles.copy()
+    stacking=[]
+    stackingAllCircles=[]
+
+        
+    stacking=local
+    stacking.sort(key=lambda x: x[1],reverse=False)
+   
+    
+    for i in range(0,len(stacking)):
+        onCircleX=stacking[i][0]
+        onCircleY=stacking[i][1]-stacking[i][2]                       
+        deltaX=stacking[i][0]-onCircleX
+        deltaY=stacking[i][1]-onCircleY
+        deltaX=deltaX/stacking[i][2]
+        deltaY=deltaY/stacking[i][2]
+      
+        for j in range(2,len(stacking[i])):       
+            x0=onCircleX+deltaX * (stacking[i][j])
+            y0=onCircleY+deltaY * ( stacking[i][j])
+            r0=stacking[i][j]
+            stackingAllCircles.append([x0,y0,r0])       
+    return stackingAllCircles
+    
+def hawaiianRightToLeft(circles):
+    local=circles.copy()
+    stacking=[]
+    stackingAllCircles=[]
+    
+    stacking=local
+    stacking.sort(key=lambda x: x[1],reverse=True)
+
+
+    for i in range(0,len(stacking)):        
+        onCircleX=stacking[i][0]
+        onCircleY=stacking[i][1]+stacking[i][2]
+        deltaX=stacking[i][0]-onCircleX
+        deltaY=stacking[i][1]-onCircleY
+        deltaX=deltaX/stacking[i][2]
+        deltaY=deltaY/stacking[i][2]
+      
+        for j in range(2,len(stacking[i])):       
+            x0=onCircleX+deltaX * (stacking[i][j])
+            y0=onCircleY+deltaY * ( stacking[i][j])
+            r0=stacking[i][j]
+            stackingAllCircles.append([x0,y0,r0])       
+    return stackingAllCircles
+
+
+def hawaiianRandom(circles):
+    N=[]
+    local=circles.copy()
+    stacking=[]
+    stackingAllCircles=[]
+    
+    stacking=local  
+    random.shuffle(stacking)
+
+
+    for i in range(0,len(stacking)):
+        N=stacking[i+1:]
+        visbleInt=caculateVisibleIntervall(stacking[i],N)#########
+        maximum=-1
+        angle=0
+
+        if(visbleInt==None):
+            print("asd")
+            onCircleX=stacking[i][0]+2
+            onCircleY=stacking[i][1]+2
+     
+        else:
+            for interval in visbleInt:
+                if (interval[1]<interval[0]):
+                    interval[1]=interval[1]+2*np.pi
+                tmp= np.absolute(interval[1]-interval[0])
+                if(tmp>maximum):
+                    maximum=tmp
+
+                    angle=interval[0]+(interval[1]-interval[0])/2
+
+            onCircleX,onCircleY =calculatePointOnCircle([int(stacking[i][0]),int(stacking[i][1]),int(stacking[i][2])], angle)
+
+                           
+        deltaX=stacking[i][0]-onCircleX
+        deltaY=stacking[i][1]-onCircleY
+        deltaX=deltaX/stacking[i][2]
+        deltaY=deltaY/stacking[i][2]
+       
+        for j in range(2,len(stacking[i])):            
+            x0=onCircleX+deltaX * (stacking[i][j])
+            y0=onCircleY+deltaY * ( stacking[i][j])
+            r0=stacking[i][j]
+            stackingAllCircles.append([x0,y0,r0])
+            
+    return stackingAllCircles
+
+
+def hawaiianPainter(circles):
+    local=circles.copy()
+    stacking=[]
+    stackingAllCircles=[]
+    
+    stacking=local
+    stacking.sort(key=lambda x: x[2],reverse=True)
+    
+    for i in range(0,len(stacking)):
+        N=stacking[i+1:]
+        visbleInt=caculateVisibleIntervall(stacking[i],N)#########
+        maximum=-1
+        angle=0
+
+        for interval in visbleInt:
+            if (interval[1]<interval[0]):
+                interval[1]=interval[1]+2*np.pi
+            tmp= np.absolute(interval[1]-interval[0])
+            if(tmp>maximum):
+                maximum=tmp
+
+                angle=interval[0]+(interval[1]-interval[0])/2
+
+        onCircleX,onCircleY =calculatePointOnCircle([int(stacking[i][0]),int(stacking[i][1]),int(stacking[i][2])], angle)
+
+                           
+        deltaX=stacking[i][0]-onCircleX
+        deltaY=stacking[i][1]-onCircleY
+        deltaX=deltaX/stacking[i][2]
+        deltaY=deltaY/stacking[i][2]
+       
+        for j in range(2,len(stacking[i])):            
+            x0=onCircleX+deltaX * (stacking[i][j])
+            y0=onCircleY+deltaY * ( stacking[i][j])
+            r0=stacking[i][j]
+            stackingAllCircles.append([x0,y0,r0])
+            
+    return stackingAllCircles
+
+
+
 
 
 ################################################################################
