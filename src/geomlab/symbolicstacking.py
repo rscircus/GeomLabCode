@@ -773,6 +773,148 @@ def hawaiianPainter(circles):
     return stackingAllCircles
 
 
+def painterPieCharts(pies,piepieces):
+    n=len(piepieces[0])
+    localPies= []
+    localPiePieces=[]
+    localAngles=[]
+    local=np.concatenate((pies,piepieces),axis=1)
+    print(type(local))
+    local=sorted(local,key=lambda x: x[2],reverse=True)
+    for l in local:
+        localPies.append([l[0],l[1],l[2]])
+        tmp=[]
+        for i in range(1,n+1):
+            tmp.append(l[2+i])
+        localPiePieces.append(tmp)
+      
+    
+    for i in range(0,len(localPies)):
+        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
+        if(angle==None):
+            x=localPiePieces[i].copy()
+            while(angle==None):
+                if(len(x)==0):
+                    angle=0
+                    break
+                x.pop(len(x)-1) 
+                print(x)
+                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])
+                
+        localAngles.append(angle)
+
+    
+        
+    return localPies, localPiePieces, localAngles
+    
+    
+            
+            
+    
+def randomPieCharts(pies,piepieces):
+ 
+    n=len(piepieces[0])
+    localPies= []
+    localPiePieces=[]
+    localAngles=[]
+    local=np.concatenate((pies,piepieces),axis=1)
+    random.shuffle(local)
+    for l in local:
+        localPies.append([l[0],l[1],l[2]])
+        tmp=[]
+        for i in range(1,n+1):
+            tmp.append(l[2+i])
+        localPiePieces.append(tmp)
+      
+    
+    for i in range(0,len(localPies)):
+        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
+        if(angle==None):
+            x=localPiePieces[i].copy()
+            while(angle==None):
+                if(len(x)==0):
+                    angle=0
+                    break
+                x.pop(len(x)-1) 
+                print(x)
+                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])
+                
+        localAngles.append(angle)
+
+    
+        
+    return localPies, localPiePieces, localAngles
+    
+
+
+def leftToRightPieCharts(pies,piepieces):
+    n=len(piepieces[0])
+    localPies= []
+    localPiePieces=[]
+    localAngles=[]
+    local=np.concatenate((pies,piepieces),axis=1)
+    print(type(local))
+    local=sorted(local,key=lambda x: x[1],reverse=False)
+    for l in local:
+        localPies.append([l[0],l[1],l[2]])
+        tmp=[]
+        for i in range(1,n+1):
+            tmp.append(l[2+i])
+        localPiePieces.append(tmp)
+      
+    
+    for i in range(0,len(localPies)):
+        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
+        if(angle==None):
+            x=localPiePieces[i].copy()
+            while(angle==None):
+                if(len(x)==0):
+                    angle=0
+                    break
+                x.pop(len(x)-1) 
+                print(x)
+                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])
+                
+        localAngles.append(angle)
+  
+    return localPies, localPiePieces, localAngles
+    
+    
+
+
+def rightToLeftPieCharts(pies,piepieces): 
+    n=len(piepieces)
+    localPies= []
+    localPiePieces=[]
+    local=np.concatenate((pies,piepieces),axis=1)
+    local=sorted(local,key=lambda x: x[1],reverse=True)
+    n=len(piepieces[0])
+    localPies= []
+    localPiePieces=[]
+    localAngles=[]
+    local=np.concatenate((pies,piepieces),axis=1)
+    print(type(local))
+    local=sorted(local,key=lambda x: x[1],reverse=True)
+    for l in local:
+        localPies.append([l[0],l[1],l[2]])
+        tmp=[]
+        for i in range(1,n+1):
+            tmp.append(l[2+i])
+        localPiePieces.append(tmp)
+    
+    for i in range(0,len(localPies)):
+        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
+        if(angle==None):
+            x=localPiePieces[i].copy()
+            while(angle==None):
+                if(len(x)==0):
+                    angle=0
+                    break
+                x.pop(len(x)-1) 
+                print(x)
+                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])     
+        localAngles.append(angle)  
+    return localPies, localPiePieces, localAngles
 
 
 
