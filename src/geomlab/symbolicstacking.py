@@ -4,6 +4,7 @@ import time
 import cv2
 import math
 import random
+import copy
 from PIL import Image, ImageDraw
 
 color3PIL = "rgb(100, 100, 100)"  # grau
@@ -916,6 +917,106 @@ def rightToLeftPieCharts(pies,piepieces):
         localAngles.append(angle)  
     return localPies, localPiePieces, localAngles
 
+
+
+################################################################################
+##################comparisons###################################################
+
+def formatChangeNestedDisks(circles):
+    n=len(circles[0])-2
+    result=[]
+    
+    for c in circles:
+        
+        for i in range(2,len(c)):
+            result.append([c[0],c[1],c[i]])
+    
+    return result, n
+
+
+def circumferenceValuesNestedDisks(circles,numberOfNestings):
+    j=0
+    resultArray=[]
+    resultCovered=0
+    coverCircles=[]
+    for i in range(0,int(len(circles)/numberOfNestings)):
+        coverCircles.append(circles[i*numberOfNestings])
+    tmp=[]
+    for i in range(0,len(circles)):   
+        tmpvis=caculateVisibleIntervall(circles[i], coverCircles[(math.floor(i/numberOfNestings)+1):])
+        tmpValue=0
+        #print(math.floor(i/3)+1)
+        if(tmpvis==None):
+            resultCovered=resultCovered+1
+            tmp.append(0)
+        else:  
+            #print(tmpvis)
+            for i in tmpvis:
+                if(i[1]<=i[0]):
+                    i[1]=i[1]+2*np.pi
+                tmpValue=tmpValue+(i[1]-i[0])
+            tmp.append(tmpValue)
+        if(j==numberOfNestings-1):
+            resultArray.append(tmp)
+            j=-1
+            tmp=[]
+        j=j+1
+    return resultArray, resultCovered
+    
+
+def calculateUtilitysNestedDisks(circles):
+    x,y=formatChangeNestedDisks(circles)
+    calculateUtilitysHawaiian(x,y)
+    
+    
+    
+
+def calculateUtilitysHawaiian(circles,numberOfNestings):
+    relativeVis,covered=circumferenceValuesNestedDisks(circles, numberOfNestings)
+    absoluteVis=copy.deepcopy(relativeVis)
+    percentageRelative=0
+    percentageAbsolute=0
+    minRelativeNonZero=200000000
+    minAbsoluteNonZero=200000000
+    
+    sumOfCirc=0
+    
+    
+    
+    for i in range(0,len(absoluteVis)):
+        for j in range(0,len(absoluteVis[0])):
+            absoluteVis[i][j]=absoluteVis[i][j]*circles[i*numberOfNestings+j][2]
+            sumOfCirc=2*np.pi*circles[i*numberOfNestings+j][2]+sumOfCirc
+
+            
+    
+    for i in range(0,len(absoluteVis)):
+        for j in range(0,len(absoluteVis[0])):
+            percentageRelative=relativeVis[i][j]+percentageRelative
+            percentageAbsolute=absoluteVis[i][j]+percentageAbsolute
+            if((not (absoluteVis[i][j]==0 )) and relativeVis[i][j]<minRelativeNonZero ):
+                minRelativeNonZero=relativeVis[i][j]
+            if((not (absoluteVis[i][j]==0 ))and absoluteVis[i][j]<minAbsoluteNonZero ):
+                minAbsoluteNonZero=absoluteVis[i][j]
+                
+    percentageRelative=percentageRelative/(2*np.pi*len(absoluteVis)*len(absoluteVis[0]))
+    percentageAbsolute=percentageAbsolute/sumOfCirc
+ 
+
+    print(" ")
+    print("Some statistics:")
+    print("relPerc: ",percentageRelative)
+    print("absPerc: ",percentageAbsolute)
+    print("minRelNonZero: ",minRelativeNonZero)
+    print("minAbsNoneZero: ",minAbsoluteNonZero)
+    print("coveredCircles: ",covered)
+    print(" ")
+
+    
+    return percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
+    
+    
+            
 
 
 ################################################################################
