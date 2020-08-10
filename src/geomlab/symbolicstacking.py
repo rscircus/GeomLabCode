@@ -1014,6 +1014,104 @@ def calculateUtilitysHawaiian(circles,numberOfNestings):
 
     
     return percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
+
+
+
+def calculateUtilityPieCharts(circles,piePieces,angles):
+    largestDist,smallestDist,occludedCounter=calculateAllPieDistances(circles,piePieces,angles)
+    
+    largestOverall=0
+    smallestOverall=200
+    
+    for l in largestDist:
+        x=max(l)
+        if(x>largestOverall):
+            largestOverall=x
+    for s in smallestDist:
+        if(type(s)==int):
+            x=s
+        else:
+            x=min(s)
+        if(x<smallestOverall):
+            smallestOverall=x
+            
+    largestAvg=0
+    smallestAvg=0
+    k=0
+    j=0
+    for l in largestDist:
+        for tmp in l:
+            largestAvg=largestAvg+tmp
+            k=k+1
+    for s in smallestDist:
+        if(type(s)==int):
+            smallestAvg=smallestAvg+s
+            j=j+1
+        else:     
+            for tmp in s:
+                smallestAvg=smallestAvg+tmp
+                j=j+1           
+    largestAvg=largestAvg/k
+    smallestAvg=smallestAvg/j 
+    
+    sumOccluded=sum(occludedCounter)
+    
+    print("Some statistics:")
+    print("maxDist: ",largestOverall)
+    print("minDist: ",smallestOverall)
+    print("AvgOfMax: ",largestAvg)
+    print("smallestAvg: ",smallestAvg)
+    print("numberOfOccLines: ",sumOccluded)
+    
+      
+    return largestOverall, smallestOverall, largestAvg, smallestAvg, sumOccluded
+    
+    
+  
+def calculateAllPieDistances(circles,piePieces,angles):
+
+    largestDist=[]
+    smallestDist=[]
+    occludedCounter=[]
+    for i in range(0,len(circles)):
+        adjustedAngles=[]
+        c=circles[i]
+        visibleInt=caculateVisibleIntervall(c, circles[(i+1):])
+        for Int in visibleInt:
+            if Int[0]>=Int[1]:
+                Int[1]=Int[1]+np.pi*2
+        adjustedAngles.append(angles[i])
+        for p in piePieces[i]:
+            adjustedAngles.append(p+angles[i])
+        
+        tmpL=[]
+        tmpS=[]
+        tmpCounter=0
+     
+        
+        for angle in adjustedAngles:
+            isVisible=False
+            for interval in visibleInt:
+                if((interval[0]<=angle and interval[1]>angle)or(interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle) ):   
+                    if((interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle)):
+                        x=np.absolute(-2*np.pi+angle-interval[0])
+                        y=np.absolute(-2*np.pi+angle-interval[1]) 
+                    else:
+                        x=np.absolute(angle-interval[0])
+                        y=np.absolute(angle-interval[1])
+                                        
+                    isVisible=True
+                    if(x<=y):
+                        tmpS.append(x)
+                        tmpL.append(y)
+                    else:
+                        tmpS.append(y)
+                        tmpL.append(x)
+            if(isVisible==False):
+                tmpCounter=tmpCounter+1
+        largestDist.append(tmpL)
+        smallestDist.append(tmpS)
+        occludedCounter.append(tmpCounter)
     
     
             
