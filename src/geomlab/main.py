@@ -245,6 +245,32 @@ class SymbolicMapsPage(tk.Frame):
             # x, y ,r
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
 
+    def draw_subcircle_stacking(self):
+        pass
+
+    def draw_pie_stacking(self):
+        pass
+
+        for i in range(0, len(self.circles)):
+            circle_set = self.data_sets[i]
+            #pie = self.pie_piece_sets[i]
+            angle = self.angles[i]
+            self.canvas.create_arc(
+                    circle_set[0],
+                    circle_set[1],
+                    circle_set[2],
+                    fill="green",
+                    outline="",
+                    start=90,
+                    end=angle)
+
+#def drawPieSolution(circles, cPieces, angles, image):
+#    for i in range(0, len(circles)):
+#        tmpC = circles[i]
+#        tmpPieces = cPieces[i]
+#        tmpAngle = angles[i]
+#        drawPie(tmpC, tmpPieces, tmpAngle, image)
+
     def data_algo_change(self, event):
         print("Change algorithm.")
         self.canvas.delete("all")
@@ -335,6 +361,8 @@ class SymbolicMapsPage(tk.Frame):
         logging.info(self._screen_height)
         logging.info(self._screen_width)
 
+    # This can be reworked but is held compatible to Philipp's
+    # code due to early development state.
     def prepare_data(self):
         def latLongToPoint(lat, long, h, w):
             """Return (x,y) for lat, long inside a box."""
@@ -438,6 +466,7 @@ class SymbolicMapsPage(tk.Frame):
 
                 # TODO: Think about datastructure for pies and piePieces = probably a class
                 self.data_sets[i] = circles
+                self.pie_piece_sets[i] = piePieces
 
             # Generate random set
             circles = []
