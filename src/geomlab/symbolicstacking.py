@@ -978,9 +978,10 @@ def calculateUtilitysHawaiian(circles,numberOfNestings):
     percentageAbsolute=0
     minRelativeNonZero=200000000
     minAbsoluteNonZero=200000000
+    minAbsoluteAvg=20000000
+    
     
     sumOfCirc=0
-    
     
     
     for i in range(0,len(absoluteVis)):
@@ -991,20 +992,25 @@ def calculateUtilitysHawaiian(circles,numberOfNestings):
             
     
     for i in range(0,len(absoluteVis)):
+        tmpForAvg=0
         for j in range(0,len(absoluteVis[0])):
+            tmpForAvg=tmpForAvg+absoluteVis[i][j]
             percentageRelative=relativeVis[i][j]+percentageRelative
             percentageAbsolute=absoluteVis[i][j]+percentageAbsolute
             if((not (absoluteVis[i][j]==0 )) and relativeVis[i][j]<minRelativeNonZero ):
                 minRelativeNonZero=relativeVis[i][j]
-            if((not (absoluteVis[i][j]==0 ))and absoluteVis[i][j]<minAbsoluteNonZero ):
+            if((not (absoluteVis[i][j]==0 ))and absoluteVis[i][j]<minAbsoluteNonZero ):                
                 minAbsoluteNonZero=absoluteVis[i][j]
+        if(tmpForAvg<minAbsoluteAvg):
+            minAbsoluteAvg=tmpForAvg
+
                 
     percentageRelative=percentageRelative/(2*np.pi*len(absoluteVis)*len(absoluteVis[0]))
     percentageAbsolute=percentageAbsolute/sumOfCirc
- 
 
-    print(" ")
+
     print("Some statistics:")
+    print("minSum: ", minAbsoluteAvg)
     print("relPerc: ",percentageRelative)
     print("absPerc: ",percentageAbsolute)
     print("minRelNonZero: ",minRelativeNonZero)
@@ -1013,8 +1019,8 @@ def calculateUtilitysHawaiian(circles,numberOfNestings):
     print(" ")
 
     
-    return percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
-
+    return minAbsoluteAvg, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
+    
 
 
 def calculateUtilityPieCharts(circles,piePieces,angles):
@@ -1024,14 +1030,21 @@ def calculateUtilityPieCharts(circles,piePieces,angles):
     smallestOverall=200
     
     for l in largestDist:
-        x=max(l)
+        if(len(l)==0):
+            x=0
+        else:
+            x=max(l)
+       
         if(x>largestOverall):
             largestOverall=x
     for s in smallestDist:
         if(type(s)==int):
             x=s
         else:
-            x=min(s)
+            if(len(s)==0):
+                x=222222222
+            else:
+                x=min(s)
         if(x<smallestOverall):
             smallestOverall=x
             
@@ -1062,6 +1075,7 @@ def calculateUtilityPieCharts(circles,piePieces,angles):
     print("AvgOfMax: ",largestAvg)
     print("smallestAvg: ",smallestAvg)
     print("numberOfOccLines: ",sumOccluded)
+    print(" ")
     
       
     return largestOverall, smallestOverall, largestAvg, smallestAvg, sumOccluded
@@ -1077,10 +1091,13 @@ def calculateAllPieDistances(circles,piePieces,angles):
         adjustedAngles=[]
         c=circles[i]
         visibleInt=caculateVisibleIntervall(c, circles[(i+1):])
-        for Int in visibleInt:
-            if Int[0]>=Int[1]:
-                Int[1]=Int[1]+np.pi*2
-        adjustedAngles.append(angles[i])
+        if(visibleInt==None):
+                x=2
+        else:
+            for Int in visibleInt:
+                if Int[0]>=Int[1]:
+                    Int[1]=Int[1]+np.pi*2
+                adjustedAngles.append(angles[i])
         for p in piePieces[i]:
             adjustedAngles.append(p+angles[i])
         
@@ -1091,14 +1108,22 @@ def calculateAllPieDistances(circles,piePieces,angles):
         
         for angle in adjustedAngles:
             isVisible=False
+            if(visibleInt==None):
+                tmpCounter=tmpCounter+1
+                continue
             for interval in visibleInt:
-                if((interval[0]<=angle and interval[1]>angle)or(interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle) ):   
+                
+                if((interval[0]<=angle and interval[1]>angle)or(interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle)or(interval[0]<=2*np.pi+angle and interval[1]>2*np.pi+angle) ):   
                     if((interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle)):
                         x=np.absolute(-2*np.pi+angle-interval[0])
                         y=np.absolute(-2*np.pi+angle-interval[1]) 
                     else:
-                        x=np.absolute(angle-interval[0])
-                        y=np.absolute(angle-interval[1])
+                        if((interval[0]<=2*np.pi+angle and interval[1]>2*np.pi+angle)):
+                            x=np.absolute(2*np.pi+angle-interval[0])
+                            y=np.absolute(2*np.pi+angle-interval[1]) 
+                        else:
+                            x=np.absolute(angle-interval[0])
+                            y=np.absolute(angle-interval[1])
                                         
                     isVisible=True
                     if(x<=y):
@@ -1112,6 +1137,8 @@ def calculateAllPieDistances(circles,piePieces,angles):
         largestDist.append(tmpL)
         smallestDist.append(tmpS)
         occludedCounter.append(tmpCounter)
+    return largestDist,smallestDist,occludedCounter
+      
     
     
             
