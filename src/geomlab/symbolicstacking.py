@@ -364,7 +364,7 @@ def calculateLowestPie(circles, piePieces):
 # resultOrder new Stackingorder
 # resultPieces the pieces in the same order as the circles
 # for every pie the angle of the 0 devidingline
-def pieStacking(circles, piePieces):
+def algorithmPieChartsStacking(circles, piePieces):
     resultAngles = []
     resultOrder = []
     resultPieces = []
@@ -412,10 +412,10 @@ def calculateLowestHawaiian(Circles):
 
 
 # given some circles of the form (x,y,r1,r2,...) where r1>r2>...
-# returns a hawaiianStacking
+# returns a algorithmHawaiianStacking
 # form: for each circle with subcircles there are now multiple circles
 # output has form [[x1,y1,r1],[x2,y2,r2],....,[x1',y1',r1'],[x2',y2'.r2']...]
-def hawaiianStacking(circles):
+def algorithmHawaiianStacking(circles):
     local = circles.copy()
     stacking = []
     stackingAllCircles = []
@@ -572,7 +572,7 @@ def calculateLowestCircleMaxMinSumK(Circles, mode):
 # input: circles nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
 # output: nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
 # maximizes minimum of minimal subcircles
-def maxMinMinKStacking(circles, mode):
+def algorithmNestedDisksStackingMinMin(circles, mode):
     local = circles.copy()
     solution = []
     objective = 0
@@ -589,7 +589,7 @@ def maxMinMinKStacking(circles, mode):
 # input: circles nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
 # output: nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
 # maximizes minimum of sum of the subcircles
-def maxMinSumKStacking(circles, mode):
+def algorithmNestedDisksStackingMinSum(circles, mode):
     local = circles.copy()
     solution = []
     objective = 0
@@ -602,12 +602,6 @@ def maxMinSumKStacking(circles, mode):
         objective += cur_objective
     return solution, objective
 
-
-# painter only defined for circles without subcircles
-def painterAlgorithm(circles):
-    local = circles.copy()
-    local.sort(key=lambda x: x[2], reverse=True)
-    return local
 
 
 ########################################################################

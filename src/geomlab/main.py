@@ -203,7 +203,7 @@ class SymbolicMapsPage(tk.Frame):
         objective_value = -1
 
         if algo == 0:
-            self.circles = st.painterAlgorithm(self.circles)
+            self.circles = st.algorithmNestedDisksPainter(self.circles)
         elif algo == 1:
             random.shuffle(self.circles)
         elif algo == 2:
@@ -211,15 +211,15 @@ class SymbolicMapsPage(tk.Frame):
         elif algo == 3:
             pass
         elif algo == 4:
-            self.circles, objective_value = st.maxMinMinKStacking(self.circles, "absolute")
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "absolute")
         elif algo == 5:
-            self.circles, objective_value = st.maxMinMinKStacking(self.circles, "relative")
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "relative")
         elif algo == 6:
-            self.circles, objective_value = st.maxMinSumKStacking(self.circles, "relative")
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "relative")
         elif algo == 7:
-            self.circles, objective_value = st.maxMinSumKStacking(self.circles, "relative")
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "relative")
         elif algo == 8:
-            self.circles, objective_value = st.maxMinSumKStacking(self.circles, "weighted")
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "weighted")
         else:
             logging.critical("You shouldn't see me.")
 
