@@ -614,29 +614,29 @@ def painterAlgorithm(circles):
 #####Algorithms for comparison########################################## 
 ########################################################################
     
-def nestedPainter(circles):
+def algorithmNestedDisksPainter(circles):
     local=circles.copy()
     local.sort(key=lambda x: x[2],reverse=True)
     return local
 
 
-def nestedLeftToRight(circles):
+def algorithmNestedDisksLeftToRight(circles):
     local=circles.copy()
     local.sort(key=lambda x: x[1],reverse=False)
     return local
 
-def nestedRightToLeft(circles):
+def algorithmNestedDisksRightToLeft(circles):
     local=circles.copy()
     local.sort(key=lambda x: x[1],reverse=True)
     return local
     
-def nestedRandom(circles):
+def algorithmNestedDisksRandom(circles):
     local=circles.copy()
     random.shuffle(local)
     return local
 
 
-def hawaiianLeftToRight(circles):
+def algorithmHawaiianLeftToRight(circles):
     local=circles.copy()
     stacking=[]
     stackingAllCircles=[]
@@ -661,7 +661,7 @@ def hawaiianLeftToRight(circles):
             stackingAllCircles.append([x0,y0,r0])       
     return stackingAllCircles
     
-def hawaiianRightToLeft(circles):
+def algorithmHawaiianRightToLeft(circles):
     local=circles.copy()
     stacking=[]
     stackingAllCircles=[]
@@ -686,7 +686,7 @@ def hawaiianRightToLeft(circles):
     return stackingAllCircles
 
 
-def hawaiianRandom(circles):
+def algorithmHawaiianRandom(circles):
     N=[]
     local=circles.copy()
     stacking=[]
@@ -734,7 +734,7 @@ def hawaiianRandom(circles):
     return stackingAllCircles
 
 
-def hawaiianPainter(circles):
+def algorithmHawaiianPainter(circles):
     local=circles.copy()
     stacking=[]
     stackingAllCircles=[]
@@ -774,7 +774,7 @@ def hawaiianPainter(circles):
     return stackingAllCircles
 
 
-def painterPieCharts(pies,piepieces):
+def algorithmPieChartsPainter(pies,piepieces):
     n=len(piepieces[0])
     localPies= []
     localPiePieces=[]
@@ -812,7 +812,7 @@ def painterPieCharts(pies,piepieces):
             
             
     
-def randomPieCharts(pies,piepieces):
+def algorithmPieChartsRandom(pies,piepieces):
  
     n=len(piepieces[0])
     localPies= []
@@ -848,7 +848,7 @@ def randomPieCharts(pies,piepieces):
     
 
 
-def leftToRightPieCharts(pies,piepieces):
+def algorithmPieChartsLeftToRight(pies,piepieces):
     n=len(piepieces[0])
     localPies= []
     localPiePieces=[]
@@ -882,8 +882,7 @@ def leftToRightPieCharts(pies,piepieces):
     
     
 
-
-def rightToLeftPieCharts(pies,piepieces): 
+def algorithmPieChartsRightToLeft(pies,piepieces): 
     n=len(piepieces)
     localPies= []
     localPiePieces=[]
@@ -964,14 +963,14 @@ def circumferenceValuesNestedDisks(circles,numberOfNestings):
     return resultArray, resultCovered
     
 
-def calculateUtilitysNestedDisks(circles):
+def utilitysNestedDisks(circles):
     x,y=formatChangeNestedDisks(circles)
-    calculateUtilitysHawaiian(x,y)
+    utilitysHawaiian(x,y)
     
     
     
 
-def calculateUtilitysHawaiian(circles,numberOfNestings):
+def utilitysHawaiian(circles,numberOfNestings):
     relativeVis,covered=circumferenceValuesNestedDisks(circles, numberOfNestings)
     absoluteVis=copy.deepcopy(relativeVis)
     percentageRelative=0
@@ -1023,7 +1022,7 @@ def calculateUtilitysHawaiian(circles,numberOfNestings):
     
 
 
-def calculateUtilityPieCharts(circles,piePieces,angles):
+def utilitysPieCharts(circles,piePieces,angles):
     largestDist,smallestDist,occludedCounter=calculateAllPieDistances(circles,piePieces,angles)
     
     largestOverall=0
