@@ -959,8 +959,8 @@ def circumferenceValuesNestedDisks(circles,numberOfNestings):
 
 def utilitysNestedDisks(circles):
     x,y=formatChangeNestedDisks(circles)
-    utilitysHawaiian(x,y)
-    
+    minAvgOnSingleGlyph, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered = utilitysHawaiian(x,y)
+    return minAvgOnSingleGlyph, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
     
     
 
@@ -1010,9 +1010,9 @@ def utilitysHawaiian(circles,numberOfNestings):
     print("minAbsNoneZero: ",minAbsoluteNonZero)
     print("coveredCircles: ",covered)
     print(" ")
-
+    minAvgOnSingleGlyph=minAbsoluteAvg
     
-    return minAbsoluteAvg, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
+    return minAvgOnSingleGlyph, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
     
 
 
