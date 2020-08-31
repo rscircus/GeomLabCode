@@ -348,7 +348,7 @@ class SymbolicMapsPage(tk.Frame):
     def initialize_data(self):
         self._maps = {}
         self.circles = []
-        self.piePieces = []
+        self.pie_piece_sets = {}
         self.pies = []
         self._maps[0] = np.load("data/testData.npy", allow_pickle=True)
         self._maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
