@@ -741,17 +741,23 @@ def algorithmHawaiianPainter(circles):
         visbleInt=caculateVisibleIntervall(stacking[i],N)#########
         maximum=-1
         angle=0
+        
+        
+        if(visbleInt==None):
 
-        for interval in visbleInt:
-            if (interval[1]<interval[0]):
-                interval[1]=interval[1]+2*np.pi
-            tmp= np.absolute(interval[1]-interval[0])
-            if(tmp>maximum):
-                maximum=tmp
+            onCircleX=stacking[i][0]+2
+            onCircleY=stacking[i][1]+2
+     
+        else:
+            for interval in visbleInt:
+                if (interval[1]<interval[0]):
+                    interval[1]=interval[1]+2*np.pi
+                tmp= np.absolute(interval[1]-interval[0])
+                if(tmp>maximum):
+                    maximum=tmp
+                    angle=interval[0]+(interval[1]-interval[0])/2
 
-                angle=interval[0]+(interval[1]-interval[0])/2
-
-        onCircleX,onCircleY =calculatePointOnCircle([int(stacking[i][0]),int(stacking[i][1]),int(stacking[i][2])], angle)
+            onCircleX,onCircleY =calculatePointOnCircle([int(stacking[i][0]),int(stacking[i][1]),int(stacking[i][2])], angle)
 
                            
         deltaX=stacking[i][0]-onCircleX
@@ -766,6 +772,7 @@ def algorithmHawaiianPainter(circles):
             stackingAllCircles.append([x0,y0,r0])
             
     return stackingAllCircles
+
 
 
 def algorithmPieChartsPainter(pies,piepieces):
