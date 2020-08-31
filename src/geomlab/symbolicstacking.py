@@ -1140,8 +1140,104 @@ def calculateAllPieDistances(circles,piePieces,angles):
         occludedCounter.append(tmpCounter)
     return largestDist,smallestDist,occludedCounter
       
+
+################################squares#######################################
+
+#generates the heuristic Piecharts for the squares              
+def preparePies(squares):
+    circles=[]
+    piePieces=[]
+    baseAngles=[]
     
+    for s in squares:
+        radius=0
+        tmpPiece=[]
+        center=[s[6][0],s[6][1]]
+        baseLine=[s[2][0],s[2][1]]#base piePiece devidinglineAt0
+        baseAngle=calculateRelativeAngle(center,baseLine) #angle in the square
+        
+        #init the three(four) deviding lines which must be visible
+        tmpAngle=calculateRelativeAngle(center,s[4])-baseAngle
+        tmpPiece.append(tmpAngle)
+        tmpAngle=calculateRelativeAngle(center,s[5])-baseAngle
+        tmpPiece.append(tmpAngle)
+        tmpAngle=calculateRelativeAngle(center,s[0])-baseAngle
+        tmpPiece.append(tmpAngle) 
+        
+        #radius of the circle
+        radius=distance(center[0],center[1],s[4][0],s[4][1])+distance(center[0],center[1],s[5][0],s[5][1])
+        radius=radius/2
+        
+        #we only want positive angles
+        for a in tmpPiece:
+            if(a<=0):
+                a=a+2*np.pi
+        baseAngles.append(baseAngle)
+        circles.append([center[0],center[1],radius])
+        piePieces.append(tmpPiece)   
+    return circles,piePieces, baseAngles
+
+#rotates Squares such that the heuristic is maximized    
+def rotateTheSquares(squares, angles):
+    for i in range (0,len(squares)):#
+        square_center=(squares[i][6][1],squares[i][6][0])
+        for j in range(0,len(squares[i])):
+            if(not isinstance(squares[i][j][0], str)):
+                angle=angles[i]
+                y=squares[i][j][0]
+                x=squares[i][j][1]
+                x1,x0=rotated_about(x,y, square_center[0], square_center[1], angle)
+                squares[i][j][0]=x0
+                squares[i][j][1]=x1      
+    return squares
+
+def algorithmSquaresStacking(squares):   
+    localCircles,localPiePieces,baseAngles=preparePies(squares)
+    localSquares=copy.deepcopy(squares)
     
+    angle=[]
+    resultOrder=[]
+    resultAngles=[]
+    resultAnglesForPies=[]
+    resultOrderForPies=[]
+    resultPiecesForPies=[]
+    
+    while(len(localCircles)>0):
+        #calculate next glyph
+       ind,angle= calculateLowestPie(localCircles, localPiePieces)
+       
+       #get next glyph
+       tmpCircle=localCircles.pop(ind)
+       tmpPiece=localPiePieces.pop(ind)
+       tmpSquare=localSquares.pop(ind)
+       
+       #input into new lists
+       resultAngles.append(-baseAngles[ind]+np.pi/2-angle)
+       resultOrder.append(tmpSquare)
+       resultAnglesForPies.append(angle)
+       resultOrderForPies.append(tmpCircle)
+       resultPiecesForPies.append(tmpPiece)  
+    
+    #rotates Squares such that the heuristic is maximized    
+    resultOrder= rotateTheSquares(resultOrder, resultAngles)
+    
+    return resultOrder,resultOrderForPies,resultPiecesForPies,resultAnglesForPies
+       
+#euclidian distance
+def distance(ax, ay, bx, by):
+    return math.sqrt((by - ay)**2 + (bx - ax)**2)
+
+#rotates point `A` about point `B` by `angle` radians counterclockwise.
+def rotated_about(ax, ay, bx, by, angle):
+    radius = distance(ax,ay,bx,by)
+    angle += math.atan2(ay-by, ax-bx)
+    return (
+        round(bx - radius * math.cos(angle)),
+        round(by - radius * math.sin(angle))
+    )
+    
+
+  
             
 
 
