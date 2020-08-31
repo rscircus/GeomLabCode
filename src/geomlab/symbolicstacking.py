@@ -503,41 +503,42 @@ def calculateLowestCircleMaxMin(Circles, mode):
 # calculates the lowest circle (for circles with subcircles)
 # for the cost: Max the Min of the minimal subcircle of visible area
 # mode:"absolute" or "relative"
-def calculateLowestCircleMaxMinMinK(Circles, mode):
-    maximum = -1
-    maximumNonZero = -1
-    for i in range(0, len(Circles)):
-        tmp = Circles[:i] + Circles[i + 1 :]
-        tmp = np.array(tmp)
-        if not len(tmp) == 0:
-            tmp = tmp[:, :3]
-        tmpMin = 100000000000
-        tmpMinNonZero = 1000000000
-        for k in range(0, len(Circles[0]) - 2):
-            tmpCircle = [Circles[i][0], Circles[i][1], Circles[i][2 + k]]
-            if mode == "absolute":
-                tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
-            elif mode == "relative":
-                tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)
-            else:
-                print("You shouldn't see this")  # TODO
-
-            if tmpValue < tmpMin:
-                tmpMin = tmpValue
-            if tmpValue < tmpMin and tmpValue > 0:
-                tmpMinNonZero = tmpValue
-
-        if tmpMinNonZero > maximumNonZero:
-            indexNonZero = i
-            maximumNonZero = tmpMinNonZero
-        if tmpMin > maximum:
-            index = i
-            maximum = tmpMin
-
-    if maximum == 0 and maximumNonZero > 0 and mode == "absolute":
-        return indexNonZero, maximumNonZero
-
-    return index, maximum
+def calculateLowestCircleMaxMinMinK(realCircles, mode):
+    Circles=copy.deepcopy(realCircles)
+    maximum=-1
+    maximumNonZero=-1
+    while(maximum<=0):
+        for i in range(0,len(Circles)):
+            tmp=Circles[:i]+Circles[i+1:]
+            tmp=np.array(tmp)
+            if(not len(tmp)==0):
+                tmp=tmp[:,:3]
+            tmpMin=100000000000
+            for k in range(0,len(Circles[0])-2):
+                tmpCircle=[Circles[i][0],Circles[i][1],Circles[i][2+k]]
+                if(mode=="absolute"):
+                    tmpValue=calculateAbsoluteBoundaryUtility(tmpCircle,tmp)
+                else:
+                    tmpValue=calculateRelativeBoundaryUtility(tmpCircle,tmp)
+            
+                if(tmpValue<tmpMin):
+                    tmpMin=tmpValue               
+        
+            if(tmpMin>maximum):
+                index=i
+                maximum=tmpMin
+        
+        
+        if(maximum>0):
+            return index, maximum
+         
+            
+        if(maximum<=0):
+            for i in range(0,len(Circles)):
+                if(Circles[i][2]>maximum):
+                    index=i
+                    maximum=Circles[i][2]
+            return index, maximum
 
 
 # calculates the lowest circle (for circles with subcircles)
