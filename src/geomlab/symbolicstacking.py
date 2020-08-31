@@ -1238,6 +1238,217 @@ def rotated_about(ax, ay, bx, by, angle):
     
 
   
+    
+
+#####dataPrep [should most likly be in main but can be used as refrence]######
+
+def prepData(data, maximalSize,scalingFactor, lowerBoundCases,height,width):
+    #change data to a structure I can work with
+    myData=[]
+    for case in data:
+        tmp=[]
+        for slot in case:
+            tmp.append(slot)
+        myData.append(tmp)
+    for case in list(myData):
+        if(case[4]<lowerBoundCases):
+            myData.remove(case)
+            
+    
+    
+    #calculate secondminimum and prepare scaling of the circles        
+    maximum=1
+    maximumsecond=1
+    for case in myData:
+        if(case[4]<1):
+                tmp=1
+        else:
+            tmp=case[4]
+        if(tmp>maximum):
+            maximumsecond=maximum
+            maximum=tmp
+    multiplicativeconstant=maximalSize/np.log(1+scalingFactor)
+
+    
+    circles=[]
+    pies=[]
+    piePieces=[]
+    squares=[]
+    
+    #generating circles,pies and squares
+    testMax=0
+    for case in myData:
+        lat=case[2]
+        long=case[3]
+        x,y=latLongToPoint(lat, long, height, width)
+        
+        #making sure data makes sense
+        case[4]=case[4]
+        case[5]=case[5]
+        case[6]=case[6]
+        
+            
+        
+        if(case[4]<case[6]):
+            continue
+        if(case[4]==0):
+            conf=1
+        else:
+            conf=case[4]
+            
+        if(case[5]==0 or math.isnan(case[5])):
+            dead=1
+            
+        else:
+            dead=(case[5])
+        if(case[6]==0 or math.isnan(case[6])):
+            rec=1
+        else:
+            rec=(case[6])
+          
+            
+        #nestedCircles
+        confAdjusted=multiplicativeconstant*np.log(1+scalingFactor*conf/maximumsecond)
+        deadAdjusted=multiplicativeconstant*np.log(1+scalingFactor*dead/maximumsecond)
+        recAdjusted=multiplicativeconstant*np.log(1+scalingFactor*(rec+dead)/maximumsecond)
+        
+        
+        if(conf<dead or conf<rec+dead):
+            print(case)
+            print(conf,dead,rec+dead)
+            print("")
+        if(dead>rec+dead):
+            print(case)
+        
+        r=confAdjusted
+        rprime2=deadAdjusted
+        rprime1=recAdjusted
+
+        
+        if(r>testMax):
+            testMax=r
+        circles.append([int(y),int(x),int(r),int(rprime1),int(rprime2)])
+        
+        #pies
+        pies.append([int(y),int(x),int(r)])
+        p1=(case[5]/case[4]) *2*np.pi
+        p2=(((case[6]/case[4]))*2*np.pi )+p1
+        piePieces.append([p1,p2])
+        
+        #squares
+        test=createOneSquare(r,case,height,width)
+        squares.append(test)
+    return circles, pies, piePieces, squares
+
+def createOneSquare(size,case,heightOfImage,widthOfImage):
+    square=[]
+    x,y=latLongToPoint(case[2], case[3], heightOfImage, widthOfImage)
+    
+    #corners and center of the square
+    center=[y,x]
+    x1=[y+size,x-size]
+    x2=[y+size,x+size]
+    x3=[y-size,x+size]
+    
+    #special points and their represented "type"
+    x4=[y-size,x-size]
+    x5=[0,0," "]
+    x6=[0,0," "]
+    last=[" "]
+    
+    #data
+    allCases=case[4]
+    dead=case[5]
+    rec=case[6]
+    rest=case[4]-dead-rec
+
+    
+    #checks which small square corresponds to which  "type"
+    if(dead>=rec and dead>=rest):
+        perc=dead/allCases
+        x5[0]=x1[0]+(x2[0]-x1[0])*perc
+        x5[1]=x1[1]+(x2[1]-x1[1])*perc
+        x5[2]="dead"
+        if(rec>rest):
+            perc=rec/(rec+rest)
+            x6[0]=x2[0]+(x3[0]-x2[0])*perc
+            x6[1]=x2[1]+(x3[1]-x2[1])*perc
+            x6[2]="rec"
+            last="rest"
+        else:
+            perc=rest/(rec+rest)
+            x6[0]=x2[0]+(x3[0]-x2[0])*perc
+            x6[1]=x2[1]+(x3[1]-x2[1])*perc
+            x6[2]="rest"
+            last="rec"
+        
+        square.append(x1)
+        square.append(x2)
+        square.append(x3)
+        square.append(x4)
+        square.append(x5)
+        square.append(x6)
+        square.append(center)
+        square.append(last)       
+        return square
+            
+    if(rec>=dead and rec>=rest):
+        perc=rec/allCases
+        x5[0]=x1[0]+(x2[0]-x1[0])*perc
+        x5[1]=x1[1]+(x2[1]-x1[1])*perc
+        x5[2]="rec"
+        if(rest>dead):
+            perc=rest/(rest+dead)
+            x6[0]=x2[0]+(x3[0]-x2[0])*perc
+            x6[1]=x2[1]+(x3[1]-x2[1])*perc
+            x6[2]="rest"
+            last="dead"
+        else:
+            perc=dead/(rest+dead)
+            x6[0]=x2[0]+(x3[0]-x2[0])*perc
+            x6[1]=x2[1]+(x3[1]-x2[1])*perc
+            x6[2]="dead"
+            last="rest"
+        square.append(x1)
+        square.append(x2)
+        square.append(x3)
+        square.append(x4)
+        square.append(x5)
+        square.append(x6)
+        square.append(center)
+        square.append(last)       
+        return square    
+        
+        
+    if(rest>=dead and rest>=rec):
+        perc=rest/allCases
+        x5[0]=x1[0]+(x2[0]-x1[0])*perc
+        x5[1]=x1[1]+(x2[1]-x1[1])*perc
+        x5[2]="rest"
+        if(rec>dead):
+            perc=rec/(rec+dead)
+            x6[0]=x2[0]+(x3[0]-x2[0])*perc
+            x6[1]=x2[1]+(x3[1]-x2[1])*perc
+            x6[2]="rec"
+            last="dead"
+        else:
+            perc=dead/(rec+dead)
+            x6[0]=x2[0]+(x3[0]-x2[0])*perc
+            x6[1]=x2[1]+(x3[1]-x2[1])*perc
+            x6[2]="dead"
+            last="rec"
+            
+        #create the square
+        square.append(x1)
+        square.append(x2)
+        square.append(x3)
+        square.append(x4)
+        square.append(x5)
+        square.append(x6)
+        square.append(center)
+        square.append(last)       
+        return square
+
             
 
 
