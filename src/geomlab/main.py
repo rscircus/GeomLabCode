@@ -115,10 +115,15 @@ class SymbolicMapsPage(tk.Frame):
         self.create_widgets()
 
         # Display objects
+        self.pie_sets={}
+        self.pie_piece_sets={}
+        self.data_sets = {}
         self.circles = []
         self.pies = []
         self.piePieces = []
-        self.data_sets = {}
+        self.circlesToDraw=[] #for nested disks different structure
+        self.numberOfFeatures=0 #numberOffeatures eg, rec,dead,rest equal 3
+        self.angles = []
 
         # Code
         self.initialize_data()
@@ -182,8 +187,12 @@ class SymbolicMapsPage(tk.Frame):
         # Set current dataset
         print("Current data set:")
         print(self.data.current())
+        
+        
         self.circles = self.data_sets[self.data.current()]
-        print(len(self.circles))
+        self.piePieces=self.pie_piece_sets[self.data.current()]
+        self.pies=self.pie_sets[self.data.current()]
+        self.angles=[0]*len(self.pies)
 
         algo = self.algorithm.current()
         # "Painter", #0
@@ -204,22 +213,31 @@ class SymbolicMapsPage(tk.Frame):
 
         if algo == 0:
             self.circles = st.algorithmNestedDisksPainter(self.circles)
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         elif algo == 1:
             random.shuffle(self.circles)
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         elif algo == 2:
-            pass
+            self.pies,self.piePieces,self.angles =st.algorithmPieChartsStacking(self.pies,self.piePieces)
         elif algo == 3:
-            pass
+            self.circlesToDraw=st.algorithmHawaiianStacking(self.circles)
+            self.numberOfFeatures=len(self.circles[0])-2
+            
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "absolute")
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         elif algo == 5:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "relative")
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         elif algo == 6:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "relative")
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         elif algo == 7:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "relative")
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         elif algo == 8:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "weighted")
+            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
         else:
             logging.critical("You shouldn't see me.")
 
@@ -236,8 +254,11 @@ class SymbolicMapsPage(tk.Frame):
             self.objective_running_label["text"] = "No objective"
             self.objectivelabel["text"] = "N/A"
 
+
         # Draw
-        self.draw_circles()
+        self.draw_subcircle_stacking()
+        if(algo ==2):
+            self.draw_pie_stacking()
 
     def draw_circles(self):
 
@@ -245,37 +266,67 @@ class SymbolicMapsPage(tk.Frame):
             # x, y ,r
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
 
+    def draw_subcircle_stacking_3Features(self):
+        counter=1
+        for c in self.circlesToDraw:
+            y=c[0]
+            x=c[1]
+            r=c[2]
+            if(counter==1):
+                color="#FF9994"
+            if(counter==2):
+                color="#94FF99"
+            if(counter==3):
+                color="#A0A0A0"
+            counter=counter+1
+            if(counter==4):
+                counter=1
+            self.canvas.create_circle(x, y, r, fill=color, outline="#000")
+
+
     def draw_subcircle_stacking(self):
-        pass
+        counterMax=self.numberOfFeatures
+        if(counterMax==3):
+            for c in self.circlesToDraw:
+                self.draw_subcircle_stacking_3Features()
+                
+                    
+                
+    def draw_pie_stacking_3Features(self):
+        for i in range(0, len(self.pies)):
+            angle = self.angles[i]
+            y=self.pies[i][0]
+            x=self.pies[i][1]
+            r=self.pies[i][2]
+            angle=self.angles[i]
+            s=angle*180/np.pi
+            e=(angle+self.piePieces[i][0])*180/np.pi
+            ext=e-s
+            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#A0A0A0",outline="black",start=s-90,extent=ext)
+            s=e
+            e=(angle+self.piePieces[i][1])*180/np.pi
+            ext=e-s
+            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#94FF99",outline="black",start=s-90,extent=ext)
+            s=e
+            e=angle*180/np.pi
+            e=e+360
+            ext=e-s
+            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#FF9994",outline="black",start=s-90,extent=ext)
+        
 
     def draw_pie_stacking(self):
-        pass
 
-        for i in range(0, len(self.circles)):
-            circle_set = self.data_sets[i]
-            #pie = self.pie_piece_sets[i]
-            angle = self.angles[i]
-            self.canvas.create_arc(
-                    circle_set[0],
-                    circle_set[1],
-                    circle_set[2],
-                    fill="green",
-                    outline="",
-                    start=90,
-                    end=angle)
-
-#def drawPieSolution(circles, cPieces, angles, image):
-#    for i in range(0, len(circles)):
-#        tmpC = circles[i]
-#        tmpPieces = cPieces[i]
-#        tmpAngle = angles[i]
-#        drawPie(tmpC, tmpPieces, tmpAngle, image)
-
+        if(len(self.piePieces[0])==2):
+            self.draw_pie_stacking_3Features()
+            
+            
+                
+                
     def data_algo_change(self, event):
         print("Change algorithm.")
         self.canvas.delete("all")
         self.apply_algorithm()
-        self.draw_circles()
+        #self.draw_circles()
 
     def create_widgets(self):
         # Top widgets
@@ -452,8 +503,9 @@ class SymbolicMapsPage(tk.Frame):
                 rprime0 = 1
 
                 # appending circles with pie radii
-                circles.append([int(x), int(y), int(r), int(rprime1), int(rprime2)])
-                pies.append([int(x), int(y), int(r)])
+                circles.append([int(y), int(x), int(r), int(rprime1), int(rprime2)])#its important that its y,x i'm sorry :(
+                pies.append([int(y), int(x), int(r)]) #its important that its y,x i'm sorry :(
+
 
                 # appending pie pieces
                 a0 = rprime0 * rprime0
@@ -467,6 +519,7 @@ class SymbolicMapsPage(tk.Frame):
                 # TODO: Think about datastructure for pies and piePieces = probably a class
                 self.data_sets[i] = circles
                 self.pie_piece_sets[i] = piePieces
+                self.pie_sets[i]=pies
 
             # Generate random set
             circles = []
@@ -475,12 +528,9 @@ class SymbolicMapsPage(tk.Frame):
                 x = random.randint(0, self._screen_width - MAX_RADIUS)
                 y = random.randint(0, self._screen_height - MAX_RADIUS)
                 r = random.randint(1, MAX_RADIUS)
-                circles.append([x, y, r])
+                circles.append([y, x, r])#its important that its y,x i'm sorry :(
 
             self.data_sets[3] = circles
-
-            print(len(self.data_sets))
-
             logging.debug(self.circles)
 
 
