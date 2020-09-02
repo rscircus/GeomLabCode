@@ -265,6 +265,11 @@ class SymbolicMapsPage(tk.Frame):
         for c in self.circles:
             # x, y ,r
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
+    
+    def from_rgb(self,rgb):
+        """translates an rgb tuple of int to a tkinter friendly color code"""
+        return "#%02x%02x%02x" % rgb
+
 
     def draw_subcircle_stacking_3Features(self):
         counter=1
@@ -283,12 +288,36 @@ class SymbolicMapsPage(tk.Frame):
                 counter=1
             self.canvas.create_circle(x, y, r, fill=color, outline="#000")
 
+    def draw_subcircle_stacking_arbitraryFeatures(self):
+        counter=0
+        counterMax=self.numberOfFeatures-1
+        for c in self.circlesToDraw:
+            y=c[0]
+            x=c[1]
+            r=c[2]
+            colorValue=int(200-counter*(150/counterMax))
+            colorRGB=(colorValue,colorValue,colorValue)
+            colorHEX=self.from_rgb(colorRGB)
+            self.canvas.create_circle(x, y, r, fill=colorHEX, outline="#000")
+            if(counter==counterMax):
+                counter=0
+            else:
+                counter=counter+1
+            
+            
+            
+            
+            
+        
+        
 
     def draw_subcircle_stacking(self):
         counterMax=self.numberOfFeatures
         if(counterMax==3):
-            for c in self.circlesToDraw:
-                self.draw_subcircle_stacking_3Features()
+            self.draw_subcircle_stacking_3Features()
+        else:
+            self.draw_subcircle_stacking_arbitraryFeatures()
+            
                 
                     
                 
@@ -302,10 +331,14 @@ class SymbolicMapsPage(tk.Frame):
             s=angle*180/np.pi
             e=(angle+self.piePieces[i][0])*180/np.pi
             ext=e-s
+            if(ext<0):
+                ext=ext+360
             self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#A0A0A0",outline="black",start=s-90,extent=ext)
             s=e
             e=(angle+self.piePieces[i][1])*180/np.pi
             ext=e-s
+            if(ext<0):
+                ext=ext+360
             self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#94FF99",outline="black",start=s-90,extent=ext)
             s=e
             e=angle*180/np.pi
@@ -313,11 +346,56 @@ class SymbolicMapsPage(tk.Frame):
             ext=e-s
             self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#FF9994",outline="black",start=s-90,extent=ext)
         
-
+    def draw_pies_stacking_arbitraryFeatures(self):
+        for i in range(0, len(self.pies)):
+            #geometry of the circle
+            angle = self.angles[i]
+            y=self.pies[i][0]
+            x=self.pies[i][1]
+            r=self.pies[i][2]
+            angle=self.angles[i]
+            
+            #initial Piece (does depend on somthing which is not in piePieces)
+            s=angle
+            *180/np.pi
+            e=(angle+self.piePieces[i][0])*180/np.pi
+            ext=e-s
+            if(ext<0):
+                ext=ext+360
+            colorValue=int(200-0*(150/len(self.piePieces)))
+            colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
+            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
+            
+            #middle Pieces
+            for j in range(1,len(self.piePieces[i])):
+                s=(angle+self.piePieces[i][j-1])*180/np.pi
+                e=(angle+self.piePieces[i][j])*180/np.pi
+                ext=e-s
+                if(ext<0):
+                    ext=ext+360
+                colorValue=int(200-j*(150/(len(self.piePieces[i]))))
+                colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
+                self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
+            
+            #last Piece (does depend on somthing which is not in piePieces)
+            s=(angle+self.piePieces[i][len(self.piePieces[i])-1])*180/np.pi
+            e=(angle*180/np.pi)+360
+            ext=e-s
+            if(ext<0):
+                ext=ext+360    
+            colorValue=int(50)
+            colorHEX=self.from_rgb((colorValue,colorValue,colorValue))   
+            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
+                
+                
+            
+            
+            
     def draw_pie_stacking(self):
-
         if(len(self.piePieces[0])==2):
             self.draw_pie_stacking_3Features()
+        else:
+            self.draw_pies_stacking_arbitraryFeatures()
             
             
                 
