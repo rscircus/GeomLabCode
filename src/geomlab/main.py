@@ -531,12 +531,6 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.algorithm.bind("<<Configure>>", on_combo_configure)
 
-        # Add about button
-        self.about = tk.Button(
-            self, text="About", command=lambda: self.controller.show_frame(AboutPage)
-        )
-        self.about.grid(column=2, row=0)
-
     # TODO: split this into {initialize, flush}
 
     def initialize_data(self):
