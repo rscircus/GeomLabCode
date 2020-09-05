@@ -1,4 +1,6 @@
 import pandas as pd
+import re
+from datetime import datetime
 
 # Date Pattern
 date_pattern = re.compile(r"\d{1,2}/\d{1,2}/\d{2}")
@@ -99,15 +101,3 @@ deaths_df = (
     .rename(columns=reformat_dates)
     .fillna(method="bfill", axis=1)
 )
-
-# Create dictionary to define figure later on plotted by plotly
-fig_dict = {
-    "data": [],
-    "layout": {},
-    "frames": []
-}
-
-# fill in most of layout
-#fig_dict["layout"]["xaxis"] = {"range": [30, 85], "title": "Life Expectancy"}
-#fig_dict["layout"]["yaxis"] = {"title": "COVID-19 spread over the World", "type": "log"}
-#fig_dict["layout"]["hovermode"] = "closest"
