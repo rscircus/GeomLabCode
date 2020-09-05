@@ -17,6 +17,8 @@ import numpy as np
 import cv2
 import math
 
+# Import covid loader and most recent covid data
+from . import covidloader as cl
 from . import symbolicstacking as st
 
 # Basic settings

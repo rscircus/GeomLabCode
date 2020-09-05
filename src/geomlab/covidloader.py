@@ -61,15 +61,14 @@ dates_list = (
 
 # create a mapping of date -> DataFrame, where each df holds the daily counts of cases and deaths per country
 # TODO: Shift all of this into one df later on
-# Right now it's needed for ScatterGeo
 for date in dates_list:
-    
+
     confirmed_cases_day_df = (
         confirmed_cases_df
         .filter(like=date, axis=1)
         .rename(columns=lambda col: "confirmed_cases")
     )
-    
+
     deaths_day_df = deaths_df.filter(like=date, axis=1).rename(columns=lambda col: "deaths")
     cases_df = confirmed_cases_day_df.join(deaths_day_df).set_index(confirmed_cases_df["country"])
 
@@ -78,9 +77,9 @@ for date in dates_list:
         .groupby("country")
         .agg({"confirmed_cases": "sum", "deaths": "sum", "alpha-3_code": "first"})
     )
-    
+
     date_df = date_df[date_df["confirmed_cases"] > 0].reset_index()
-    
+
 renamed_columns_map = {
     "Country/Region": "country",
     "Province/State": "location",
