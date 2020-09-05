@@ -18,10 +18,11 @@ color1 = [254, 201, 201]  # blau
 color4 = [200, 239, 245]  # grün
 
 
-def calculatePointOnCircle(c,angle):
-    cosangle=np.cos(angle)
-    sinangle=np.sin(angle)
-    return cosangle*c[2]+c[0], sinangle*c[2]+c[1]
+def calculatePointOnCircle(c, angle):
+    cosangle = np.cos(angle)
+    sinangle = np.sin(angle)
+    return cosangle * c[2] + c[0], sinangle * c[2] + c[1]
+
 
 #############################################################################
 ###############caculating of the occluded circumference of a Circle##########
@@ -381,34 +382,32 @@ def algorithmPieChartsStacking(circles, piePieces):
     return resultOrder, resultPieces, resultAngles
 
 
-#used for Hawaiian
-def calculateLargestContinousCirc(circle,neighbours):
-    x=caculateVisibleIntervall(circle,neighbours)
-    maximum=-1
-    
-    if(x==None):
-        return 0
-    
-    for i in x:
-        if (i[0]>i[1]):
-            i[1]=i[1]+2*np.pi
-        tmpvalue=i[1]-i[0]
-        if(maximum<tmpvalue):
-            maximum=tmpvalue
-    return maximum
-        
-        
-def calculateLowestHawaiian(Circles):
-    maximum=-1
-    for i in range(0,len(Circles)):
-        tmp=Circles[:i]+Circles[i+1:]
-        tmpValue=calculateLargestContinousCirc(Circles[i],tmp)
-        if(tmpValue*Circles[i][2]>maximum):
-            index=i
-            maximum=tmpValue*Circles[i][2]
-    return index, maximum    
-    
+# used for Hawaiian
+def calculateLargestContinousCirc(circle, neighbours):
+    x = caculateVisibleIntervall(circle, neighbours)
+    maximum = -1
 
+    if x == None:
+        return 0
+
+    for i in x:
+        if i[0] > i[1]:
+            i[1] = i[1] + 2 * np.pi
+        tmpvalue = i[1] - i[0]
+        if maximum < tmpvalue:
+            maximum = tmpvalue
+    return maximum
+
+
+def calculateLowestHawaiian(Circles):
+    maximum = -1
+    for i in range(0, len(Circles)):
+        tmp = Circles[:i] + Circles[i + 1 :]
+        tmpValue = calculateLargestContinousCirc(Circles[i], tmp)
+        if tmpValue * Circles[i][2] > maximum:
+            index = i
+            maximum = tmpValue * Circles[i][2]
+    return index, maximum
 
 
 # given some circles of the form (x,y,r1,r2,...) where r1>r2>...
@@ -420,8 +419,8 @@ def algorithmHawaiianStacking(circles):
     stacking = []
     stackingAllCircles = []
     for i in range(0, len(circles)):
-        index,value=calculateLowestHawaiian(local)
-        #index,value=calculateLowestCircleMaxMin(local,"absolute")
+        index, value = calculateLowestHawaiian(local)
+        # index,value=calculateLowestCircleMaxMin(local,"absolute")
         tmp = local.pop(index)
         stacking.append(tmp)
 
@@ -504,40 +503,38 @@ def calculateLowestCircleMaxMin(Circles, mode):
 # for the cost: Max the Min of the minimal subcircle of visible area
 # mode:"absolute" or "relative"
 def calculateLowestCircleMaxMinMinK(realCircles, mode):
-    Circles=copy.deepcopy(realCircles)
-    maximum=-1
-    maximumNonZero=-1
-    while(maximum<=0):
-        for i in range(0,len(Circles)):
-            tmp=Circles[:i]+Circles[i+1:]
-            tmp=np.array(tmp)
-            if(not len(tmp)==0):
-                tmp=tmp[:,:3]
-            tmpMin=100000000000
-            for k in range(0,len(Circles[0])-2):
-                tmpCircle=[Circles[i][0],Circles[i][1],Circles[i][2+k]]
-                if(mode=="absolute"):
-                    tmpValue=calculateAbsoluteBoundaryUtility(tmpCircle,tmp)
+    Circles = copy.deepcopy(realCircles)
+    maximum = -1
+    maximumNonZero = -1
+    while maximum <= 0:
+        for i in range(0, len(Circles)):
+            tmp = Circles[:i] + Circles[i + 1 :]
+            tmp = np.array(tmp)
+            if not len(tmp) == 0:
+                tmp = tmp[:, :3]
+            tmpMin = 100000000000
+            for k in range(0, len(Circles[0]) - 2):
+                tmpCircle = [Circles[i][0], Circles[i][1], Circles[i][2 + k]]
+                if mode == "absolute":
+                    tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
                 else:
-                    tmpValue=calculateRelativeBoundaryUtility(tmpCircle,tmp)
-            
-                if(tmpValue<tmpMin):
-                    tmpMin=tmpValue               
-        
-            if(tmpMin>maximum):
-                index=i
-                maximum=tmpMin
-        
-        
-        if(maximum>0):
+                    tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)
+
+                if tmpValue < tmpMin:
+                    tmpMin = tmpValue
+
+            if tmpMin > maximum:
+                index = i
+                maximum = tmpMin
+
+        if maximum > 0:
             return index, maximum
-         
-            
-        if(maximum<=0):
-            for i in range(0,len(Circles)):
-                if(Circles[i][2]>maximum):
-                    index=i
-                    maximum=Circles[i][2]
+
+        if maximum <= 0:
+            for i in range(0, len(Circles)):
+                if Circles[i][2] > maximum:
+                    index = i
+                    maximum = Circles[i][2]
             return index, maximum
 
 
@@ -604,784 +601,814 @@ def algorithmNestedDisksStackingMinSum(circles, mode):
     return solution, objective
 
 
+########################################################################
+#####Algorithms for comparison##########################################
+########################################################################
 
-########################################################################
-#####Algorithms for comparison########################################## 
-########################################################################
-    
+
 def algorithmNestedDisksPainter(circles):
-    local=circles.copy()
-    local.sort(key=lambda x: x[2],reverse=True)
+    local = circles.copy()
+    local.sort(key=lambda x: x[2], reverse=True)
     return local
 
 
 def algorithmNestedDisksLeftToRight(circles):
-    local=circles.copy()
-    local.sort(key=lambda x: x[1],reverse=False)
+    local = circles.copy()
+    local.sort(key=lambda x: x[1], reverse=False)
     return local
 
+
 def algorithmNestedDisksRightToLeft(circles):
-    local=circles.copy()
-    local.sort(key=lambda x: x[1],reverse=True)
+    local = circles.copy()
+    local.sort(key=lambda x: x[1], reverse=True)
     return local
-    
+
+
 def algorithmNestedDisksRandom(circles):
-    local=circles.copy()
+    local = circles.copy()
     random.shuffle(local)
     return local
 
 
 def algorithmHawaiianLeftToRight(circles):
-    local=circles.copy()
-    stacking=[]
-    stackingAllCircles=[]
+    local = circles.copy()
+    stacking = []
+    stackingAllCircles = []
 
-        
-    stacking=local
-    stacking.sort(key=lambda x: x[1],reverse=False)
-   
-    
-    for i in range(0,len(stacking)):
-        onCircleX=stacking[i][0]
-        onCircleY=stacking[i][1]-stacking[i][2]                       
-        deltaX=stacking[i][0]-onCircleX
-        deltaY=stacking[i][1]-onCircleY
-        deltaX=deltaX/stacking[i][2]
-        deltaY=deltaY/stacking[i][2]
-      
-        for j in range(2,len(stacking[i])):       
-            x0=onCircleX+deltaX * (stacking[i][j])
-            y0=onCircleY+deltaY * ( stacking[i][j])
-            r0=stacking[i][j]
-            stackingAllCircles.append([x0,y0,r0])       
+    stacking = local
+    stacking.sort(key=lambda x: x[1], reverse=False)
+
+    for i in range(0, len(stacking)):
+        onCircleX = stacking[i][0]
+        onCircleY = stacking[i][1] - stacking[i][2]
+        deltaX = stacking[i][0] - onCircleX
+        deltaY = stacking[i][1] - onCircleY
+        deltaX = deltaX / stacking[i][2]
+        deltaY = deltaY / stacking[i][2]
+
+        for j in range(2, len(stacking[i])):
+            x0 = onCircleX + deltaX * (stacking[i][j])
+            y0 = onCircleY + deltaY * (stacking[i][j])
+            r0 = stacking[i][j]
+            stackingAllCircles.append([x0, y0, r0])
     return stackingAllCircles
-    
+
+
 def algorithmHawaiianRightToLeft(circles):
-    local=circles.copy()
-    stacking=[]
-    stackingAllCircles=[]
-    
-    stacking=local
-    stacking.sort(key=lambda x: x[1],reverse=True)
+    local = circles.copy()
+    stacking = []
+    stackingAllCircles = []
 
+    stacking = local
+    stacking.sort(key=lambda x: x[1], reverse=True)
 
-    for i in range(0,len(stacking)):        
-        onCircleX=stacking[i][0]
-        onCircleY=stacking[i][1]+stacking[i][2]
-        deltaX=stacking[i][0]-onCircleX
-        deltaY=stacking[i][1]-onCircleY
-        deltaX=deltaX/stacking[i][2]
-        deltaY=deltaY/stacking[i][2]
-      
-        for j in range(2,len(stacking[i])):       
-            x0=onCircleX+deltaX * (stacking[i][j])
-            y0=onCircleY+deltaY * ( stacking[i][j])
-            r0=stacking[i][j]
-            stackingAllCircles.append([x0,y0,r0])       
+    for i in range(0, len(stacking)):
+        onCircleX = stacking[i][0]
+        onCircleY = stacking[i][1] + stacking[i][2]
+        deltaX = stacking[i][0] - onCircleX
+        deltaY = stacking[i][1] - onCircleY
+        deltaX = deltaX / stacking[i][2]
+        deltaY = deltaY / stacking[i][2]
+
+        for j in range(2, len(stacking[i])):
+            x0 = onCircleX + deltaX * (stacking[i][j])
+            y0 = onCircleY + deltaY * (stacking[i][j])
+            r0 = stacking[i][j]
+            stackingAllCircles.append([x0, y0, r0])
     return stackingAllCircles
 
 
 def algorithmHawaiianRandom(circles):
-    N=[]
-    local=circles.copy()
-    stacking=[]
-    stackingAllCircles=[]
-    
-    stacking=local  
+    N = []
+    local = circles.copy()
+    stacking = []
+    stackingAllCircles = []
+
+    stacking = local
     random.shuffle(stacking)
 
+    for i in range(0, len(stacking)):
+        N = stacking[i + 1 :]
+        visbleInt = caculateVisibleIntervall(stacking[i], N)  #########
+        maximum = -1
+        angle = 0
 
-    for i in range(0,len(stacking)):
-        N=stacking[i+1:]
-        visbleInt=caculateVisibleIntervall(stacking[i],N)#########
-        maximum=-1
-        angle=0
-
-        if(visbleInt==None):
+        if visbleInt == None:
             print("asd")
-            onCircleX=stacking[i][0]+2
-            onCircleY=stacking[i][1]+2
-     
+            onCircleX = stacking[i][0] + 2
+            onCircleY = stacking[i][1] + 2
+
         else:
             for interval in visbleInt:
-                if (interval[1]<interval[0]):
-                    interval[1]=interval[1]+2*np.pi
-                tmp= np.absolute(interval[1]-interval[0])
-                if(tmp>maximum):
-                    maximum=tmp
+                if interval[1] < interval[0]:
+                    interval[1] = interval[1] + 2 * np.pi
+                tmp = np.absolute(interval[1] - interval[0])
+                if tmp > maximum:
+                    maximum = tmp
 
-                    angle=interval[0]+(interval[1]-interval[0])/2
+                    angle = interval[0] + (interval[1] - interval[0]) / 2
 
-            onCircleX,onCircleY =calculatePointOnCircle([int(stacking[i][0]),int(stacking[i][1]),int(stacking[i][2])], angle)
+            onCircleX, onCircleY = calculatePointOnCircle(
+                [int(stacking[i][0]), int(stacking[i][1]), int(stacking[i][2])], angle
+            )
 
-                           
-        deltaX=stacking[i][0]-onCircleX
-        deltaY=stacking[i][1]-onCircleY
-        deltaX=deltaX/stacking[i][2]
-        deltaY=deltaY/stacking[i][2]
-       
-        for j in range(2,len(stacking[i])):            
-            x0=onCircleX+deltaX * (stacking[i][j])
-            y0=onCircleY+deltaY * ( stacking[i][j])
-            r0=stacking[i][j]
-            stackingAllCircles.append([x0,y0,r0])
-            
+        deltaX = stacking[i][0] - onCircleX
+        deltaY = stacking[i][1] - onCircleY
+        deltaX = deltaX / stacking[i][2]
+        deltaY = deltaY / stacking[i][2]
+
+        for j in range(2, len(stacking[i])):
+            x0 = onCircleX + deltaX * (stacking[i][j])
+            y0 = onCircleY + deltaY * (stacking[i][j])
+            r0 = stacking[i][j]
+            stackingAllCircles.append([x0, y0, r0])
+
     return stackingAllCircles
 
 
 def algorithmHawaiianPainter(circles):
-    local=circles.copy()
-    stacking=[]
-    stackingAllCircles=[]
-    
-    stacking=local
-    stacking.sort(key=lambda x: x[2],reverse=True)
-    
-    for i in range(0,len(stacking)):
-        N=stacking[i+1:]
-        visbleInt=caculateVisibleIntervall(stacking[i],N)#########
-        maximum=-1
-        angle=0
-        
-        
-        if(visbleInt==None):
+    local = circles.copy()
+    stacking = []
+    stackingAllCircles = []
 
-            onCircleX=stacking[i][0]+2
-            onCircleY=stacking[i][1]+2
-     
+    stacking = local
+    stacking.sort(key=lambda x: x[2], reverse=True)
+
+    for i in range(0, len(stacking)):
+        N = stacking[i + 1 :]
+        visbleInt = caculateVisibleIntervall(stacking[i], N)  #########
+        maximum = -1
+        angle = 0
+
+        if visbleInt == None:
+
+            onCircleX = stacking[i][0] + 2
+            onCircleY = stacking[i][1] + 2
+
         else:
             for interval in visbleInt:
-                if (interval[1]<interval[0]):
-                    interval[1]=interval[1]+2*np.pi
-                tmp= np.absolute(interval[1]-interval[0])
-                if(tmp>maximum):
-                    maximum=tmp
-                    angle=interval[0]+(interval[1]-interval[0])/2
+                if interval[1] < interval[0]:
+                    interval[1] = interval[1] + 2 * np.pi
+                tmp = np.absolute(interval[1] - interval[0])
+                if tmp > maximum:
+                    maximum = tmp
+                    angle = interval[0] + (interval[1] - interval[0]) / 2
 
-            onCircleX,onCircleY =calculatePointOnCircle([int(stacking[i][0]),int(stacking[i][1]),int(stacking[i][2])], angle)
+            onCircleX, onCircleY = calculatePointOnCircle(
+                [int(stacking[i][0]), int(stacking[i][1]), int(stacking[i][2])], angle
+            )
 
-                           
-        deltaX=stacking[i][0]-onCircleX
-        deltaY=stacking[i][1]-onCircleY
-        deltaX=deltaX/stacking[i][2]
-        deltaY=deltaY/stacking[i][2]
-       
-        for j in range(2,len(stacking[i])):            
-            x0=onCircleX+deltaX * (stacking[i][j])
-            y0=onCircleY+deltaY * ( stacking[i][j])
-            r0=stacking[i][j]
-            stackingAllCircles.append([x0,y0,r0])
-            
+        deltaX = stacking[i][0] - onCircleX
+        deltaY = stacking[i][1] - onCircleY
+        deltaX = deltaX / stacking[i][2]
+        deltaY = deltaY / stacking[i][2]
+
+        for j in range(2, len(stacking[i])):
+            x0 = onCircleX + deltaX * (stacking[i][j])
+            y0 = onCircleY + deltaY * (stacking[i][j])
+            r0 = stacking[i][j]
+            stackingAllCircles.append([x0, y0, r0])
+
     return stackingAllCircles
 
 
-
-def algorithmPieChartsPainter(pies,piepieces):
-    n=len(piepieces[0])
-    localPies= []
-    localPiePieces=[]
-    localAngles=[]
-    local=np.concatenate((pies,piepieces),axis=1)
+def algorithmPieChartsPainter(pies, piepieces):
+    n = len(piepieces[0])
+    localPies = []
+    localPiePieces = []
+    localAngles = []
+    local = np.concatenate((pies, piepieces), axis=1)
     print(type(local))
-    local=sorted(local,key=lambda x: x[2],reverse=True)
+    local = sorted(local, key=lambda x: x[2], reverse=True)
     for l in local:
-        localPies.append([l[0],l[1],l[2]])
-        tmp=[]
-        for i in range(1,n+1):
-            tmp.append(l[2+i])
+        localPies.append([l[0], l[1], l[2]])
+        tmp = []
+        for i in range(1, n + 1):
+            tmp.append(l[2 + i])
         localPiePieces.append(tmp)
-      
-    
-    for i in range(0,len(localPies)):
-        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
-        if(angle==None):
-            x=localPiePieces[i].copy()
-            while(angle==None):
-                if(len(x)==0):
-                    angle=0
+
+    for i in range(0, len(localPies)):
+        angle, value = caculateOneAnglePie(
+            localPies[i], localPiePieces[i], localPies[i + 1 :]
+        )
+        if angle == None:
+            x = localPiePieces[i].copy()
+            while angle == None:
+                if len(x) == 0:
+                    angle = 0
                     break
-                x.pop(len(x)-1) 
+                x.pop(len(x) - 1)
                 print(x)
-                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])
-                
+                angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
+
         localAngles.append(angle)
 
-    
-        
     return localPies, localPiePieces, localAngles
-    
-    
-            
-            
-    
-def algorithmPieChartsRandom(pies,piepieces):
- 
-    n=len(piepieces[0])
-    localPies= []
-    localPiePieces=[]
-    localAngles=[]
-    local=np.concatenate((pies,piepieces),axis=1)
+
+
+def algorithmPieChartsRandom(pies, piepieces):
+
+    n = len(piepieces[0])
+    localPies = []
+    localPiePieces = []
+    localAngles = []
+    local = np.concatenate((pies, piepieces), axis=1)
     random.shuffle(local)
     for l in local:
-        localPies.append([l[0],l[1],l[2]])
-        tmp=[]
-        for i in range(1,n+1):
-            tmp.append(l[2+i])
+        localPies.append([l[0], l[1], l[2]])
+        tmp = []
+        for i in range(1, n + 1):
+            tmp.append(l[2 + i])
         localPiePieces.append(tmp)
-      
-    
-    for i in range(0,len(localPies)):
-        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
-        if(angle==None):
-            x=localPiePieces[i].copy()
-            while(angle==None):
-                if(len(x)==0):
-                    angle=0
+
+    for i in range(0, len(localPies)):
+        angle, value = caculateOneAnglePie(
+            localPies[i], localPiePieces[i], localPies[i + 1 :]
+        )
+        if angle == None:
+            x = localPiePieces[i].copy()
+            while angle == None:
+                if len(x) == 0:
+                    angle = 0
                     break
-                x.pop(len(x)-1) 
+                x.pop(len(x) - 1)
                 print(x)
-                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])
-                
+                angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
+
         localAngles.append(angle)
 
-    
-        
     return localPies, localPiePieces, localAngles
-    
 
 
-def algorithmPieChartsLeftToRight(pies,piepieces):
-    n=len(piepieces[0])
-    localPies= []
-    localPiePieces=[]
-    localAngles=[]
-    local=np.concatenate((pies,piepieces),axis=1)
+def algorithmPieChartsLeftToRight(pies, piepieces):
+    n = len(piepieces[0])
+    localPies = []
+    localPiePieces = []
+    localAngles = []
+    local = np.concatenate((pies, piepieces), axis=1)
     print(type(local))
-    local=sorted(local,key=lambda x: x[1],reverse=False)
+    local = sorted(local, key=lambda x: x[1], reverse=False)
     for l in local:
-        localPies.append([l[0],l[1],l[2]])
-        tmp=[]
-        for i in range(1,n+1):
-            tmp.append(l[2+i])
+        localPies.append([l[0], l[1], l[2]])
+        tmp = []
+        for i in range(1, n + 1):
+            tmp.append(l[2 + i])
         localPiePieces.append(tmp)
-      
-    
-    for i in range(0,len(localPies)):
-        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
-        if(angle==None):
-            x=localPiePieces[i].copy()
-            while(angle==None):
-                if(len(x)==0):
-                    angle=0
+
+    for i in range(0, len(localPies)):
+        angle, value = caculateOneAnglePie(
+            localPies[i], localPiePieces[i], localPies[i + 1 :]
+        )
+        if angle == None:
+            x = localPiePieces[i].copy()
+            while angle == None:
+                if len(x) == 0:
+                    angle = 0
                     break
-                x.pop(len(x)-1) 
+                x.pop(len(x) - 1)
                 print(x)
-                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])
-                
+                angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
+
         localAngles.append(angle)
-  
-    return localPies, localPiePieces, localAngles
-    
-    
 
-def algorithmPieChartsRightToLeft(pies,piepieces): 
-    n=len(piepieces)
-    localPies= []
-    localPiePieces=[]
-    local=np.concatenate((pies,piepieces),axis=1)
-    local=sorted(local,key=lambda x: x[1],reverse=True)
-    n=len(piepieces[0])
-    localPies= []
-    localPiePieces=[]
-    localAngles=[]
-    local=np.concatenate((pies,piepieces),axis=1)
+    return localPies, localPiePieces, localAngles
+
+
+def algorithmPieChartsRightToLeft(pies, piepieces):
+    n = len(piepieces)
+    localPies = []
+    localPiePieces = []
+    local = np.concatenate((pies, piepieces), axis=1)
+    local = sorted(local, key=lambda x: x[1], reverse=True)
+    n = len(piepieces[0])
+    localPies = []
+    localPiePieces = []
+    localAngles = []
+    local = np.concatenate((pies, piepieces), axis=1)
     print(type(local))
-    local=sorted(local,key=lambda x: x[1],reverse=True)
+    local = sorted(local, key=lambda x: x[1], reverse=True)
     for l in local:
-        localPies.append([l[0],l[1],l[2]])
-        tmp=[]
-        for i in range(1,n+1):
-            tmp.append(l[2+i])
+        localPies.append([l[0], l[1], l[2]])
+        tmp = []
+        for i in range(1, n + 1):
+            tmp.append(l[2 + i])
         localPiePieces.append(tmp)
-    
-    for i in range(0,len(localPies)):
-        angle,value=caculateOneAnglePie(localPies[i],localPiePieces[i],localPies[i+1:])
-        if(angle==None):
-            x=localPiePieces[i].copy()
-            while(angle==None):
-                if(len(x)==0):
-                    angle=0
-                    break
-                x.pop(len(x)-1) 
-                print(x)
-                angle,value=caculateOneAnglePie(localPies[i],x,localPies[i+1:])     
-        localAngles.append(angle)  
-    return localPies, localPiePieces, localAngles
 
+    for i in range(0, len(localPies)):
+        angle, value = caculateOneAnglePie(
+            localPies[i], localPiePieces[i], localPies[i + 1 :]
+        )
+        if angle == None:
+            x = localPiePieces[i].copy()
+            while angle == None:
+                if len(x) == 0:
+                    angle = 0
+                    break
+                x.pop(len(x) - 1)
+                print(x)
+                angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
+        localAngles.append(angle)
+    return localPies, localPiePieces, localAngles
 
 
 ################################################################################
 ##################comparisons###################################################
 
+
 def formatChangeNestedDisks(circles):
-    n=len(circles[0])-2
-    result=[]
-    
+    n = len(circles[0]) - 2
+    result = []
+
     for c in circles:
-        
-        for i in range(2,len(c)):
-            result.append([c[0],c[1],c[i]])
-    
+
+        for i in range(2, len(c)):
+            result.append([c[0], c[1], c[i]])
+
     return result, n
 
 
-def circumferenceValuesNestedDisks(circles,numberOfNestings):
-    j=0
-    resultArray=[]
-    resultCovered=0
-    coverCircles=[]
-    for i in range(0,int(len(circles)/numberOfNestings)):
-        coverCircles.append(circles[i*numberOfNestings])
-    tmp=[]
-    for i in range(0,len(circles)):   
-        tmpvis=caculateVisibleIntervall(circles[i], coverCircles[(math.floor(i/numberOfNestings)+1):])
-        tmpValue=0
-        #print(math.floor(i/3)+1)
-        if(tmpvis==None):
-            resultCovered=resultCovered+1
+def circumferenceValuesNestedDisks(circles, numberOfNestings):
+    j = 0
+    resultArray = []
+    resultCovered = 0
+    coverCircles = []
+    for i in range(0, int(len(circles) / numberOfNestings)):
+        coverCircles.append(circles[i * numberOfNestings])
+    tmp = []
+    for i in range(0, len(circles)):
+        tmpvis = caculateVisibleIntervall(
+            circles[i], coverCircles[(math.floor(i / numberOfNestings) + 1) :]
+        )
+        tmpValue = 0
+        # print(math.floor(i/3)+1)
+        if tmpvis == None:
+            resultCovered = resultCovered + 1
             tmp.append(0)
-        else:  
-            #print(tmpvis)
+        else:
+            # print(tmpvis)
             for i in tmpvis:
-                if(i[1]<=i[0]):
-                    i[1]=i[1]+2*np.pi
-                tmpValue=tmpValue+(i[1]-i[0])
+                if i[1] <= i[0]:
+                    i[1] = i[1] + 2 * np.pi
+                tmpValue = tmpValue + (i[1] - i[0])
             tmp.append(tmpValue)
-        if(j==numberOfNestings-1):
+        if j == numberOfNestings - 1:
             resultArray.append(tmp)
-            j=-1
-            tmp=[]
-        j=j+1
+            j = -1
+            tmp = []
+        j = j + 1
     return resultArray, resultCovered
-    
+
 
 def utilitysNestedDisks(circles):
-    x,y=formatChangeNestedDisks(circles)
-    minAvgOnSingleGlyph, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered = utilitysHawaiian(x,y)
-    return minAvgOnSingleGlyph, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
-    
-    
+    x, y = formatChangeNestedDisks(circles)
+    (
+        minAvgOnSingleGlyph,
+        percentageRelative,
+        percentageAbsolute,
+        minRelativeNonZero,
+        minAbsoluteNonZero,
+        covered,
+    ) = utilitysHawaiian(x, y)
+    return (
+        minAvgOnSingleGlyph,
+        percentageRelative,
+        percentageAbsolute,
+        minRelativeNonZero,
+        minAbsoluteNonZero,
+        covered,
+    )
 
-def utilitysHawaiian(circles,numberOfNestings):
-    relativeVis,covered=circumferenceValuesNestedDisks(circles, numberOfNestings)
-    absoluteVis=copy.deepcopy(relativeVis)
-    percentageRelative=0
-    percentageAbsolute=0
-    minRelativeNonZero=200000000
-    minAbsoluteNonZero=200000000
-    minAbsoluteAvg=20000000
-    
-    
-    sumOfCirc=0
-    
-    
-    for i in range(0,len(absoluteVis)):
-        for j in range(0,len(absoluteVis[0])):
-            absoluteVis[i][j]=absoluteVis[i][j]*circles[i*numberOfNestings+j][2]
-            sumOfCirc=2*np.pi*circles[i*numberOfNestings+j][2]+sumOfCirc
 
-            
-    
-    for i in range(0,len(absoluteVis)):
-        tmpForAvg=0
-        for j in range(0,len(absoluteVis[0])):
-            tmpForAvg=tmpForAvg+absoluteVis[i][j]
-            percentageRelative=relativeVis[i][j]+percentageRelative
-            percentageAbsolute=absoluteVis[i][j]+percentageAbsolute
-            if((not (absoluteVis[i][j]==0 )) and relativeVis[i][j]<minRelativeNonZero ):
-                minRelativeNonZero=relativeVis[i][j]
-            if((not (absoluteVis[i][j]==0 ))and absoluteVis[i][j]<minAbsoluteNonZero ):                
-                minAbsoluteNonZero=absoluteVis[i][j]
-        if(tmpForAvg<minAbsoluteAvg):
-            minAbsoluteAvg=tmpForAvg
+def utilitysHawaiian(circles, numberOfNestings):
+    relativeVis, covered = circumferenceValuesNestedDisks(circles, numberOfNestings)
+    absoluteVis = copy.deepcopy(relativeVis)
+    percentageRelative = 0
+    percentageAbsolute = 0
+    minRelativeNonZero = 200000000
+    minAbsoluteNonZero = 200000000
+    minAbsoluteAvg = 20000000
 
-                
-    percentageRelative=percentageRelative/(2*np.pi*len(absoluteVis)*len(absoluteVis[0]))
-    percentageAbsolute=percentageAbsolute/sumOfCirc
+    sumOfCirc = 0
 
+    for i in range(0, len(absoluteVis)):
+        for j in range(0, len(absoluteVis[0])):
+            absoluteVis[i][j] = absoluteVis[i][j] * circles[i * numberOfNestings + j][2]
+            sumOfCirc = 2 * np.pi * circles[i * numberOfNestings + j][2] + sumOfCirc
+
+    for i in range(0, len(absoluteVis)):
+        tmpForAvg = 0
+        for j in range(0, len(absoluteVis[0])):
+            tmpForAvg = tmpForAvg + absoluteVis[i][j]
+            percentageRelative = relativeVis[i][j] + percentageRelative
+            percentageAbsolute = absoluteVis[i][j] + percentageAbsolute
+            if (not (absoluteVis[i][j] == 0)) and relativeVis[i][
+                j
+            ] < minRelativeNonZero:
+                minRelativeNonZero = relativeVis[i][j]
+            if (not (absoluteVis[i][j] == 0)) and absoluteVis[i][
+                j
+            ] < minAbsoluteNonZero:
+                minAbsoluteNonZero = absoluteVis[i][j]
+        if tmpForAvg < minAbsoluteAvg:
+            minAbsoluteAvg = tmpForAvg
+
+    percentageRelative = percentageRelative / (
+        2 * np.pi * len(absoluteVis) * len(absoluteVis[0])
+    )
+    percentageAbsolute = percentageAbsolute / sumOfCirc
 
     print("Some statistics:")
     print("minSum: ", minAbsoluteAvg)
-    print("relPerc: ",percentageRelative)
-    print("absPerc: ",percentageAbsolute)
-    print("minRelNonZero: ",minRelativeNonZero)
-    print("minAbsNoneZero: ",minAbsoluteNonZero)
-    print("coveredCircles: ",covered)
+    print("relPerc: ", percentageRelative)
+    print("absPerc: ", percentageAbsolute)
+    print("minRelNonZero: ", minRelativeNonZero)
+    print("minAbsNoneZero: ", minAbsoluteNonZero)
+    print("coveredCircles: ", covered)
     print(" ")
-    minAvgOnSingleGlyph=minAbsoluteAvg
-    
-    return minAvgOnSingleGlyph, percentageRelative,percentageAbsolute,minRelativeNonZero,minAbsoluteNonZero,covered
-    
+    minAvgOnSingleGlyph = minAbsoluteAvg
+
+    return (
+        minAvgOnSingleGlyph,
+        percentageRelative,
+        percentageAbsolute,
+        minRelativeNonZero,
+        minAbsoluteNonZero,
+        covered,
+    )
 
 
-def utilitysPieCharts(circles,piePieces,angles):
-    largestDist,smallestDist,occludedCounter=calculateAllPieDistances(circles,piePieces,angles)
-    
-    largestOverall=0
-    smallestOverall=200
-    
+def utilitysPieCharts(circles, piePieces, angles):
+    largestDist, smallestDist, occludedCounter = calculateAllPieDistances(
+        circles, piePieces, angles
+    )
+
+    largestOverall = 0
+    smallestOverall = 200
+
     for l in largestDist:
-        if(len(l)==0):
-            x=0
+        if len(l) == 0:
+            x = 0
         else:
-            x=max(l)
-       
-        if(x>largestOverall):
-            largestOverall=x
+            x = max(l)
+
+        if x > largestOverall:
+            largestOverall = x
     for s in smallestDist:
-        if(type(s)==int):
-            x=s
+        if type(s) == int:
+            x = s
         else:
-            if(len(s)==0):
-                x=222222222
+            if len(s) == 0:
+                x = 222222222
             else:
-                x=min(s)
-        if(x<smallestOverall):
-            smallestOverall=x
-            
-    largestAvg=0
-    smallestAvg=0
-    k=0
-    j=0
+                x = min(s)
+        if x < smallestOverall:
+            smallestOverall = x
+
+    largestAvg = 0
+    smallestAvg = 0
+    k = 0
+    j = 0
     for l in largestDist:
         for tmp in l:
-            largestAvg=largestAvg+tmp
-            k=k+1
+            largestAvg = largestAvg + tmp
+            k = k + 1
     for s in smallestDist:
-        if(type(s)==int):
-            smallestAvg=smallestAvg+s
-            j=j+1
-        else:     
+        if type(s) == int:
+            smallestAvg = smallestAvg + s
+            j = j + 1
+        else:
             for tmp in s:
-                smallestAvg=smallestAvg+tmp
-                j=j+1           
-    largestAvg=largestAvg/k
-    smallestAvg=smallestAvg/j 
-    
-    sumOccluded=sum(occludedCounter)
-    
-    print("Some statistics:")
-    print("maxDist: ",largestOverall)
-    print("minDist: ",smallestOverall)
-    print("AvgOfMax: ",largestAvg)
-    print("smallestAvg: ",smallestAvg)
-    print("numberOfOccLines: ",sumOccluded)
-    print(" ")
-    
-      
-    return largestOverall, smallestOverall, largestAvg, smallestAvg, sumOccluded
-    
-    
-  
-def calculateAllPieDistances(circles,piePieces,angles):
+                smallestAvg = smallestAvg + tmp
+                j = j + 1
+    largestAvg = largestAvg / k
+    smallestAvg = smallestAvg / j
 
-    largestDist=[]
-    smallestDist=[]
-    occludedCounter=[]
-    for i in range(0,len(circles)):
-        adjustedAngles=[]
-        c=circles[i]
-        visibleInt=caculateVisibleIntervall(c, circles[(i+1):])
-        if(visibleInt==None):
-                x=2
+    sumOccluded = sum(occludedCounter)
+
+    print("Some statistics:")
+    print("maxDist: ", largestOverall)
+    print("minDist: ", smallestOverall)
+    print("AvgOfMax: ", largestAvg)
+    print("smallestAvg: ", smallestAvg)
+    print("numberOfOccLines: ", sumOccluded)
+    print(" ")
+
+    return largestOverall, smallestOverall, largestAvg, smallestAvg, sumOccluded
+
+
+def calculateAllPieDistances(circles, piePieces, angles):
+
+    largestDist = []
+    smallestDist = []
+    occludedCounter = []
+    for i in range(0, len(circles)):
+        adjustedAngles = []
+        c = circles[i]
+        visibleInt = caculateVisibleIntervall(c, circles[(i + 1) :])
+        if visibleInt == None:
+            x = 2
         else:
             for Int in visibleInt:
-                if Int[0]>=Int[1]:
-                    Int[1]=Int[1]+np.pi*2
+                if Int[0] >= Int[1]:
+                    Int[1] = Int[1] + np.pi * 2
                 adjustedAngles.append(angles[i])
         for p in piePieces[i]:
-            adjustedAngles.append(p+angles[i])
-        
-        tmpL=[]
-        tmpS=[]
-        tmpCounter=0
-     
-        
+            adjustedAngles.append(p + angles[i])
+
+        tmpL = []
+        tmpS = []
+        tmpCounter = 0
+
         for angle in adjustedAngles:
-            isVisible=False
-            if(visibleInt==None):
-                tmpCounter=tmpCounter+1
+            isVisible = False
+            if visibleInt == None:
+                tmpCounter = tmpCounter + 1
                 continue
             for interval in visibleInt:
-                
-                if((interval[0]<=angle and interval[1]>angle)or(interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle)or(interval[0]<=2*np.pi+angle and interval[1]>2*np.pi+angle) ):   
-                    if((interval[0]<=-2*np.pi+angle and interval[1]>-2*np.pi+angle)):
-                        x=np.absolute(-2*np.pi+angle-interval[0])
-                        y=np.absolute(-2*np.pi+angle-interval[1]) 
+
+                if (
+                    (interval[0] <= angle and interval[1] > angle)
+                    or (
+                        interval[0] <= -2 * np.pi + angle
+                        and interval[1] > -2 * np.pi + angle
+                    )
+                    or (
+                        interval[0] <= 2 * np.pi + angle
+                        and interval[1] > 2 * np.pi + angle
+                    )
+                ):
+                    if (
+                        interval[0] <= -2 * np.pi + angle
+                        and interval[1] > -2 * np.pi + angle
+                    ):
+                        x = np.absolute(-2 * np.pi + angle - interval[0])
+                        y = np.absolute(-2 * np.pi + angle - interval[1])
                     else:
-                        if((interval[0]<=2*np.pi+angle and interval[1]>2*np.pi+angle)):
-                            x=np.absolute(2*np.pi+angle-interval[0])
-                            y=np.absolute(2*np.pi+angle-interval[1]) 
+                        if (
+                            interval[0] <= 2 * np.pi + angle
+                            and interval[1] > 2 * np.pi + angle
+                        ):
+                            x = np.absolute(2 * np.pi + angle - interval[0])
+                            y = np.absolute(2 * np.pi + angle - interval[1])
                         else:
-                            x=np.absolute(angle-interval[0])
-                            y=np.absolute(angle-interval[1])
-                                        
-                    isVisible=True
-                    if(x<=y):
+                            x = np.absolute(angle - interval[0])
+                            y = np.absolute(angle - interval[1])
+
+                    isVisible = True
+                    if x <= y:
                         tmpS.append(x)
                         tmpL.append(y)
                     else:
                         tmpS.append(y)
                         tmpL.append(x)
-            if(isVisible==False):
-                tmpCounter=tmpCounter+1
+            if isVisible == False:
+                tmpCounter = tmpCounter + 1
         largestDist.append(tmpL)
         smallestDist.append(tmpS)
         occludedCounter.append(tmpCounter)
-    return largestDist,smallestDist,occludedCounter
-      
+    return largestDist, smallestDist, occludedCounter
+
 
 ################################squares#######################################
 
-#generates the heuristic Piecharts for the squares              
+# generates the heuristic Piecharts for the squares
 def preparePies(squares):
-    circles=[]
-    piePieces=[]
-    baseAngles=[]
-    
-    for s in squares:
-        radius=0
-        tmpPiece=[]
-        center=[s[6][0],s[6][1]]
-        baseLine=[s[2][0],s[2][1]]#base piePiece devidinglineAt0
-        baseAngle=calculateRelativeAngle(center,baseLine) #angle in the square
-        
-        #init the three(four) deviding lines which must be visible
-        tmpAngle=calculateRelativeAngle(center,s[4])-baseAngle
-        tmpPiece.append(tmpAngle)
-        tmpAngle=calculateRelativeAngle(center,s[5])-baseAngle
-        tmpPiece.append(tmpAngle)
-        tmpAngle=calculateRelativeAngle(center,s[0])-baseAngle
-        tmpPiece.append(tmpAngle) 
-        
-        #radius of the circle
-        radius=distance(center[0],center[1],s[4][0],s[4][1])+distance(center[0],center[1],s[5][0],s[5][1])
-        radius=radius/2
-        
-        #we only want positive angles
-        for a in tmpPiece:
-            if(a<=0):
-                a=a+2*np.pi
-        baseAngles.append(baseAngle)
-        circles.append([center[0],center[1],radius])
-        piePieces.append(tmpPiece)   
-    return circles,piePieces, baseAngles
+    circles = []
+    piePieces = []
+    baseAngles = []
 
-#rotates Squares such that the heuristic is maximized    
+    for s in squares:
+        radius = 0
+        tmpPiece = []
+        center = [s[6][0], s[6][1]]
+        baseLine = [s[2][0], s[2][1]]  # base piePiece devidinglineAt0
+        baseAngle = calculateRelativeAngle(center, baseLine)  # angle in the square
+
+        # init the three(four) deviding lines which must be visible
+        tmpAngle = calculateRelativeAngle(center, s[4]) - baseAngle
+        tmpPiece.append(tmpAngle)
+        tmpAngle = calculateRelativeAngle(center, s[5]) - baseAngle
+        tmpPiece.append(tmpAngle)
+        tmpAngle = calculateRelativeAngle(center, s[0]) - baseAngle
+        tmpPiece.append(tmpAngle)
+
+        # radius of the circle
+        radius = distance(center[0], center[1], s[4][0], s[4][1]) + distance(
+            center[0], center[1], s[5][0], s[5][1]
+        )
+        radius = radius / 2
+
+        # we only want positive angles
+        for a in tmpPiece:
+            if a <= 0:
+                a = a + 2 * np.pi
+        baseAngles.append(baseAngle)
+        circles.append([center[0], center[1], radius])
+        piePieces.append(tmpPiece)
+    return circles, piePieces, baseAngles
+
+
+# rotates Squares such that the heuristic is maximized
 def rotateTheSquares(squares, angles):
-    for i in range (0,len(squares)):#
-        square_center=(squares[i][6][1],squares[i][6][0])
-        for j in range(0,len(squares[i])):
-            if(not isinstance(squares[i][j][0], str)):
-                angle=angles[i]
-                y=squares[i][j][0]
-                x=squares[i][j][1]
-                x1,x0=rotated_about(x,y, square_center[0], square_center[1], angle)
-                squares[i][j][0]=x0
-                squares[i][j][1]=x1      
+    for i in range(0, len(squares)):  #
+        square_center = (squares[i][6][1], squares[i][6][0])
+        for j in range(0, len(squares[i])):
+            if not isinstance(squares[i][j][0], str):
+                angle = angles[i]
+                y = squares[i][j][0]
+                x = squares[i][j][1]
+                x1, x0 = rotated_about(x, y, square_center[0], square_center[1], angle)
+                squares[i][j][0] = x0
+                squares[i][j][1] = x1
     return squares
 
-def algorithmSquaresStacking(squares):   
-    localCircles,localPiePieces,baseAngles=preparePies(squares)
-    localSquares=copy.deepcopy(squares)
-    
-    angle=[]
-    resultOrder=[]
-    resultAngles=[]
-    resultAnglesForPies=[]
-    resultOrderForPies=[]
-    resultPiecesForPies=[]
-    
-    while(len(localCircles)>0):
-        #calculate next glyph
-       ind,angle= calculateLowestPie(localCircles, localPiePieces)
-       
-       #get next glyph
-       tmpCircle=localCircles.pop(ind)
-       tmpPiece=localPiePieces.pop(ind)
-       tmpSquare=localSquares.pop(ind)
-       
-       #input into new lists
-       resultAngles.append(-baseAngles[ind]+np.pi/2-angle)
-       resultOrder.append(tmpSquare)
-       resultAnglesForPies.append(angle)
-       resultOrderForPies.append(tmpCircle)
-       resultPiecesForPies.append(tmpPiece)  
-    
-    #rotates Squares such that the heuristic is maximized    
-    resultOrder= rotateTheSquares(resultOrder, resultAngles)
-    
-    return resultOrder,resultOrderForPies,resultPiecesForPies,resultAnglesForPies
-       
-#euclidian distance
+
+def algorithmSquaresStacking(squares):
+    localCircles, localPiePieces, baseAngles = preparePies(squares)
+    localSquares = copy.deepcopy(squares)
+
+    angle = []
+    resultOrder = []
+    resultAngles = []
+    resultAnglesForPies = []
+    resultOrderForPies = []
+    resultPiecesForPies = []
+
+    while len(localCircles) > 0:
+        # calculate next glyph
+        ind, angle = calculateLowestPie(localCircles, localPiePieces)
+
+        # get next glyph
+        tmpCircle = localCircles.pop(ind)
+        tmpPiece = localPiePieces.pop(ind)
+        tmpSquare = localSquares.pop(ind)
+
+        # input into new lists
+        resultAngles.append(-baseAngles[ind] + np.pi / 2 - angle)
+        resultOrder.append(tmpSquare)
+        resultAnglesForPies.append(angle)
+        resultOrderForPies.append(tmpCircle)
+        resultPiecesForPies.append(tmpPiece)
+
+    # rotates Squares such that the heuristic is maximized
+    resultOrder = rotateTheSquares(resultOrder, resultAngles)
+
+    return resultOrder, resultOrderForPies, resultPiecesForPies, resultAnglesForPies
+
+
+# euclidian distance
 def distance(ax, ay, bx, by):
-    return math.sqrt((by - ay)**2 + (bx - ax)**2)
+    return math.sqrt((by - ay) ** 2 + (bx - ax) ** 2)
 
-#rotates point `A` about point `B` by `angle` radians counterclockwise.
+
+# rotates point `A` about point `B` by `angle` radians counterclockwise.
 def rotated_about(ax, ay, bx, by, angle):
-    radius = distance(ax,ay,bx,by)
-    angle += math.atan2(ay-by, ax-bx)
-    return (
-        round(bx - radius * math.cos(angle)),
-        round(by - radius * math.sin(angle))
-    )
-    
+    radius = distance(ax, ay, bx, by)
+    angle += math.atan2(ay - by, ax - bx)
+    return (round(bx - radius * math.cos(angle)), round(by - radius * math.sin(angle)))
 
-  
-    
 
 #####dataPrep [should most likly be in main but can be used as refrence]######
 
-def prepData(data, maximalSize,scalingFactor, lowerBoundCases,height,width):
-    #change data to a structure I can work with
-    myData=[]
+
+def prepData(data, maximalSize, scalingFactor, lowerBoundCases, height, width):
+    # change data to a structure I can work with
+    myData = []
     for case in data:
-        tmp=[]
+        tmp = []
         for slot in case:
             tmp.append(slot)
         myData.append(tmp)
     for case in list(myData):
-        if(case[4]<lowerBoundCases):
+        if case[4] < lowerBoundCases:
             myData.remove(case)
-            
-    
-    
-    #calculate secondminimum and prepare scaling of the circles        
-    maximum=1
-    maximumsecond=1
-    for case in myData:
-        if(case[4]<1):
-                tmp=1
-        else:
-            tmp=case[4]
-        if(tmp>maximum):
-            maximumsecond=maximum
-            maximum=tmp
-    multiplicativeconstant=maximalSize/np.log(1+scalingFactor)
 
-    
-    circles=[]
-    pies=[]
-    piePieces=[]
-    squares=[]
-    
-    #generating circles,pies and squares
-    testMax=0
+    # calculate secondminimum and prepare scaling of the circles
+    maximum = 1
+    maximumsecond = 1
     for case in myData:
-        lat=case[2]
-        long=case[3]
-        x,y=latLongToPoint(lat, long, height, width)
-        
-        #making sure data makes sense
-        case[4]=case[4]
-        case[5]=case[5]
-        case[6]=case[6]
-        
-            
-        
-        if(case[4]<case[6]):
+        if case[4] < 1:
+            tmp = 1
+        else:
+            tmp = case[4]
+        if tmp > maximum:
+            maximumsecond = maximum
+            maximum = tmp
+    multiplicativeconstant = maximalSize / np.log(1 + scalingFactor)
+
+    circles = []
+    pies = []
+    piePieces = []
+    squares = []
+
+    # generating circles,pies and squares
+    testMax = 0
+    for case in myData:
+        lat = case[2]
+        long = case[3]
+        x, y = latLongToPoint(lat, long, height, width)
+
+        # making sure data makes sense
+        case[4] = case[4]
+        case[5] = case[5]
+        case[6] = case[6]
+
+        if case[4] < case[6]:
             continue
-        if(case[4]==0):
-            conf=1
+        if case[4] == 0:
+            conf = 1
         else:
-            conf=case[4]
-            
-        if(case[5]==0 or math.isnan(case[5])):
-            dead=1
-            
-        else:
-            dead=(case[5])
-        if(case[6]==0 or math.isnan(case[6])):
-            rec=1
-        else:
-            rec=(case[6])
-          
-            
-        #nestedCircles
-        confAdjusted=multiplicativeconstant*np.log(1+scalingFactor*conf/maximumsecond)
-        deadAdjusted=multiplicativeconstant*np.log(1+scalingFactor*dead/maximumsecond)
-        recAdjusted=multiplicativeconstant*np.log(1+scalingFactor*(rec+dead)/maximumsecond)
-        
-        
-        if(conf<dead or conf<rec+dead):
-            print(case)
-            print(conf,dead,rec+dead)
-            print("")
-        if(dead>rec+dead):
-            print(case)
-        
-        r=confAdjusted
-        rprime2=deadAdjusted
-        rprime1=recAdjusted
+            conf = case[4]
 
-        
-        if(r>testMax):
-            testMax=r
-        circles.append([int(y),int(x),int(r),int(rprime1),int(rprime2)])
-        
-        #pies
-        pies.append([int(y),int(x),int(r)])
-        p1=(case[5]/case[4]) *2*np.pi
-        p2=(((case[6]/case[4]))*2*np.pi )+p1
-        piePieces.append([p1,p2])
-        
-        #squares
-        test=createOneSquare(r,case,height,width)
+        if case[5] == 0 or math.isnan(case[5]):
+            dead = 1
+
+        else:
+            dead = case[5]
+        if case[6] == 0 or math.isnan(case[6]):
+            rec = 1
+        else:
+            rec = case[6]
+
+        # nestedCircles
+        confAdjusted = multiplicativeconstant * np.log(
+            1 + scalingFactor * conf / maximumsecond
+        )
+        deadAdjusted = multiplicativeconstant * np.log(
+            1 + scalingFactor * dead / maximumsecond
+        )
+        recAdjusted = multiplicativeconstant * np.log(
+            1 + scalingFactor * (rec + dead) / maximumsecond
+        )
+
+        if conf < dead or conf < rec + dead:
+            print(case)
+            print(conf, dead, rec + dead)
+            print("")
+        if dead > rec + dead:
+            print(case)
+
+        r = confAdjusted
+        rprime2 = deadAdjusted
+        rprime1 = recAdjusted
+
+        if r > testMax:
+            testMax = r
+        circles.append([int(y), int(x), int(r), int(rprime1), int(rprime2)])
+
+        # pies
+        pies.append([int(y), int(x), int(r)])
+        p1 = (case[5] / case[4]) * 2 * np.pi
+        p2 = (((case[6] / case[4])) * 2 * np.pi) + p1
+        piePieces.append([p1, p2])
+
+        # squares
+        test = createOneSquare(r, case, height, width)
         squares.append(test)
     return circles, pies, piePieces, squares
 
-def createOneSquare(size,case,heightOfImage,widthOfImage):
-    square=[]
-    x,y=latLongToPoint(case[2], case[3], heightOfImage, widthOfImage)
-    
-    #corners and center of the square
-    center=[y,x]
-    x1=[y+size,x-size]
-    x2=[y+size,x+size]
-    x3=[y-size,x+size]
-    
-    #special points and their represented "type"
-    x4=[y-size,x-size]
-    x5=[0,0," "]
-    x6=[0,0," "]
-    last=[" "]
-    
-    #data
-    allCases=case[4]
-    dead=case[5]
-    rec=case[6]
-    rest=case[4]-dead-rec
 
-    
-    #checks which small square corresponds to which  "type"
-    if(dead>=rec and dead>=rest):
-        perc=dead/allCases
-        x5[0]=x1[0]+(x2[0]-x1[0])*perc
-        x5[1]=x1[1]+(x2[1]-x1[1])*perc
-        x5[2]="dead"
-        if(rec>rest):
-            perc=rec/(rec+rest)
-            x6[0]=x2[0]+(x3[0]-x2[0])*perc
-            x6[1]=x2[1]+(x3[1]-x2[1])*perc
-            x6[2]="rec"
-            last="rest"
+def createOneSquare(size, case, heightOfImage, widthOfImage):
+    square = []
+    x, y = latLongToPoint(case[2], case[3], heightOfImage, widthOfImage)
+
+    # corners and center of the square
+    center = [y, x]
+    x1 = [y + size, x - size]
+    x2 = [y + size, x + size]
+    x3 = [y - size, x + size]
+
+    # special points and their represented "type"
+    x4 = [y - size, x - size]
+    x5 = [0, 0, " "]
+    x6 = [0, 0, " "]
+    last = [" "]
+
+    # data
+    allCases = case[4]
+    dead = case[5]
+    rec = case[6]
+    rest = case[4] - dead - rec
+
+    # checks which small square corresponds to which  "type"
+    if dead >= rec and dead >= rest:
+        perc = dead / allCases
+        x5[0] = x1[0] + (x2[0] - x1[0]) * perc
+        x5[1] = x1[1] + (x2[1] - x1[1]) * perc
+        x5[2] = "dead"
+        if rec > rest:
+            perc = rec / (rec + rest)
+            x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+            x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+            x6[2] = "rec"
+            last = "rest"
         else:
-            perc=rest/(rec+rest)
-            x6[0]=x2[0]+(x3[0]-x2[0])*perc
-            x6[1]=x2[1]+(x3[1]-x2[1])*perc
-            x6[2]="rest"
-            last="rec"
-        
+            perc = rest / (rec + rest)
+            x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+            x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+            x6[2] = "rest"
+            last = "rec"
+
         square.append(x1)
         square.append(x2)
         square.append(x3)
@@ -1389,67 +1416,64 @@ def createOneSquare(size,case,heightOfImage,widthOfImage):
         square.append(x5)
         square.append(x6)
         square.append(center)
-        square.append(last)       
-        return square
-            
-    if(rec>=dead and rec>=rest):
-        perc=rec/allCases
-        x5[0]=x1[0]+(x2[0]-x1[0])*perc
-        x5[1]=x1[1]+(x2[1]-x1[1])*perc
-        x5[2]="rec"
-        if(rest>dead):
-            perc=rest/(rest+dead)
-            x6[0]=x2[0]+(x3[0]-x2[0])*perc
-            x6[1]=x2[1]+(x3[1]-x2[1])*perc
-            x6[2]="rest"
-            last="dead"
-        else:
-            perc=dead/(rest+dead)
-            x6[0]=x2[0]+(x3[0]-x2[0])*perc
-            x6[1]=x2[1]+(x3[1]-x2[1])*perc
-            x6[2]="dead"
-            last="rest"
-        square.append(x1)
-        square.append(x2)
-        square.append(x3)
-        square.append(x4)
-        square.append(x5)
-        square.append(x6)
-        square.append(center)
-        square.append(last)       
-        return square    
-        
-        
-    if(rest>=dead and rest>=rec):
-        perc=rest/allCases
-        x5[0]=x1[0]+(x2[0]-x1[0])*perc
-        x5[1]=x1[1]+(x2[1]-x1[1])*perc
-        x5[2]="rest"
-        if(rec>dead):
-            perc=rec/(rec+dead)
-            x6[0]=x2[0]+(x3[0]-x2[0])*perc
-            x6[1]=x2[1]+(x3[1]-x2[1])*perc
-            x6[2]="rec"
-            last="dead"
-        else:
-            perc=dead/(rec+dead)
-            x6[0]=x2[0]+(x3[0]-x2[0])*perc
-            x6[1]=x2[1]+(x3[1]-x2[1])*perc
-            x6[2]="dead"
-            last="rec"
-            
-        #create the square
-        square.append(x1)
-        square.append(x2)
-        square.append(x3)
-        square.append(x4)
-        square.append(x5)
-        square.append(x6)
-        square.append(center)
-        square.append(last)       
+        square.append(last)
         return square
 
-            
+    if rec >= dead and rec >= rest:
+        perc = rec / allCases
+        x5[0] = x1[0] + (x2[0] - x1[0]) * perc
+        x5[1] = x1[1] + (x2[1] - x1[1]) * perc
+        x5[2] = "rec"
+        if rest > dead:
+            perc = rest / (rest + dead)
+            x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+            x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+            x6[2] = "rest"
+            last = "dead"
+        else:
+            perc = dead / (rest + dead)
+            x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+            x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+            x6[2] = "dead"
+            last = "rest"
+        square.append(x1)
+        square.append(x2)
+        square.append(x3)
+        square.append(x4)
+        square.append(x5)
+        square.append(x6)
+        square.append(center)
+        square.append(last)
+        return square
+
+    if rest >= dead and rest >= rec:
+        perc = rest / allCases
+        x5[0] = x1[0] + (x2[0] - x1[0]) * perc
+        x5[1] = x1[1] + (x2[1] - x1[1]) * perc
+        x5[2] = "rest"
+        if rec > dead:
+            perc = rec / (rec + dead)
+            x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+            x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+            x6[2] = "rec"
+            last = "dead"
+        else:
+            perc = dead / (rec + dead)
+            x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+            x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+            x6[2] = "dead"
+            last = "rec"
+
+        # create the square
+        square.append(x1)
+        square.append(x2)
+        square.append(x3)
+        square.append(x4)
+        square.append(x5)
+        square.append(x6)
+        square.append(center)
+        square.append(last)
+        return square
 
 
 ################################################################################

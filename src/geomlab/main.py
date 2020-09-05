@@ -47,12 +47,12 @@ def on_combo_configure(event):
     combo = event.widget
     style = ttk.Style()
 
-    long = max(combo.cget('values'), key=len)
+    long = max(combo.cget("values"), key=len)
 
-    font = tkfont.nametofont(str(combo.cget('font')))
-    width = max(0,font.measure(long.strip() + '0') - combo.winfo_width())
+    font = tkfont.nametofont(str(combo.cget("font")))
+    width = max(0, font.measure(long.strip() + "0") - combo.winfo_width())
 
-    style.configure('TCombobox', postoffset=(0,0,width,0))
+    style.configure("TCombobox", postoffset=(0, 0, width, 0))
 
 
 # Main Window
@@ -123,14 +123,14 @@ class SymbolicMapsPage(tk.Frame):
         self.create_widgets()
 
         # Display objects
-        self.pie_sets={}
-        self.pie_piece_sets={}
+        self.pie_sets = {}
+        self.pie_piece_sets = {}
         self.data_sets = {}
         self.circles = []
         self.pies = []
         self.piePieces = []
-        self.circlesToDraw=[] #for nested disks different structure
-        self.numberOfFeatures=0 #numberOffeatures eg, rec,dead,rest equal 3
+        self.circlesToDraw = []  # for nested disks different structure
+        self.numberOfFeatures = 0  # numberOffeatures eg, rec,dead,rest equal 3
         self.angles = []
 
         # Code
@@ -163,15 +163,15 @@ class SymbolicMapsPage(tk.Frame):
         count()
 
     def timer_start(self):
-        self.timer_running_label["bg"] = ("red")
-        self.timer_running_label["text"] = ("Timer running")
+        self.timer_running_label["bg"] = "red"
+        self.timer_running_label["text"] = "Timer running"
         self.timer_running_label.update_idletasks()
         self.timer_start_timestamp = datetime.datetime.now()
         # self.timer_update_label()
 
     def timer_stop(self):
-        self.timer_running_label["bg"] = ("green")
-        self.timer_running_label["text"] = ("Timer not running")
+        self.timer_running_label["bg"] = "green"
+        self.timer_running_label["text"] = "Timer not running"
         self.timer_running_label.update_idletasks()
         self.timerlabel["text"] = (
             "Runtime (wall): "
@@ -196,11 +196,10 @@ class SymbolicMapsPage(tk.Frame):
         print("Current data set:")
         print(self.data.current())
 
-
         self.circles = self.data_sets[self.data.current()]
-        self.piePieces=self.pie_piece_sets[self.data.current()]
-        self.pies=self.pie_sets[self.data.current()]
-        self.angles=[0]*len(self.pies)
+        self.piePieces = self.pie_piece_sets[self.data.current()]
+        self.pies = self.pie_sets[self.data.current()]
+        self.angles = [0] * len(self.pies)
 
         algo = self.algorithm.current()
         # "Painter", #0
@@ -221,31 +220,57 @@ class SymbolicMapsPage(tk.Frame):
 
         if algo == 0:
             self.circles = st.algorithmNestedDisksPainter(self.circles)
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         elif algo == 1:
             random.shuffle(self.circles)
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         elif algo == 2:
-            self.pies,self.piePieces,self.angles =st.algorithmPieChartsStacking(self.pies,self.piePieces)
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
+                self.pies, self.piePieces
+            )
         elif algo == 3:
-            self.circlesToDraw=st.algorithmHawaiianStacking(self.circles)
-            self.numberOfFeatures=len(self.circles[0])-2
+            self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
+            self.numberOfFeatures = len(self.circles[0]) - 2
 
         elif algo == 4:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "absolute")
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
+                self.circles, "absolute"
+            )
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         elif algo == 5:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "relative")
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
+                self.circles, "relative"
+            )
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         elif algo == 6:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "relative")
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
+                self.circles, "relative"
+            )
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         elif algo == 7:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "relative")
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
+                self.circles, "relative"
+            )
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         elif algo == 8:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles, "weighted")
-            self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
+                self.circles, "weighted"
+            )
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
         else:
             logging.critical("You shouldn't see me.")
 
@@ -256,16 +281,15 @@ class SymbolicMapsPage(tk.Frame):
         if objective_value != -1:
             self.objective_running_label["text"] = "Objective"
             self.objectivelabel["text"] = str(objective_value)
-            self.objective_running_label["bg"] = ("green")
+            self.objective_running_label["bg"] = "green"
         else:
-            self.objective_running_label["bg"] = ("red")
+            self.objective_running_label["bg"] = "red"
             self.objective_running_label["text"] = "No objective"
             self.objectivelabel["text"] = "N/A"
 
-
         # Draw
         self.draw_subcircle_stacking()
-        if(algo ==2):
+        if algo == 2:
             self.draw_pie_stacking()
 
     def draw_circles(self):
@@ -274,144 +298,180 @@ class SymbolicMapsPage(tk.Frame):
             # x, y ,r
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
 
-    def from_rgb(self,rgb):
+    def from_rgb(self, rgb):
         """translates an rgb tuple of int to a tkinter friendly color code"""
         return "#%02x%02x%02x" % rgb
 
-
     def draw_subcircle_stacking_3Features(self):
-        counter=1
+        counter = 1
         for c in self.circlesToDraw:
-            y=c[0]
-            x=c[1]
-            r=c[2]
-            if(counter==1):
-                color="#FF9994"
-            if(counter==2):
-                color="#94FF99"
-            if(counter==3):
-                color="#A0A0A0"
-            counter=counter+1
-            if(counter==4):
-                counter=1
+            y = c[0]
+            x = c[1]
+            r = c[2]
+            if counter == 1:
+                color = "#FF9994"
+            if counter == 2:
+                color = "#94FF99"
+            if counter == 3:
+                color = "#A0A0A0"
+            counter = counter + 1
+            if counter == 4:
+                counter = 1
             self.canvas.create_circle(x, y, r, fill=color, outline="#000")
 
     def draw_subcircle_stacking_arbitraryFeatures(self):
-        counter=0
-        counterMax=self.numberOfFeatures-1
+        counter = 0
+        counterMax = self.numberOfFeatures - 1
         for c in self.circlesToDraw:
-            y=c[0]
-            x=c[1]
-            r=c[2]
-            colorValue=int(200-counter*(150/counterMax))
-            colorRGB=(colorValue,colorValue,colorValue)
-            colorHEX=self.from_rgb(colorRGB)
+            y = c[0]
+            x = c[1]
+            r = c[2]
+            colorValue = int(200 - counter * (150 / counterMax))
+            colorRGB = (colorValue, colorValue, colorValue)
+            colorHEX = self.from_rgb(colorRGB)
             self.canvas.create_circle(x, y, r, fill=colorHEX, outline="#000")
-            if(counter==counterMax):
-                counter=0
+            if counter == counterMax:
+                counter = 0
             else:
-                counter=counter+1
-
-
-
-
-
-
-
+                counter = counter + 1
 
     def draw_subcircle_stacking(self):
-        counterMax=self.numberOfFeatures
-        if(counterMax==3):
+        counterMax = self.numberOfFeatures
+        if counterMax == 3:
             self.draw_subcircle_stacking_3Features()
         else:
             self.draw_subcircle_stacking_arbitraryFeatures()
 
-
-
-
     def draw_pie_stacking_3Features(self):
         for i in range(0, len(self.pies)):
             angle = self.angles[i]
-            y=self.pies[i][0]
-            x=self.pies[i][1]
-            r=self.pies[i][2]
-            angle=self.angles[i]
-            s=angle*180/np.pi
-            e=(angle+self.piePieces[i][0])*180/np.pi
-            ext=e-s
-            if(ext<0):
-                ext=ext+360
-            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#A0A0A0",outline="black",start=s-90,extent=ext)
-            s=e
-            e=(angle+self.piePieces[i][1])*180/np.pi
-            ext=e-s
-            if(ext<0):
-                ext=ext+360
-            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#94FF99",outline="black",start=s-90,extent=ext)
-            s=e
-            e=angle*180/np.pi
-            e=e+360
-            ext=e-s
-            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#FF9994",outline="black",start=s-90,extent=ext)
+            y = self.pies[i][0]
+            x = self.pies[i][1]
+            r = self.pies[i][2]
+            angle = self.angles[i]
+            s = angle * 180 / np.pi
+            e = (angle + self.piePieces[i][0]) * 180 / np.pi
+            ext = e - s
+            if ext < 0:
+                ext = ext + 360
+            self.canvas.create_arc(
+                x - r,
+                y - r,
+                x + r,
+                y + r,
+                fill="#A0A0A0",
+                outline="black",
+                start=s - 90,
+                extent=ext,
+            )
+            s = e
+            e = (angle + self.piePieces[i][1]) * 180 / np.pi
+            ext = e - s
+            if ext < 0:
+                ext = ext + 360
+            self.canvas.create_arc(
+                x - r,
+                y - r,
+                x + r,
+                y + r,
+                fill="#94FF99",
+                outline="black",
+                start=s - 90,
+                extent=ext,
+            )
+            s = e
+            e = angle * 180 / np.pi
+            e = e + 360
+            ext = e - s
+            self.canvas.create_arc(
+                x - r,
+                y - r,
+                x + r,
+                y + r,
+                fill="#FF9994",
+                outline="black",
+                start=s - 90,
+                extent=ext,
+            )
 
     def draw_pies_stacking_arbitraryFeatures(self):
         for i in range(0, len(self.pies)):
-            #geometry of the circle
+            # geometry of the circle
             angle = self.angles[i]
-            y=self.pies[i][0]
-            x=self.pies[i][1]
-            r=self.pies[i][2]
-            angle=self.angles[i]
+            y = self.pies[i][0]
+            x = self.pies[i][1]
+            r = self.pies[i][2]
+            angle = self.angles[i]
 
-            #initial Piece (does depend on somthing which is not in piePieces)
-            s=angle *180/np.pi
-            e=(angle+self.piePieces[i][0])*180/np.pi
-            ext=e-s
-            if(ext<0):
-                ext=ext+360
-            colorValue=int(200-0*(150/len(self.piePieces)))
-            colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
-            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
+            # initial Piece (does depend on somthing which is not in piePieces)
+            s = angle * 180 / np.pi
+            e = (angle + self.piePieces[i][0]) * 180 / np.pi
+            ext = e - s
+            if ext < 0:
+                ext = ext + 360
+            colorValue = int(200 - 0 * (150 / len(self.piePieces)))
+            colorHEX = self.from_rgb((colorValue, colorValue, colorValue))
+            self.canvas.create_arc(
+                x - r,
+                y - r,
+                x + r,
+                y + r,
+                fill=colorHEX,
+                outline="black",
+                start=s - 90,
+                extent=ext,
+            )
 
-            #middle Pieces
-            for j in range(1,len(self.piePieces[i])):
-                s=(angle+self.piePieces[i][j-1])*180/np.pi
-                e=(angle+self.piePieces[i][j])*180/np.pi
-                ext=e-s
-                if(ext<0):
-                    ext=ext+360
-                colorValue=int(200-j*(150/(len(self.piePieces[i]))))
-                colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
-                self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
+            # middle Pieces
+            for j in range(1, len(self.piePieces[i])):
+                s = (angle + self.piePieces[i][j - 1]) * 180 / np.pi
+                e = (angle + self.piePieces[i][j]) * 180 / np.pi
+                ext = e - s
+                if ext < 0:
+                    ext = ext + 360
+                colorValue = int(200 - j * (150 / (len(self.piePieces[i]))))
+                colorHEX = self.from_rgb((colorValue, colorValue, colorValue))
+                self.canvas.create_arc(
+                    x - r,
+                    y - r,
+                    x + r,
+                    y + r,
+                    fill=colorHEX,
+                    outline="black",
+                    start=s - 90,
+                    extent=ext,
+                )
 
-            #last Piece (does depend on somthing which is not in piePieces)
-            s=(angle+self.piePieces[i][len(self.piePieces[i])-1])*180/np.pi
-            e=(angle*180/np.pi)+360
-            ext=e-s
-            if(ext<0):
-                ext=ext+360
-            colorValue=int(50)
-            colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
-            self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
-
-
-
-
+            # last Piece (does depend on somthing which is not in piePieces)
+            s = (angle + self.piePieces[i][len(self.piePieces[i]) - 1]) * 180 / np.pi
+            e = (angle * 180 / np.pi) + 360
+            ext = e - s
+            if ext < 0:
+                ext = ext + 360
+            colorValue = int(50)
+            colorHEX = self.from_rgb((colorValue, colorValue, colorValue))
+            self.canvas.create_arc(
+                x - r,
+                y - r,
+                x + r,
+                y + r,
+                fill=colorHEX,
+                outline="black",
+                start=s - 90,
+                extent=ext,
+            )
 
     def draw_pie_stacking(self):
-        if(len(self.piePieces[0])==2):
+        if len(self.piePieces[0]) == 2:
             self.draw_pie_stacking_3Features()
         else:
             self.draw_pies_stacking_arbitraryFeatures()
-
-
-
 
     def data_algo_change(self, event):
         print("Change algorithm.")
         self.canvas.delete("all")
         self.apply_algorithm()
-        #self.draw_circles()
+        # self.draw_circles()
 
     def create_widgets(self):
         # Top widgets
@@ -420,17 +480,21 @@ class SymbolicMapsPage(tk.Frame):
 
         # Add algo timer
         self.timerlabel = tk.Label(self.frame, text="Timer...", fg="red")
-        self.timerlabel.grid(column=2, row=1, sticky=tk.W+tk.E)
+        self.timerlabel.grid(column=2, row=1, sticky=tk.W + tk.E)
 
-        self.timer_running_label = tk.Label(self.frame, text="Timer not running", bg="red", fg="white")
-        self.timer_running_label.grid(column=2, row=0, sticky=tk.W+tk.E)
+        self.timer_running_label = tk.Label(
+            self.frame, text="Timer not running", bg="red", fg="white"
+        )
+        self.timer_running_label.grid(column=2, row=0, sticky=tk.W + tk.E)
 
         # Add objective value display
         self.objectivelabel = tk.Label(self.frame, text="Objective...", fg="red")
-        self.objectivelabel.grid(column=3, row=1, sticky=tk.W+tk.E)
+        self.objectivelabel.grid(column=3, row=1, sticky=tk.W + tk.E)
 
-        self.objective_running_label = tk.Label(self.frame, text="No objective", bg="red", fg="white")
-        self.objective_running_label.grid(column=3, row=0, sticky=tk.W+tk.E)
+        self.objective_running_label = tk.Label(
+            self.frame, text="No objective", bg="red", fg="white"
+        )
+        self.objective_running_label.grid(column=3, row=0, sticky=tk.W + tk.E)
 
         # Add canvas
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
@@ -441,12 +505,7 @@ class SymbolicMapsPage(tk.Frame):
         self.datalabel.grid(column=0, row=0)
 
         self.data = ttk.Combobox(self.frame, width=50)
-        self.data["values"] = (
-            "test",
-            "May",
-            "June",
-            "Random"
-        )
+        self.data["values"] = ("test", "May", "June", "Random")
         self.data.current(1)
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
@@ -472,7 +531,6 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.algorithm.bind("<<Configure>>", on_combo_configure)
 
-
         # Add about button
         self.about = tk.Button(
             self, text="About", command=lambda: self.controller.show_frame(AboutPage)
@@ -490,7 +548,9 @@ class SymbolicMapsPage(tk.Frame):
         self._maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
         self._maps[2] = np.load("data/testDataJuni.npy", allow_pickle=True)
 
-        self._worldmap = cv2.imread("assets/test4.png") # Todo paint worldmap in background
+        self._worldmap = cv2.imread(
+            "assets/test4.png"
+        )  # Todo paint worldmap in background
         self._screen_height = len(self._worldmap)
         self._screen_width = len(self._worldmap[0])
 
@@ -556,7 +616,9 @@ class SymbolicMapsPage(tk.Frame):
             for case in my_data:
                 lat = case[2]
                 long = case[3]
-                x, y = latLongToPoint(lat, long, self._screen_height, self._screen_width)
+                x, y = latLongToPoint(
+                    lat, long, self._screen_height, self._screen_width
+                )
                 case[4] = case[4] + 5
                 case[5] = case[5] + 5
                 case[6] = case[6] + 5
@@ -588,9 +650,12 @@ class SymbolicMapsPage(tk.Frame):
                 rprime0 = 1
 
                 # appending circles with pie radii
-                circles.append([int(y), int(x), int(r), int(rprime1), int(rprime2)])#its important that its y,x i'm sorry :(
-                pies.append([int(y), int(x), int(r)]) #its important that its y,x i'm sorry :(
-
+                circles.append(
+                    [int(y), int(x), int(r), int(rprime1), int(rprime2)]
+                )  # its important that its y,x i'm sorry :(
+                pies.append(
+                    [int(y), int(x), int(r)]
+                )  # its important that its y,x i'm sorry :(
 
                 # appending pie pieces
                 a0 = rprime0 * rprime0
@@ -604,7 +669,7 @@ class SymbolicMapsPage(tk.Frame):
                 # TODO: Think about datastructure for pies and piePieces = probably a class
                 self.data_sets[i] = circles
                 self.pie_piece_sets[i] = piePieces
-                self.pie_sets[i]=pies
+                self.pie_sets[i] = pies
 
             # Generate random set
             circles = []
@@ -613,7 +678,7 @@ class SymbolicMapsPage(tk.Frame):
                 x = random.randint(0, self._screen_width - MAX_RADIUS)
                 y = random.randint(0, self._screen_height - MAX_RADIUS)
                 r = random.randint(1, MAX_RADIUS)
-                circles.append([y, x, r])#its important that its y,x i'm sorry :(
+                circles.append([y, x, r])  # its important that its y,x i'm sorry :(
 
             self.data_sets[3] = circles
             logging.debug(self.circles)
@@ -704,7 +769,7 @@ class MatplotlibPage(tk.Frame):
         self.canvas.draw()
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
-        #self.canvas._tkcanvas.pack(side="top", fill="both", expand=True)
+        # self.canvas._tkcanvas.pack(side="top", fill="both", expand=True)
 
 
 class AboutPage(tk.Frame):
@@ -727,6 +792,7 @@ class AboutPage(tk.Frame):
             command=lambda: self.controller.show_frame(SymbolicMapsPage),
         )
         self.symbolic_button.pack(side="bottom")
+
 
 def main():
     """The main function of the geomlab."""
