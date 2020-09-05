@@ -356,8 +356,7 @@ class SymbolicMapsPage(tk.Frame):
             angle=self.angles[i]
             
             #initial Piece (does depend on somthing which is not in piePieces)
-            s=angle
-            *180/np.pi
+            s=angle *180/np.pi
             e=(angle+self.piePieces[i][0])*180/np.pi
             ext=e-s
             if(ext<0):
