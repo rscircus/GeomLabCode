@@ -505,7 +505,11 @@ class SymbolicMapsPage(tk.Frame):
         self.datalabel.grid(column=0, row=0)
 
         self.data = ttk.Combobox(self.frame, width=50)
-        self.data["values"] = ("test", "May", "June", "Random")
+        philipp_sep = ("test", "May", "June", "Random", "---")
+
+        # Append all available covid data
+        self.data["values"] = tuple(list(philipp_sep) + cl.dates_list)
+
         self.data.current(1)
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
@@ -664,6 +668,38 @@ class SymbolicMapsPage(tk.Frame):
                 self.data_sets[i] = circles
                 self.pie_piece_sets[i] = piePieces
                 self.pie_sets[i] = pies
+
+            # append separator (empty list)
+            self.data_sets[3] = list()
+
+            cur_data_set_idx = len(self.data_sets)
+
+            # append downloaded datasets
+            for _, df in cl.cases_by_date.items():
+
+                # create circles array
+                circles = list()
+
+                # for each country in df add circle
+                # TODO: Using deaths here, as confirmed cases is growing to steep over time...
+                # for lat, lon, r in zip(df['latitude'], df['longitude'], df['confirmed_cases']):
+                for lat, lon, r in zip(df["latitude"], df["longitude"], df["deaths"]):
+                    x, y = latLongToPoint(
+                        lat, lon, self._screen_height, self._screen_width
+                    )
+                    # TODO: This is getting crazy.... log1p and not...
+                    # circles.append([int(y), int(x), int(np.log1p(r)), 0, 0])
+                    # circles.append([int(y), int(x), int(np.log1p(r)), 0, 0])
+                    circles.append([int(y), int(x), int(10 * np.log1p(r)), 0, 0])
+
+                self.data_sets[cur_data_set_idx] = circles
+
+                # TODO: Empty lists for now
+                self.pie_piece_sets[cur_data_set_idx] = list()
+                self.pie_sets[cur_data_set_idx] = list()
+                cur_data_set_idx += 1
+
+            len(self.pie_piece_sets)
 
             # Generate random set
             circles = []

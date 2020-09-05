@@ -106,3 +106,33 @@ deaths_df = (
     .rename(columns=reformat_dates)
     .fillna(method="bfill", axis=1)
 )
+
+geo_data_cols = ["country", "location", "latitude", "longitude"]
+
+geo_data_df = confirmed_cases_df[geo_data_cols]
+
+# Rewrite date to European style
+dates_list = confirmed_cases_df.filter(
+    regex=r"(\d{2}/\d{2}/\d{4})", axis=1
+).columns.to_list()
+
+# We'll use this data dict to connect to the symbolic page display
+cases_by_date = {}
+
+for date in dates_list:
+    confirmed_cases_day_df = (
+        confirmed_cases_df.filter(like=date, axis=1)
+        .rename(columns=lambda col: "confirmed_cases")
+        .astype("uint32")
+    )
+    deaths_day_df = (
+        deaths_df.filter(like=date, axis=1)
+        .rename(columns=lambda col: "deaths")
+        .astype("uint32")
+    )
+
+    cases_df = confirmed_cases_day_df.join(deaths_day_df)
+    cases_df = geo_data_df.join(cases_df)
+    cases_df = cases_df[cases_df["confirmed_cases"] > 0]
+
+    cases_by_date[date] = cases_df
