@@ -98,6 +98,12 @@ class GeomLabApp(tk.Tk):
             frame.grid(row=0, column=0, sticky="nswe")
             self.frames[page] = frame
 
+        # Add a second SymbolicMapsPage
+        scnd_container = tk.Frame(self)
+        scnd_container.pack(side="top", fill="both", expand=True)
+        scnd_frame = SymbolicMapsPage(scnd_container, self)
+        scnd_frame.grid(row=0, column=1, sticky="nswe")
+
         # Display
         self.show_frame(SymbolicMapsPage)
 
