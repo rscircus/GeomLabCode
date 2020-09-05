@@ -195,8 +195,8 @@ class SymbolicMapsPage(tk.Frame):
         # Set current dataset
         print("Current data set:")
         print(self.data.current())
-        
-        
+
+
         self.circles = self.data_sets[self.data.current()]
         self.piePieces=self.pie_piece_sets[self.data.current()]
         self.pies=self.pie_sets[self.data.current()]
@@ -230,7 +230,7 @@ class SymbolicMapsPage(tk.Frame):
         elif algo == 3:
             self.circlesToDraw=st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures=len(self.circles[0])-2
-            
+
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles, "absolute")
             self.circlesToDraw, self.numberOfFeatures=st.formatChangeNestedDisks(self.circles)
@@ -273,7 +273,7 @@ class SymbolicMapsPage(tk.Frame):
         for c in self.circles:
             # x, y ,r
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
-    
+
     def from_rgb(self,rgb):
         """translates an rgb tuple of int to a tkinter friendly color code"""
         return "#%02x%02x%02x" % rgb
@@ -311,13 +311,13 @@ class SymbolicMapsPage(tk.Frame):
                 counter=0
             else:
                 counter=counter+1
-            
-            
-            
-            
-            
-        
-        
+
+
+
+
+
+
+
 
     def draw_subcircle_stacking(self):
         counterMax=self.numberOfFeatures
@@ -325,10 +325,10 @@ class SymbolicMapsPage(tk.Frame):
             self.draw_subcircle_stacking_3Features()
         else:
             self.draw_subcircle_stacking_arbitraryFeatures()
-            
-                
-                    
-                
+
+
+
+
     def draw_pie_stacking_3Features(self):
         for i in range(0, len(self.pies)):
             angle = self.angles[i]
@@ -353,7 +353,7 @@ class SymbolicMapsPage(tk.Frame):
             e=e+360
             ext=e-s
             self.canvas.create_arc(x - r,y - r,x + r,y + r,fill="#FF9994",outline="black",start=s-90,extent=ext)
-        
+
     def draw_pies_stacking_arbitraryFeatures(self):
         for i in range(0, len(self.pies)):
             #geometry of the circle
@@ -362,7 +362,7 @@ class SymbolicMapsPage(tk.Frame):
             x=self.pies[i][1]
             r=self.pies[i][2]
             angle=self.angles[i]
-            
+
             #initial Piece (does depend on somthing which is not in piePieces)
             s=angle *180/np.pi
             e=(angle+self.piePieces[i][0])*180/np.pi
@@ -372,7 +372,7 @@ class SymbolicMapsPage(tk.Frame):
             colorValue=int(200-0*(150/len(self.piePieces)))
             colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
             self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
-            
+
             #middle Pieces
             for j in range(1,len(self.piePieces[i])):
                 s=(angle+self.piePieces[i][j-1])*180/np.pi
@@ -383,30 +383,30 @@ class SymbolicMapsPage(tk.Frame):
                 colorValue=int(200-j*(150/(len(self.piePieces[i]))))
                 colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
                 self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
-            
+
             #last Piece (does depend on somthing which is not in piePieces)
             s=(angle+self.piePieces[i][len(self.piePieces[i])-1])*180/np.pi
             e=(angle*180/np.pi)+360
             ext=e-s
             if(ext<0):
-                ext=ext+360    
+                ext=ext+360
             colorValue=int(50)
-            colorHEX=self.from_rgb((colorValue,colorValue,colorValue))   
+            colorHEX=self.from_rgb((colorValue,colorValue,colorValue))
             self.canvas.create_arc(x - r,y - r,x + r,y + r,fill=colorHEX,outline="black",start=s-90,extent=ext)
-                
-                
-            
-            
-            
+
+
+
+
+
     def draw_pie_stacking(self):
         if(len(self.piePieces[0])==2):
             self.draw_pie_stacking_3Features()
         else:
             self.draw_pies_stacking_arbitraryFeatures()
-            
-            
-                
-                
+
+
+
+
     def data_algo_change(self, event):
         print("Change algorithm.")
         self.canvas.delete("all")
