@@ -140,6 +140,11 @@ class SymbolicMapsPage(tk.Frame):
         self.counter = 123456
         self.timer_start_timestamp = datetime.datetime.now()
 
+        # Draw background
+        # TODO can I reuse cv2 here?
+        self.world_image = tk.PhotoImage(file = r'assets/test4.png')
+        self.canvas.create_image(0, 0, image = self.world_image, anchor = "nw")
+
         # Execute symbolic algo
         self.apply_algorithm()
 
