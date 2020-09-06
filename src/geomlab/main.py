@@ -752,6 +752,10 @@ class PaintingProgramPage(tk.Frame):
             end=270 + 25,
         )
 
+        # Example for rectangle
+        # args: (x1, y1, x2, y2, **kwargs)
+        self.canvas.create_rectangle(350, 200, 400, 250, fill="red")
+
     def create_widgets(self):
         self.canvas = tk.Canvas(self, bg="white")
         self.canvas.pack(side="top", fill="both", expand=True)
