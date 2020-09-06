@@ -475,6 +475,7 @@ class SymbolicMapsPage(tk.Frame):
     def data_algo_change(self, event):
         print("Change algorithm.")
         self.canvas.delete("all")
+        self.canvas.create_image(0, 0, image = self.world_image, anchor = "nw")
         self.apply_algorithm()
         # self.draw_circles()
 
