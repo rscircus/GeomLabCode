@@ -126,12 +126,19 @@ class SymbolicMapsPage(tk.Frame):
         self.pie_sets = {}
         self.pie_piece_sets = {}
         self.data_sets = {}
+        self.square_set= {}
         self.circles = []
         self.pies = []
         self.piePieces = []
         self.circlesToDraw = []  # for nested disks different structure
         self.numberOfFeatures = 0  # numberOffeatures eg, rec,dead,rest equal 3
         self.angles = []
+        
+        #geomDataGeneration (should be adapted by the user)
+        self.maximalSize=50
+        self.scalingFactor= 200
+        self.lowerBoundCases=5000
+        
 
         # Code
         self.initialize_data()
@@ -579,6 +586,224 @@ class SymbolicMapsPage(tk.Frame):
             cosangle = np.cos(angle)
             sinangle = np.sin(angle)
             return cosangle * c[2] + c[0], sinangle * c[2] + c[1]
+            
+        
+        def changeStructure(dataSet):
+            my_data=[]
+            for case in dataSet:
+                tmp = []
+                for slot in case:
+                    if(type(slot)==int):
+                        slot=slot+1
+                    tmp.append(slot)
+                my_data.append(tmp)
+                    
+            
+            return my_data
+        
+        def changeSructureFromPanda(df):
+            myData=[]
+
+            for lat, lon, conf,dead in zip(df["latitude"], df["longitude"], df["confirmed_cases"],df["deaths"]):
+                tmp=[0,0,lat,lon,conf+1,dead+1,1+(conf-dead)/2]
+                myData.append(tmp)
+                
+            return myData
+        
+        
+        
+        def createOneSquare(size, case, heightOfImage, widthOfImage):
+            square = []
+            x, y = latLongToPoint(case[2], case[3], heightOfImage, widthOfImage)
+
+            # corners and center of the square
+            center = [y, x]
+            x1 = [y + size, x - size]
+            x2 = [y + size, x + size]
+            x3 = [y - size, x + size]
+
+            # special points and their represented "type"
+            x4 = [y - size, x - size]
+            x5 = [0, 0, " "]
+            x6 = [0, 0, " "]
+            last = [" "]
+
+            # data
+            allCases = case[4]
+            dead = case[5]
+            rec = case[6]
+            rest = case[4] - dead - rec
+
+            # checks which small square corresponds to which  "type"
+            if dead >= rec and dead >= rest:
+                perc = dead / allCases
+                x5[0] = x1[0] + (x2[0] - x1[0]) * perc
+                x5[1] = x1[1] + (x2[1] - x1[1]) * perc
+                x5[2] = "dead"
+                if rec > rest:
+                    perc = rec / (rec + rest)
+                    x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+                    x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+                    x6[2] = "rec"
+                    last = "rest"
+                else:
+                    perc = rest / (rec + rest)
+                    x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+                    x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+                    x6[2] = "rest"
+                    last = "rec"
+
+                square.append(x1)
+                square.append(x2)
+                square.append(x3)
+                square.append(x4)
+                square.append(x5)
+                square.append(x6)
+                square.append(center)
+                square.append(last)
+                return square
+
+            if rec >= dead and rec >= rest:
+                perc = rec / allCases
+                x5[0] = x1[0] + (x2[0] - x1[0]) * perc
+                x5[1] = x1[1] + (x2[1] - x1[1]) * perc
+                x5[2] = "rec"
+                if rest > dead:
+                    perc = rest / (rest + dead)
+                    x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+                    x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+                    x6[2] = "rest"
+                    last = "dead"
+                else:
+                    perc = dead / (rest + dead)
+                    x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+                    x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+                    x6[2] = "dead"
+                    last = "rest"
+                square.append(x1)
+                square.append(x2)
+                square.append(x3)
+                square.append(x4)
+                square.append(x5)
+                square.append(x6)
+                square.append(center)
+                square.append(last)
+                return square
+
+            if rest >= dead and rest >= rec:
+                perc = rest / allCases
+                x5[0] = x1[0] + (x2[0] - x1[0]) * perc
+                x5[1] = x1[1] + (x2[1] - x1[1]) * perc
+                x5[2] = "rest"
+                if rec > dead:
+                    perc = rec / (rec + dead)
+                    x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+                    x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+                    x6[2] = "rec"
+                    last = "dead"
+                else:
+                    perc = dead / (rec + dead)
+                    x6[0] = x2[0] + (x3[0] - x2[0]) * perc
+                    x6[1] = x2[1] + (x3[1] - x2[1]) * perc
+                    x6[2] = "dead"
+                    last = "rec"
+
+                square.append(x1)
+                square.append(x2)
+                square.append(x3)
+                square.append(x4)
+                square.append(x5)
+                square.append(x6)
+                square.append(center)
+                square.append(last)
+                return square
+        
+        def generateGeomData(myData,index):
+            # calculate secondminimum and prepare scaling of the circles
+            
+            for case in list(my_data):
+                if case[4] < self.lowerBoundCases:
+                    my_data.remove(case)
+            
+            maximum = 1
+            maximumsecond = 1
+            for case in myData:
+                if case[4] < 1:
+                    tmp = 1
+                else:
+                    tmp = case[4]
+                if tmp > maximum:
+                    maximumsecond = maximum
+                    maximum = tmp
+            multiplicativeconstant = self.maximalSize / np.log(1 + self.scalingFactor)
+
+            circles = []
+            pies = []
+            piePieces = []
+            squares = []
+
+            # generating circles,pies and squares
+            for case in myData:
+                lat = case[2]
+                long = case[3]
+                x, y = latLongToPoint(lat, long,self._screen_height, self._screen_width)
+
+                # making sure data makes sense
+                if case[4] < case[6]:
+                    continue
+                if case[4] == 0:
+                    conf = 1
+                else:
+                    conf = case[4]
+                if case[5] == 0 or math.isnan(case[5]):
+                    dead = 1
+                else:
+                    dead = case[5]
+                if case[6] == 0 or math.isnan(case[6]):
+                    rec = 1
+                else:
+                    rec = case[6]
+
+                # nestedCircles
+                confAdjusted = multiplicativeconstant * np.log(
+                    1 + self.scalingFactor * conf / maximumsecond
+                    )
+                deadAdjusted = multiplicativeconstant * np.log(
+                    1 + self.scalingFactor * dead / maximumsecond
+                    )
+                recAdjusted = multiplicativeconstant * np.log(
+                    1 + self.scalingFactor * (rec + dead) / maximumsecond
+                    )
+
+                r = confAdjusted
+                rprime2 = deadAdjusted
+                rprime1 = recAdjusted
+
+
+                circles.append([int(y), int(x), int(r), int(rprime1), int(rprime2)])
+
+                #pies
+                pies.append([int(y), int(x), int(r)])
+                p1 = (case[5] / case[4]) * 2 * np.pi
+                p2 = (((case[6] / case[4])) * 2 * np.pi) + p1
+                piePieces.append([p1, p2])
+
+                # squares
+                tmpSquare = createOneSquare(r, case, self._screen_height, self._screen_width)
+                squares.append(tmpSquare) 
+                
+            self.data_sets[index] = circles
+            self.pie_piece_sets[index] = piePieces
+            self.pie_sets[index] = pies
+            self.square_set[index]=squares
+      
+        
+            
+        
+        
+        
+        
+        
 
         # structure: loc,loc,lat,long,conf,dead,recovered
 
@@ -596,117 +821,25 @@ class SymbolicMapsPage(tk.Frame):
             maximum_2 = -1
 
             my_worldmap = self._maps[i]
+            
+            my_data=changeStructure(my_worldmap)
+            generateGeomData(my_data,i)
 
-            for case in my_worldmap:
-                tmp = []
-                for slot in case:
-                    tmp.append(slot)
-                my_data.append(tmp)
-
-            for case in list(my_data):
-                if case[4] < 5000:
-                    my_data.remove(case)
-
-            for case in my_data:
-                if case[4] < 1:
-                    tmp = 1
-                else:
-                    tmp = case[4]
-                if tmp > maximum:
-                    maximum_second = maximum
-                    maximum = tmp
-                    maximum_2 = np.log(4 + case[4] * 100 / maximum_second)
-
-            for case in my_data:
-                lat = case[2]
-                long = case[3]
-                x, y = latLongToPoint(
-                    lat, long, self._screen_height, self._screen_width
-                )
-                case[4] = case[4] + 5
-                case[5] = case[5] + 5
-                case[6] = case[6] + 5
-
-                if case[4] < case[6]:
-                    continue
-
-                if case[4] == 0:
-                    conf = 1
-                else:
-                    conf = np.log(4 + case[4] * 100 / maximum_second)
-
-                if case[5] == 0 or math.isnan(case[5]):
-                    dead = 1
-                else:
-                    dead = case[5]
-
-                if case[6] == 0 or math.isnan(case[6]):
-                    rec = 1
-                else:
-                    rec = case[6]
-
-                conf = 125 * conf / maximum_2
-                dead = np.sqrt(conf * conf * (dead / case[4]))
-                rec = np.sqrt(conf * conf * (rec / case[4]) + dead * dead)
-                r = conf
-                rprime2 = dead
-                rprime1 = rec
-                rprime0 = 1
-
-                # appending circles with pie radii
-                circles.append(
-                    [int(y), int(x), int(r), int(rprime1), int(rprime2)]
-                )  # its important that its y,x i'm sorry :(
-                pies.append(
-                    [int(y), int(x), int(r)]
-                )  # its important that its y,x i'm sorry :(
-
-                # appending pie pieces
-                a0 = rprime0 * rprime0
-                a1 = rprime1 * rprime1
-                a2 = rprime2 * rprime2
-                a = r * r
-                p1 = (case[5] / case[4]) * 2 * np.pi
-                p2 = (((case[6] / case[4])) * 2 * np.pi) + p1
-                piePieces.append([p1, p2])
-
-                # TODO: Think about datastructure for pies and piePieces = probably a class
-                self.data_sets[i] = circles
-                self.pie_piece_sets[i] = piePieces
-                self.pie_sets[i] = pies
 
             # append separator (empty list)
             self.data_sets[3] = list()
-
             cur_data_set_idx = len(self.data_sets)
-
+            
             # append downloaded datasets
             for _, df in cl.cases_by_date.items():
 
-                # create circles array
-                circles = list()
-
-                # for each country in df add circle
-                # TODO: Using deaths here, as confirmed cases is growing to steep over time...
-                # for lat, lon, r in zip(df['latitude'], df['longitude'], df['confirmed_cases']):
-                for lat, lon, r in zip(df["latitude"], df["longitude"], df["deaths"]):
-                    x, y = latLongToPoint(
-                        lat, lon, self._screen_height, self._screen_width
-                    )
-                    # TODO: This is getting crazy.... log1p and not...
-                    # circles.append([int(y), int(x), int(np.log1p(r)), 0, 0])
-                    # circles.append([int(y), int(x), int(np.log1p(r)), 0, 0])
-                    circles.append([int(y), int(x), int(10 * np.log1p(r)), 0, 0])
-
-                self.data_sets[cur_data_set_idx] = circles
-
-                # TODO: Empty lists for now
-                self.pie_piece_sets[cur_data_set_idx] = list()
-                self.pie_sets[cur_data_set_idx] = list()
+                #generate geomData
+                my_data=changeSructureFromPanda(df)
+                generateGeomData(my_data, cur_data_set_idx)
                 cur_data_set_idx += 1
-
+                
             len(self.pie_piece_sets)
-
+            
             # Generate random set
             circles = []
             MAX_RADIUS = 100

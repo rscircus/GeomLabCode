@@ -1223,10 +1223,10 @@ def rotateTheSquares(squares, angles):
     return squares
 
 
+
 def algorithmSquaresStacking(squares):
     localCircles, localPiePieces, baseAngles = preparePies(squares)
     localSquares = copy.deepcopy(squares)
-
     angle = []
     resultOrder = []
     resultAngles = []
@@ -1260,7 +1260,6 @@ def algorithmSquaresStacking(squares):
 def distance(ax, ay, bx, by):
     return math.sqrt((by - ay) ** 2 + (bx - ax) ** 2)
 
-
 # rotates point `A` about point `B` by `angle` radians counterclockwise.
 def rotated_about(ax, ay, bx, by, angle):
     radius = distance(ax, ay, bx, by)
@@ -1268,9 +1267,9 @@ def rotated_about(ax, ay, bx, by, angle):
     return (round(bx - radius * math.cos(angle)), round(by - radius * math.sin(angle)))
 
 
+
 #####dataPrep [should most likly be in main but can be used as refrence]######
-
-
+"""
 def prepData(data, maximalSize, scalingFactor, lowerBoundCases, height, width):
     # change data to a structure I can work with
     myData = []
@@ -1308,11 +1307,8 @@ def prepData(data, maximalSize, scalingFactor, lowerBoundCases, height, width):
         long = case[3]
         x, y = latLongToPoint(lat, long, height, width)
 
-        # making sure data makes sense
-        case[4] = case[4]
-        case[5] = case[5]
-        case[6] = case[6]
 
+        # making sure data makes sense
         if case[4] < case[6]:
             continue
         if case[4] == 0:
@@ -1366,7 +1362,6 @@ def prepData(data, maximalSize, scalingFactor, lowerBoundCases, height, width):
         test = createOneSquare(r, case, height, width)
         squares.append(test)
     return circles, pies, piePieces, squares
-
 
 def createOneSquare(size, case, heightOfImage, widthOfImage):
     square = []
@@ -1473,230 +1468,5 @@ def createOneSquare(size, case, heightOfImage, widthOfImage):
         square.append(x6)
         square.append(center)
         square.append(last)
-        return square
+        return square"""
 
-
-################################################################################
-###############################draw functions ###############################
-
-
-def drawPieSolution(circles, cPieces, angles, image):
-    for i in range(0, len(circles)):
-        tmpC = circles[i]
-        tmpPieces = cPieces[i]
-        tmpAngle = angles[i]
-        drawPie(tmpC, tmpPieces, tmpAngle, image)
-
-
-# only for 4 colors
-def drawPieSolution2(circles, cPieces, angles, image):
-    for i in range(0, len(circles)):
-        tmpC = circles[i]
-        tmpPieces = cPieces[i]
-        tmpAngle = angles[i]
-        drawPie2(tmpC, tmpPieces, tmpAngle, image)
-
-
-def drawSolution(stacking, image):
-    numberOfRadi = len(stacking[0]) - 2
-    for i in range(0, len(stacking)):
-        tmp = stacking[i]
-        for k in range(0, numberOfRadi):
-            colorValue = 200 - (150 * ((k + 1) / numberOfRadi))
-            x = int(tmp[1])
-            y = int(tmp[0])
-            r = int(tmp[2 + k])
-            cv2.circle(
-                image,
-                (x, y),
-                r,
-                [colorValue, colorValue, colorValue],
-                thickness=-1,
-                lineType=8,
-                shift=0,
-            )
-            cv2.circle(
-                image,
-                (x, y),
-                r,
-                [colorValue - 19, colorValue - 19, colorValue - 19],
-                thickness=2,
-                lineType=8,
-                shift=0,
-            )
-        cv2.circle(
-            image,
-            (int(tmp[1]), int(tmp[0])),
-            int(tmp[2]),
-            [0, 0, 0],
-            thickness=2,
-            lineType=8,
-            shift=0,
-        )
-
-
-def drawSolutionWeighted(stacking, image):
-    numberOfRadi = len(stacking[0]) - 2
-    for i in range(0, len(stacking)):
-        tmp = stacking[i]
-        for k in range(0, numberOfRadi):
-            colorValue = 200 - (150 * (k / numberOfRadi))
-            x = int(tmp[1])
-            y = int(tmp[0])
-            r = int(tmp[2 + k])
-            cv2.circle(
-                image,
-                (x, y),
-                r,
-                [colorValue, colorValue, colorValue],
-                thickness=-1,
-                lineType=8,
-                shift=0,
-            )
-            cv2.circle(
-                image,
-                (x, y),
-                r,
-                [colorValue - 10, colorValue - 10, colorValue - 10],
-                thickness=1,
-                lineType=8,
-                shift=0,
-            )
-        cv2.circle(
-            image,
-            (int(tmp[1]), int(tmp[0])),
-            int(tmp[2]),
-            [0, 0, 0],
-            thickness=1,
-            lineType=8,
-            shift=0,
-        )
-
-
-# only for 4 colors
-def drawing4H(stacking, image):
-    bo = False
-    j = 0
-    for i in range(0, len(stacking)):
-        tmp = stacking[i]
-        x = int(tmp[1])
-        y = int(tmp[0])
-        r = int(tmp[2])
-
-        if j == 0:
-            color = color1
-        if j == 1:
-            color = color2
-        if j == 2:
-            color = color3
-            j = -1
-        if j == 3:
-            color = color4
-            j = -1
-            bo = True
-        j = j + 1
-
-        cv2.circle(image, (x, y), r, color, thickness=-1, lineType=8, shift=0)
-        if j == 1:
-            cv2.circle(
-                image,
-                (x, y),
-                r,
-                [22 - 19, 22 - 19, 22 - 19],
-                thickness=2,
-                lineType=8,
-                shift=0,
-            )
-            bo = False
-
-
-# only for 4 colors
-def drawing4Normal(stacking, image):
-
-    for i in range(0, len(stacking)):
-        tmp = stacking[i]
-        x = int(tmp[1])
-        y = int(tmp[0])
-        r = int(tmp[2])
-
-        cv2.circle(image, (x, y), tmp[2], color1, thickness=-1, lineType=8, shift=0)
-        cv2.circle(image, (x, y), tmp[3], color2, thickness=-1, lineType=8, shift=0)
-        cv2.circle(image, (x, y), tmp[4], color3, thickness=-1, lineType=8, shift=0)
-        cv2.circle(image, (x, y), r, [0, 0, 0], thickness=2, lineType=8, shift=0)
-
-
-# only for 4 colors
-def drawing4Pie(circles, cPieces, angles, image):
-    for i in range(0, len(circles)):
-        tmpC = circles[i]
-        tmpPieces = cPieces[i]
-        tmpAngle = angles[i]
-        drawPie2(tmpC, tmpPieces, tmpAngle, image)
-    return image
-
-
-def drawPie(circle, pieces, angle, image):
-    c = circle
-    cPieces = pieces
-    x = int(c[0])
-    y = int(c[1])
-    r = int(c[2])
-    colorValue = 100
-
-    cv2.circle(
-        data1,
-        (y, x),
-        r,
-        [colorValue, colorValue, colorValue],
-        thickness=-1,
-        lineType=8,
-        shift=0,
-    )
-    cv2.circle(
-        data1,
-        (y, x),
-        r,
-        [colorValue - 19, colorValue - 19, colorValue - 19],
-        thickness=2,
-        lineType=8,
-        shift=0,
-    )
-    x, y = calculatePointOnCircle(c, angle)
-
-    cv2.line(data1, (int(y), int(x)), (int(c[1]), int(c[0])), (0, 0, 255), thickness=2)
-    for p in cPieces:
-        x, y = calculatePointOnCircle(c, angle + p)
-        cv2.line(
-            data1, (int(y), int(x)), (int(c[1]), int(c[0])), (0, 255, 0), thickness=2
-        )
-
-
-# only for 4 colors
-def drawPie2(circle, pieces, angle, image):
-    img1 = ImageDraw.Draw(image)
-
-    x = circle[0]
-    y = circle[1]
-    r = circle[2]
-    shape = [y - r - 4, x - r - 4, y + r + 4, x + r + 4]
-
-    anglesClock = [0, 0, 0, 0, 0]
-    anglesClock[0] = -angle * 360 / (2 * np.pi) + 90
-    anglesClock[3] = 360 - angle * 360 / (2 * np.pi) + 90
-    anglesClock[1] = 360 - (pieces[1] + angle) * 360 / (2 * np.pi) + 90
-    anglesClock[2] = 360 - (pieces[0] + angle) * 360 / (2 * np.pi) + 90
-
-    img1.ellipse(shape, fill=(0, 0, 0))
-
-    shape = [y - r, x - r, y + r, x + r]
-    img1.pieslice(
-        shape, start=anglesClock[0], end=anglesClock[1], fill=color1PIL, outline="black"
-    )
-
-    img1.pieslice(
-        shape, start=anglesClock[1], end=anglesClock[2], fill=color2PIL, outline="black"
-    )
-
-    img1.pieslice(
-        shape, start=anglesClock[2], end=anglesClock[3], fill=color3PIL, outline="black"
-    )
