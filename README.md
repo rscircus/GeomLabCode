@@ -52,11 +52,3 @@ Code for the geomlab.
   ## Logging
 
   You can specify the visible log-level via appending `--log={INFO, DEBUG, CRITICAL}` in the cmd line.
-
-# TODOs
-
-- [ ] Probability Distributions
-  - [X] Uniform
-  - [ ] Gaussian
-  - [ ] Poisson
-  - [ ] ???
