@@ -792,6 +792,9 @@ class SymbolicMapsPage(tk.Frame):
                 tmpSquare = createOneSquare(r, case, self._screen_height, self._screen_width)
                 squares.append(tmpSquare) 
                 
+            if(len(circles)==0):
+                return
+                
             self.data_sets[index] = circles
             self.pie_piece_sets[index] = piePieces
             self.pie_sets[index] = pies
@@ -836,7 +839,7 @@ class SymbolicMapsPage(tk.Frame):
                 #generate geomData
                 my_data=changeSructureFromPanda(df)
                 generateGeomData(my_data, cur_data_set_idx)
-                cur_data_set_idx += 1
+                cur_data_set_idx =len(self.data_sets)
                 
             len(self.pie_piece_sets)
             
