@@ -281,13 +281,7 @@ class SymbolicMapsPage(tk.Frame):
             )
         elif algo == 8:
             self.squares,m1,m2,m3=st.algorithmSquaresStacking(self.squares)         
-            """
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
-                self.circles, "weighted"
-            )
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
-                self.circles
-            )"""
+          
         else:
             logging.critical("You shouldn't see me.")
 
@@ -305,7 +299,10 @@ class SymbolicMapsPage(tk.Frame):
             self.objectivelabel["text"] = "N/A"
 
         # Draw
-        self.draw_subcircle_stacking()
+        
+        
+        if not algo in [2,8]:
+            self.draw_subcircle_stacking()
         if algo == 2:
             self.draw_pie_stacking()
             
