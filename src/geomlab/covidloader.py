@@ -18,8 +18,11 @@ def reformat_dates(col_name: str) -> str:
     except ValueError:
         return col_name
 
+print()
+print("Downloading most recent COVID-19 data...")
+print()
 
-# Get most recent confirmed cases, recoverd and deaths
+# Get most recent confirmed cases, recovered and deaths
 confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 recovered_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
 deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
@@ -33,24 +36,36 @@ renamed_columns_map = {
 
 cols_to_drop = ["location", "latitude", "longitude"]
 
+print("1/3: All confirmed cases...")
+
 confirmed_cases_df = (
     pd.read_csv(confirmed_url)
     .rename(columns=renamed_columns_map)
     .rename(columns=reformat_dates)
     .drop(columns=cols_to_drop)
 )
+
+print("2/3: All death cases...")
+
 deaths_df = (
     pd.read_csv(deaths_url)
     .rename(columns=renamed_columns_map)
     .rename(columns=reformat_dates)
     .drop(columns=cols_to_drop)
 )
+
+print("3/3: Recovered cases...")
+
 recovered_df = (
     pd.read_csv(recovered_url)
     .rename(columns=renamed_columns_map)
     .rename(columns=reformat_dates)
     .drop(columns=cols_to_drop)
 )
+
+print()
+print("✨  COVID-19 downloads from John Hopkins University successful. ✨")
+print()
 
 geo_data_df = confirmed_cases_df[["country"]].drop_duplicates()
 country_codes_df = pd.read_csv(
