@@ -1281,6 +1281,37 @@ def algorithmSquaresStacking(squares):
     return resultOrder, resultOrderForPies, resultPiecesForPies, resultAnglesForPies
 
 
+#############################################################################
+############ Square Comparison Algorithms ###################################
+#############################################################################
+
+
+# optimal rotations but ordered by painter's algorithm
+def algorithmHeuristicPainterSquareStacking(squares):
+    squares.sort(key=sideLength, reversed=True)
+    return heuristicRotationForStacking(squares)
+
+# random rotations and ordered by painter's algorithm
+def algorithmRandomPainterSquareStacking(squares):
+    squares.sort(key=sideLength, reversed=True)
+    angles = randomAngles(len(squares))
+    return rotateTheSquares(squares, angles)
+
+# optimal rotations but ordered randomly
+def algorithmHeuristicRandomSquareStacking(squares):
+    random.shuffle(squares)
+    return heuristicRotationForStacking(squares)
+
+# random rotations and ordered randomly
+def algorithmCompletelyRandomSquareStacking(squares):
+    random.shuffle(squares)
+    angles = randomAngles(len(squares))
+    return rotateTheSquares(squares, angles)
+
+# generate random angles
+def randomAngles(length):
+    return [random.random()*2*np.pi for i in range(length)]
+
 # euclidian distance
 def distance(ax, ay, bx, by):
     return math.sqrt((by - ay) ** 2 + (bx - ax) ** 2)
@@ -1328,7 +1359,6 @@ def prepData(data, maximalSize, scalingFactor, lowerBoundCases, height, width):
     # generating circles,pies and squares
     testMax = 0
     for case in myData:
-    <<<<<<< HEAD
         lat = case[2]
         long = case[3]
         x, y = latLongToPoint(lat, long, height, width)
@@ -1336,20 +1366,6 @@ def prepData(data, maximalSize, scalingFactor, lowerBoundCases, height, width):
 
         # making sure data makes sense
         if case[4] < case[6]:
-=======
-        lat=case[2]
-        long=case[3]
-        x,y = latLongToPoint(lat, long, height, width)
-        
-        #making sure data makes sense
-        case[4]=case[4]
-        case[5]=case[5]
-        case[6]=case[6]
-        
-            
-        
-        if(case[4]<case[6]):
->>>>>>> 61382e3... implement untested cost calculation
             continue
         if case[4] == 0:
             conf = 1
@@ -1508,9 +1524,9 @@ def createOneSquare(size, case, heightOfImage, widthOfImage):
         square.append(x6)
         square.append(center)
         square.append(last)
-        return square"""
-
-
+        return square
+"""
+            
 ################################################################################
 ############################# square functions #################################
 

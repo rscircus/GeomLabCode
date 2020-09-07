@@ -216,7 +216,11 @@ class SymbolicMapsPage(tk.Frame):
         # "maxMinMinK Stacking (relative)", #5
         # "maxMinSumK Stacking (absolute)", #6
         # "maxMinSumK Stacking (relative)", #7
-        # "maxMinSumK Stacking (weighted)", #8
+        # "heuristic square Stacking", #8
+        # "painter square Stacking", #9
+        # "random rotation painter square Stacking", #10
+        # "random square Stacking", #11
+        # "random rotation random square Stacking", #12
 
         # Timer start
         self.timer_start()
