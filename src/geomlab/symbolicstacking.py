@@ -1223,7 +1223,6 @@ def rotateTheSquares(squares, angles):
     return squares
 
 
-
 def algorithmSquaresStacking(squares):
     localCircles, localPiePieces, baseAngles = preparePies(squares)
     localSquares = copy.deepcopy(squares)
@@ -1260,12 +1259,12 @@ def algorithmSquaresStacking(squares):
 def distance(ax, ay, bx, by):
     return math.sqrt((by - ay) ** 2 + (bx - ax) ** 2)
 
+
 # rotates point `A` about point `B` by `angle` radians counterclockwise.
 def rotated_about(ax, ay, bx, by, angle):
     radius = distance(ax, ay, bx, by)
     angle += math.atan2(ay - by, ax - bx)
     return (round(bx - radius * math.cos(angle)), round(by - radius * math.sin(angle)))
-
 
 
 #####dataPrep [should most likly be in main but can be used as refrence]######
@@ -1485,98 +1484,123 @@ def createOneSquare(size, case, heightOfImage, widthOfImage):
         square.append(last)
         return square"""
 
-            
+
 ################################################################################
 ############################# square functions #################################
 
+
 def valueOfSquareConfiguration(squares):
-    minimum = float('inf')
-    minGreaterZero = float('inf')
+    minimum = float("inf")
+    minGreaterZero = float("inf")
 
     for i, currentSquare in enumerate(squares):
-        squaresAbove = squares[i+1:]
+        squaresAbove = squares[i + 1 :]
         value = distanceToOcclusion(currentSquare, squaresAbove)
         minimum = min(value, minimum)
-        if(value>0): minGreaterZero = min(value, minGreaterZero)
+        if value > 0:
+            minGreaterZero = min(value, minGreaterZero)
 
     return [minimum, minGreaterZero]
+
 
 def distanceToOcclusion(square, squares):
     occludingIntervals = occludedIntervalsPerSide(square, squares)
     return minDistanceToOcclusion(square, occludingIntervals)
 
+
 def occludedIntervalsPerSide(square, squares):
     relevant_squares = removeDistantSquares(square, squares)
-    occluded_intervals = [occludedIntervalsForSide(square, i, relevant_squares) for i in range(4)]
+    occluded_intervals = [
+        occludedIntervalsForSide(square, i, relevant_squares) for i in range(4)
+    ]
     return mergeAllIntervals(occluded_intervals)
+
 
 def removeDistantSquares(square, squares):
     filteredSquares = []
     for sq in squares:
-        if(not haveDisjointBoundingBoxes(square, sq)): filteredSquares.append(sq)
+        if not haveDisjointBoundingBoxes(square, sq):
+            filteredSquares.append(sq)
     return filteredSquares
+
 
 def occludedIntervalsForSide(square, i, squares):
     occludedIntervals = []
-    side = [square[i], square[(i+1)%4]]
+    side = [square[i], square[(i + 1) % 4]]
 
     for sq in squares:
         interval = occludedIntervalsForSquare(side, sq)
-        if interval != None : occludedIntervals.append(interval)
-        if interval == [0,1]: break
+        if interval != None:
+            occludedIntervals.append(interval)
+        if interval == [0, 1]:
+            break
 
     return occludedIntervals
 
+
 def occludedIntervalsForSquare(side, square):
-    if(sideIsContainedInSquare(side, square)): return [0,1]
+    if sideIsContainedInSquare(side, square):
+        return [0, 1]
 
     intersections = determineIntersections(side, square)
 
-    if len(intersections) == 1: 
+    if len(intersections) == 1:
         t = intersections[0]
         result = []
-        if liesWithin(side[0], square): result = [0,t]
-        elif liesWithin(side[1], square): result = [t,1]
-        else: result = [t,t]
+        if liesWithin(side[0], square):
+            result = [0, t]
+        elif liesWithin(side[1], square):
+            result = [t, 1]
+        else:
+            result = [t, t]
         return result
-        
-    if len(intersections)==2:
-        [a,b] = intersections
-        return [a,b] if a<b else [b,a]
+
+    if len(intersections) == 2:
+        [a, b] = intersections
+        return [a, b] if a < b else [b, a]
 
     return None
+
 
 def sideIsContainedInSquare(side, square):
     return liesWithin(side[0], square) and liesWithin(side[1], square)
 
+
 def liesWithin(p, square):
     numOfIntersections = 0
-    q = [p[0]+1, p[1]]
+    q = [p[0] + 1, p[1]]
     for i in range(4):
-        t,s = solveLinearEquation(p, q, square[i], square[(i+1)%4])
-        if(0<=t and s>=0 and s<1): numOfIntersections += 1
-    return numOfIntersections%2==1 
+        t, s = solveLinearEquation(p, q, square[i], square[(i + 1) % 4])
+        if 0 <= t and s >= 0 and s < 1:
+            numOfIntersections += 1
+    return numOfIntersections % 2 == 1
+
 
 def determineIntersections(side, square):
     intersections = []
     for index in range(4):
-        t,s = solveLinearEquation(side[0], side[1], square[index], square[(index+1)%4])
-        if(0<=t and t<=1 and s<=0 and s<1): intersections.append(t)
+        t, s = solveLinearEquation(
+            side[0], side[1], square[index], square[(index + 1) % 4]
+        )
+        if 0 <= t and t <= 1 and s <= 0 and s < 1:
+            intersections.append(t)
     return intersections
 
+
 def solveLinearEquation(A, B, C, D):
-    [a, c] = [B[0]-A[0], D[0]-C[0]]
-    [b, d] = [B[1]-A[1], D[1]-C[1]]
-    det = a*d - c*b
-    if det!=0:
-        [e, f] = [C[0]-A[0], C[1]-A[1]]
-        result = [e*d-f*c,e*b-f*a]
-        return [result[0]/det, result[1]/det]
+    [a, c] = [B[0] - A[0], D[0] - C[0]]
+    [b, d] = [B[1] - A[1], D[1] - C[1]]
+    det = a * d - c * b
+    if det != 0:
+        [e, f] = [C[0] - A[0], C[1] - A[1]]
+        result = [e * d - f * c, e * b - f * a]
+        return [result[0] / det, result[1] / det]
     return [-1, -1]
 
 
 def mergeAllIntervals(intervalArray):
     return [mergeIntervals(intervals) for intervals in intervalArray]
+
 
 def mergeIntervals(intervals):
     newIntervals = []
@@ -1598,89 +1622,108 @@ def leftIntervalBoundary(interval):
 
 def minDistanceToOcclusion(square, intervals):
     sideLen = sideLength(square)
-    minDist = float('inf')
+    minDist = float("inf")
     points = importantSquarePoints(square)
     for point in points:
         dist = pointDistanceToOcclusion(point, intervals)
-        if(dist<minDist):
+        if dist < minDist:
             minDist = dist
 
-    return min(minDist,4)*sideLen
+    return min(minDist, 4) * sideLen
+
 
 def sideLength(square):
     a = square[0], b = square[1]
-    diff = [a[0]-b[0], a[1]-b[1]]
-    return math.sqrt(diff[0]*diff[0] + diff[1]*diff[1])
+    diff = [a[0] - b[0], a[1] - b[1]]
+    return math.sqrt(diff[0] * diff[0] + diff[1] * diff[1])
+
 
 def importantSquarePoints(square):
     [a_index, a_param] = a_info = importantSquarePoint(square[5], square)
-    b_info = [(a_index+2)%4, 1-a_param]
+    b_info = [(a_index + 2) % 4, 1 - a_param]
     c_info = importantSquarePoint(square[6], square)
     return [a_info, b_info, c_info]
 
+
 def importantSquarePoint(point, square):
     for i in range(4):
-        t = calculateStepParam(square[i], square[(i+1)%4], point)
-        if(t!=None): return [i, t]
+        t = calculateStepParam(square[i], square[(i + 1) % 4], point)
+        if t != None:
+            return [i, t]
     return None
 
+
 def calculateStepParam(a, b, c):
-    v=[], w=[]
-    v.insert(b[0]-a[0])
-    v.insert(b[1]-a[1])
-    w.insert(c[0]-a[0])
-    w.insert(c[1]-a[1])
+    v = [], w = []
+    v.insert(b[0] - a[0])
+    v.insert(b[1] - a[1])
+    w.insert(c[0] - a[0])
+    w.insert(c[1] - a[1])
     q_0 = quotient(v[0], w[0])
     q_1 = quotient(v[1], w[1])
-    if(float('inf') in [q_0, q_1]): return None
-    if(None in [q_0, q_1]): return q_1 if q_0==None else q_0
-    if(not math.isclose(q_0, q_1)): return None
+    if float("inf") in [q_0, q_1]:
+        return None
+    if None in [q_0, q_1]:
+        return q_1 if q_0 == None else q_0
+    if not math.isclose(q_0, q_1):
+        return None
     return q_1
 
+
 def quotient(a, b):
-    if(b==0): return None if(a==0) else float('inf')
-    else: return a/b
+    if b == 0:
+        return None if (a == 0) else float("inf")
+    else:
+        return a / b
+
 
 def pointDistanceToOcclusion(point, intervals):
     [index, param] = point
-    if(isOccluded(param, intervals[index])): return 0
+    if isOccluded(param, intervals[index]):
+        return 0
     else:
-        if(sum([len(sideIntervals) for sideIntervals in intervals])==0): return 4
+        if sum([len(sideIntervals) for sideIntervals in intervals]) == 0:
+            return 4
         else:
             wrapped_intervals = wrapIntervals(index, intervals)
             [a, b] = visibleRegion(param, wrapped_intervals)
-            return min(param-a, b-param)
+            return min(param - a, b - param)
+
 
 def wrapIntervals(index, intervals):
     wrapped_intervals = []
     for i in range(-4, 5):
-        wrapped_intervals.extend(shiftIntervals(i, intervals[(i+index)%4]))
+        wrapped_intervals.extend(shiftIntervals(i, intervals[(i + index) % 4]))
     return wrapped_intervals.sort(key=leftIntervalBoundary)
 
 
 def shiftIntervals(i, intervals):
     shifted_intervals = []
     for a, b in intervals:
-        shifted_intervals.append([a-i, b-i])
+        shifted_intervals.append([a - i, b - i])
     return shifted_intervals
 
+
 def isOccluded(t, intervals):
-    for [a,b] in intervals:
-        if(a<=t and t<=b): return True
+    for [a, b] in intervals:
+        if a <= t and t <= b:
+            return True
     return False
 
+
 def visibleRegion(t, intervals):
-    lower = [inter for inter in intervals if inter[1]<t]
-    higher = [inter for inter in intervals if inter[0]>t]
-    a = -4 if len(lower)==0 else lower[-1][1]
-    b = 4 if len(higher)==0 else higher[0][0]
-    return [a,b]
+    lower = [inter for inter in intervals if inter[1] < t]
+    higher = [inter for inter in intervals if inter[0] > t]
+    a = -4 if len(lower) == 0 else lower[-1][1]
+    b = 4 if len(higher) == 0 else higher[0][0]
+    return [a, b]
 
 
 def haveDisjointBoundingBoxes(sq1, sq2):
     bb1 = boundingBox(sq1[0:4])
     bb2 = boundingBox(sq2[0:4])
     return areDisjoint(bb1, bb2)
+
 
 def boundingBox(points):
     x_coordinates = [point[0] for point in points]
@@ -1693,5 +1736,6 @@ def boundingBox(points):
 
     return [left, right, bottom, top]
 
+
 def areDisjoint(bba, bbb):
-    return bba[1]<bbb[0] or bbb[1]<bba[0] or bba[3]<bbb[2] or bbb[3]<bba[2]
+    return bba[1] < bbb[0] or bbb[1] < bba[0] or bba[3] < bbb[2] or bbb[3] < bba[2]
