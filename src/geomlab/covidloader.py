@@ -44,7 +44,7 @@ deaths_df = (
     .rename(columns=reformat_dates)
     .drop(columns=cols_to_drop)
 )
-reovered_df = (
+recovered_df = (
     pd.read_csv(recovered_url)
     .rename(columns=renamed_columns_map)
     .rename(columns=reformat_dates)
