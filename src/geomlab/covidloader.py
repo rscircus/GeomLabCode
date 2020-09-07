@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import re
 from datetime import datetime
 
@@ -107,6 +108,13 @@ deaths_df = (
     .fillna(method="bfill", axis=1)
 )
 
+recovered_df = (
+    pd.read_csv(recovered_url)
+    .rename(columns=renamed_columns_map)
+    .rename(columns=reformat_dates)
+    .fillna(method="bfill", axis=1)
+)
+
 geo_data_cols = ["country", "location", "latitude", "longitude"]
 
 geo_data_df = confirmed_cases_df[geo_data_cols]
@@ -120,19 +128,27 @@ dates_list = confirmed_cases_df.filter(
 cases_by_date = {}
 
 for date in dates_list:
-    confirmed_cases_day_df = (
-        confirmed_cases_df.filter(like=date, axis=1)
-        .rename(columns=lambda col: "confirmed_cases")
-        .astype("uint32")
-    )
-    deaths_day_df = (
-        deaths_df.filter(like=date, axis=1)
-        .rename(columns=lambda col: "deaths")
-        .astype("uint32")
-    )
 
-    cases_df = confirmed_cases_day_df.join(deaths_day_df)
-    cases_df = geo_data_df.join(cases_df)
-    cases_df = cases_df[cases_df["confirmed_cases"] > 0]
+    confirmed_cases_day_df = confirmed_cases_df[['country','location',date]].copy()
+    confirmed_cases_day_df.rename(columns = {'country':'country', date:'confirmed_cases'}, inplace = True)
+    confirmed_cases_day_df['confirmed_cases'] = pd.to_numeric(confirmed_cases_day_df['confirmed_cases'])
+
+    recovered_day_df = recovered_df[['country','location', date]].copy()
+    recovered_day_df.rename(columns = {date:'recovered'}, inplace = True)
+    recovered_day_df['recovered'] = pd.to_numeric(recovered_day_df['recovered'])
+
+    deaths_day_df = deaths_df[['country','location', date]].copy()
+    deaths_day_df.rename(columns = {'country':'country', date:'deaths'}, inplace = True)
+    deaths_day_df['deaths'] = pd.to_numeric(deaths_day_df['deaths'])
+
+    cases_df = geo_data_df.merge(confirmed_cases_day_df, how='left', on=['country','location'])
+    cases_df = cases_df.merge(recovered_day_df, how='left', on=['country','location'])
+    cases_df = cases_df.merge(deaths_day_df, how='left', on=['country','location'])
+
+    # TODO: collecting zeroes nevertheless, watch out when drawing
+    #cases_df = cases_df[cases_df["confirmed_cases"] > 0]
+
+    # TODO: This is quite dangerous and might mask other errors
+    cases_df.replace(np.nan, 0)
 
     cases_by_date[date] = cases_df
