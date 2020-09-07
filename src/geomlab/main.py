@@ -126,13 +126,15 @@ class SymbolicMapsPage(tk.Frame):
         self.pie_sets = {}
         self.pie_piece_sets = {}
         self.data_sets = {}
-        self.square_set= {}
+        self.square_sets= {}
         self.circles = []
         self.pies = []
         self.piePieces = []
+        self.squares=[]
         self.circlesToDraw = []  # for nested disks different structure
         self.numberOfFeatures = 0  # numberOffeatures eg, rec,dead,rest equal 3
         self.angles = []
+        
         
         #geomDataGeneration (should be adapted by the user)
         self.maximalSize=50
@@ -212,6 +214,7 @@ class SymbolicMapsPage(tk.Frame):
         self.piePieces = self.pie_piece_sets[self.data.current()]
         self.pies = self.pie_sets[self.data.current()]
         self.angles = [0] * len(self.pies)
+        self.squares=self.square_sets[self.data.current()]
 
         algo = self.algorithm.current()
         # "Painter", #0
@@ -277,12 +280,14 @@ class SymbolicMapsPage(tk.Frame):
                 self.circles
             )
         elif algo == 8:
+            self.squares,m1,m2,m3=st.algorithmSquaresStacking(self.squares)         
+            """
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
                 self.circles, "weighted"
             )
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
-            )
+            )"""
         else:
             logging.critical("You shouldn't see me.")
 
@@ -303,6 +308,9 @@ class SymbolicMapsPage(tk.Frame):
         self.draw_subcircle_stacking()
         if algo == 2:
             self.draw_pie_stacking()
+            
+        if algo == 8:
+            self.drawSquareSolution()
 
     def draw_circles(self):
 
@@ -313,6 +321,74 @@ class SymbolicMapsPage(tk.Frame):
     def from_rgb(self, rgb):
         """translates an rgb tuple of int to a tkinter friendly color code"""
         return "#%02x%02x%02x" % rgb
+
+    def drawSquareSolution(self):
+        for i in range(0,len(self.squares)):
+            self.drawSquare(self.squares[i])
+
+    def drawSquare(self,square): 
+        
+        color1PIL="#FF9994"
+        color2PIL="#94FF99"
+        color3PIL="#A0A0A0"
+                
+        tmp=[0,0]
+        tmp[1]=square[4][0]+(square[3][0]-square[0][0])
+        tmp[0]=square[4][1]+(square[3][1]-square[0][1]) 
+        square1_vertices = (
+            (square[0][1], square[0][0]),
+            (square[4][1],square[4][0]),
+            (tmp[0], tmp[1]),
+            (square[3][1], square[3][0])
+            )
+    
+        tmp2=[0,0]
+        tmp2[1]=square[4][0]+(square[5][0]-square[1][0])
+        tmp2[0]=square[4][1]+(square[5][1]-square[1][1])
+        square2_vertices = (
+            (square[4][1], square[4][0]),
+            (square[1][1],square[1][0]),
+            (square[5][1], square[5][0]),
+            (tmp2[0], tmp2[1])
+            )
+    
+        square3_vertices = (
+            (tmp2[0], tmp2[1]),
+            (square[5][1],square[5][0]),
+            (square[2][1], square[2][0]),
+            (tmp[0], tmp[1])
+            )
+        
+        color1=""
+        color2=""
+        color3=""
+        if(square[4][2]=="dead"):
+            color1=color3PIL
+        else:
+            if(square[4][2]=="rec"):
+                color1=color2PIL
+            else:
+                color1=color1PIL
+            
+        if(square[5][2]=="dead"):
+            color2=color3PIL
+        else:
+            if(square[5][2]=="rec"):
+                color2=color2PIL
+            else:
+                color2=color1PIL
+        if(square[7]=="dead"):
+            color3=color3PIL
+        else:
+            if(square[7]=="rec"):
+                color3=color2PIL
+            else:
+                color3=color1PIL
+                
+        self.canvas.create_polygon(square1_vertices, outline="#000",fill=color1, width=2) 
+        self.canvas.create_polygon(square2_vertices, outline="#000",fill=color2, width=2)
+        self.canvas.create_polygon(square3_vertices, outline="#000",fill=color3, width=2)
+        
 
     def draw_subcircle_stacking_3Features(self):
         counter = 1
@@ -541,7 +617,7 @@ class SymbolicMapsPage(tk.Frame):
             "maxMinMinK Stacking (relative)",  # 5
             "maxMinSumK Stacking (absolute)",  # 6
             "maxMinSumK Stacking (relative)",  # 7
-            "maxMinSumK Stacking (weighted)",  # 8
+            "squares)",  # 8
         )
         self.algorithm.current(0)
         self.algorithm.grid(column=1, row=1)
@@ -798,7 +874,7 @@ class SymbolicMapsPage(tk.Frame):
             self.data_sets[index] = circles
             self.pie_piece_sets[index] = piePieces
             self.pie_sets[index] = pies
-            self.square_set[index]=squares
+            self.square_sets[index]=squares
       
         
             
