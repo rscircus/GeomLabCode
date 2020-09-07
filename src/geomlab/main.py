@@ -603,8 +603,8 @@ class SymbolicMapsPage(tk.Frame):
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.data.bind("<<Configure>>", on_combo_configure)
 
-        self.datalabel = tk.Label(self.frame, text="Choose algorithm :")
-        self.datalabel.grid(column=0, row=1)
+        self.algolabel = tk.Label(self.frame, text="Choose algorithm :")
+        self.algolabel.grid(column=0, row=1)
 
         self.algorithm = ttk.Combobox(self.frame, width=50)
         self.algorithm["values"] = (
