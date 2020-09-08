@@ -663,12 +663,6 @@ class SymbolicMapsPage(tk.Frame):
             y = int(y * h)
             return x, y
 
-        def calculatePointOnCircle(c, angle):
-            """Return pos in interval (0,1) on circumference of circle."""
-            cosangle = np.cos(angle)
-            sinangle = np.sin(angle)
-            return cosangle * c[2] + c[0], sinangle * c[2] + c[1]
-
         def changeSructureFromPanda(df):
             myData = []
 
