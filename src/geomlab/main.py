@@ -626,7 +626,7 @@ class SymbolicMapsPage(tk.Frame):
             "Pies",  # 2
             "Squares)",  # 3
         )
-        self.symbolic_maps.current(0)
+        self.symbolic_maps.current(1) # Concentric circles as default
         self.symbolic_maps.grid(column=1, row=2)
         self.symbolic_maps.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.symbolic_maps.bind("<<Configure>>", on_combo_configure)
