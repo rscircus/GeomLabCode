@@ -586,12 +586,11 @@ class SymbolicMapsPage(tk.Frame):
         self.datalabel.grid(column=0, row=0)
 
         self.data = ttk.Combobox(self.frame, width=50)
-        philipp_sep = ("test", "May", "June", "Random", "---")
 
         # Append all available covid data
-        self.data["values"] = tuple(list(philipp_sep) + cl.dates_list)
-
-        self.data.current(1)
+        self.data["values"] = tuple(cl.dates_list)
+        self.data.current(193) # 193 is a good dataset
+        print(self.data.current())
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.data.bind("<<Configure>>", on_combo_configure)
@@ -639,9 +638,6 @@ class SymbolicMapsPage(tk.Frame):
         self.circles = []
         self.pie_piece_sets = {}
         self.pies = []
-        self._maps[0] = np.load("data/testData.npy", allow_pickle=True)
-        self._maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
-        self._maps[2] = np.load("data/testDataJuni.npy", allow_pickle=True)
 
         # Geometry by background
         self.world_image = tk.PhotoImage(file=r"assets/test4.png")
@@ -672,18 +668,6 @@ class SymbolicMapsPage(tk.Frame):
             cosangle = np.cos(angle)
             sinangle = np.sin(angle)
             return cosangle * c[2] + c[0], sinangle * c[2] + c[1]
-
-        def changeStructure(dataSet):
-            my_data = []
-            for case in dataSet:
-                tmp = []
-                for slot in case:
-                    if type(slot) == int:
-                        slot = slot + 1
-                    tmp.append(slot)
-                my_data.append(tmp)
-
-            return my_data
 
         def changeSructureFromPanda(df):
             myData = []
@@ -892,25 +876,11 @@ class SymbolicMapsPage(tk.Frame):
         # structure: loc,loc,lat,long,conf,dead,recovered
 
         # Prepare npy or create circles
-        # TODO: Talk to Philip about this
         for i in range(3):
 
             # flush previous set of circles
-            circles = []
-            pies = []
-            piePieces = []
             my_data = []
-            maximum_second = -1
-            maximum = -1
-            maximum_2 = -1
 
-            my_worldmap = self._maps[i]
-
-            my_data = changeStructure(my_worldmap)
-            generateGeomData(my_data, i)
-
-            # append separator (empty list)
-            self.data_sets[3] = list()
             cur_data_set_idx = len(self.data_sets)
 
             # append downloaded datasets
@@ -922,19 +892,6 @@ class SymbolicMapsPage(tk.Frame):
                 cur_data_set_idx = len(self.data_sets)
 
             len(self.pie_piece_sets)
-
-            # Generate random set
-            circles = []
-            MAX_RADIUS = 100
-            for _ in range(100):
-                x = random.randint(0, self.screen_width - MAX_RADIUS)
-                y = random.randint(0, self.screen_height - MAX_RADIUS)
-                r = random.randint(1, MAX_RADIUS)
-                circles.append([y, x, r])  # its important that its y,x i'm sorry :(
-
-            self.data_sets[3] = circles
-            logging.debug(self.circles)
-
 
 class PaintingProgramPage(tk.Frame):
     def __init__(self, parent, controller):
