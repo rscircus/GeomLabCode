@@ -254,8 +254,8 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                tk.END, st.utilitysHawaiian(self.circles, -1)
-            )  # TODO: number of nestings? like 2?
+                tk.END, st.utilitysHawaiian(self.circles, 3)
+            ) 
 
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
