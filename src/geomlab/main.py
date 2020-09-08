@@ -575,7 +575,7 @@ class SymbolicMapsPage(tk.Frame):
         )
         self.timer_running_label.grid(column=2, row=0, sticky=tk.W + tk.E)
 
-        # Add objective value display
+        # Add cost/objective value display
         self.objectivelabel = tk.Label(self.frame, text="Objective...", fg="red")
         self.objectivelabel.grid(column=3, row=1, sticky=tk.W + tk.E)
 
@@ -588,7 +588,7 @@ class SymbolicMapsPage(tk.Frame):
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
         self.canvas.grid(column=0, row=1, sticky="nsew")
 
-        # Combobox (to select algo, input data, cost function)
+        # Input data
         self.datalabel = tk.Label(self.frame, text="Choose input data: ")
         self.datalabel.grid(column=0, row=0)
 
@@ -603,6 +603,7 @@ class SymbolicMapsPage(tk.Frame):
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.data.bind("<<Configure>>", on_combo_configure)
 
+        # Algorithm
         self.algolabel = tk.Label(self.frame, text="Choose algorithm :")
         self.algolabel.grid(column=0, row=1)
 
@@ -622,6 +623,21 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm.grid(column=1, row=1)
         self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.algorithm.bind("<<Configure>>", on_combo_configure)
+
+        # Symbolic Maps selector
+        self.symbolic_mapslabel = tk.Label(self.frame, text="Choose symbolic maps: ")
+        self.symbolic_mapslabel.grid(column=0, row=2)
+        self.symbolic_maps = ttk.Combobox(self.frame, width=50)
+        self.symbolic_maps["values"] = (
+            "Plain circles",  # 0
+            "Concentric circles",  # 1
+            "Pies",  # 2
+            "Squares)",  # 3
+        )
+        self.symbolic_maps.current(0)
+        self.symbolic_maps.grid(column=1, row=2)
+        self.symbolic_maps.bind("<<ComboboxSelected>>", self.data_algo_change)
+        self.symbolic_maps.bind("<<Configure>>", on_combo_configure)
 
     # TODO: split this into {initialize, flush}
 
