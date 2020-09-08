@@ -247,7 +247,7 @@ class SymbolicMapsPage(tk.Frame):
                 self.pies, self.piePieces
             )
             self.objective_list.insert(
-                tk.END, st.utilitysPieCharts(self.circles.self.piePieces, self.angles)
+                tk.END, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
             )
 
         elif algo == 3:
