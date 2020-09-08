@@ -609,7 +609,7 @@ class SymbolicMapsPage(tk.Frame):
             "maxMinMinK Stacking (relative)",  # 5
             "maxMinSumK Stacking (absolute)",  # 6
             "maxMinSumK Stacking (relative)",  # 7
-            "squares)",  # 8
+            "Squares",  # 8
         )
         self.algorithm.current(0)
         self.algorithm.grid(column=1, row=1)
