@@ -2,6 +2,8 @@ import matplotlib
 import random
 import logging
 import datetime
+import numpy as np
+import math
 
 matplotlib.use("TkAgg")
 
@@ -11,11 +13,6 @@ from matplotlib.figure import Figure
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as tkfont
-
-# Philipp's deps:
-import numpy as np
-import cv2
-import math
 
 # Import covid loader and most recent covid data
 from . import covidloader as cl
@@ -140,17 +137,13 @@ class SymbolicMapsPage(tk.Frame):
         self.scalingFactor = 200
         self.lowerBoundCases = 5000
 
-        # Code
-        self.initialize_data()
-        self.prepare_data()
         self.timer_running = False
         self.counter = 123456
         self.timer_start_timestamp = datetime.datetime.now()
 
-        # Draw background
-        # TODO can I reuse cv2 here?
-        self.world_image = tk.PhotoImage(file=r"assets/test4.png")
-        self.canvas.create_image(0, 0, image=self.world_image, anchor="nw")
+        # Prepare inputs
+        self.initialize_data()
+        self.prepare_data()
 
         # Execute symbolic algo
         self.apply_algorithm()
@@ -650,14 +643,16 @@ class SymbolicMapsPage(tk.Frame):
         self._maps[1] = np.load("data/testDataEndeMai.npy", allow_pickle=True)
         self._maps[2] = np.load("data/testDataJuni.npy", allow_pickle=True)
 
-        self._worldmap = cv2.imread(
-            "assets/test4.png"
-        )  # Todo paint worldmap in background
-        self._screen_height = len(self._worldmap)
-        self._screen_width = len(self._worldmap[0])
+        # Geometry by background
+        self.world_image = tk.PhotoImage(file=r"assets/test4.png")
+        self.canvas.create_image(0, 0, image=self.world_image, anchor="nw")
 
-        logging.info(self._screen_height)
-        logging.info(self._screen_width)
+        self.screen_height = self.world_image.height()
+        self.screen_width = self.world_image.width()
+
+        logging.info(self.screen_height)
+        logging.info(self.screen_width)
+
 
     # This can be reworked but is held compatible to Philipp's
     # code due to early development state.
@@ -836,7 +831,7 @@ class SymbolicMapsPage(tk.Frame):
                 lat = case[2]
                 long = case[3]
                 x, y = latLongToPoint(
-                    lat, long, self._screen_height, self._screen_width
+                    lat, long, self.screen_height, self.screen_width
                 )
 
                 # making sure data makes sense
@@ -880,7 +875,7 @@ class SymbolicMapsPage(tk.Frame):
 
                 # squares
                 tmpSquare = createOneSquare(
-                    r, case, self._screen_height, self._screen_width
+                    r, case, self.screen_height, self.screen_width
                 )
                 squares.append(tmpSquare)
 
@@ -932,8 +927,8 @@ class SymbolicMapsPage(tk.Frame):
             circles = []
             MAX_RADIUS = 100
             for _ in range(100):
-                x = random.randint(0, self._screen_width - MAX_RADIUS)
-                y = random.randint(0, self._screen_height - MAX_RADIUS)
+                x = random.randint(0, self.screen_width - MAX_RADIUS)
+                y = random.randint(0, self.screen_height - MAX_RADIUS)
                 r = random.randint(1, MAX_RADIUS)
                 circles.append([y, x, r])  # its important that its y,x i'm sorry :(
 
