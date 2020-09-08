@@ -229,18 +229,25 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
+            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+
         elif algo == 1:
             random.shuffle(self.circles)
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
+            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+
         elif algo == 2:
             self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
                 self.pies, self.piePieces
             )
+            self.objective_list.insert(tk.END, st.utilitysPieCharts(self.circles.self.piePieces, self.angles))
+
         elif algo == 3:
             self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
+            self.objective_list.insert(tk.END, st.utilitysHawaiian(self.circles, -1)) # TODO: number of nestings? like 2?
 
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
@@ -249,6 +256,8 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
+            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+
         elif algo == 5:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
                 self.circles, "relative"
@@ -256,6 +265,8 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
+            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+
         elif algo == 6:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
                 self.circles, "relative"
@@ -263,6 +274,8 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
+            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+
         elif algo == 7:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
                 self.circles, "relative"
@@ -270,8 +283,12 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
+            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+
         elif algo == 8:
             self.squares, m1, m2, m3 = st.algorithmSquaresStacking(self.squares)
+            # TODO square utility is missing
+
 
         else:
             logging.critical("You shouldn't see me.")
@@ -280,14 +297,19 @@ class SymbolicMapsPage(tk.Frame):
         self.timer_stop()
 
         # Objective update
-        if objective_value != -1:
-            self.objective_running_label["text"] = "Objective"
-            self.objectivelabel["text"] = str(objective_value)
-            self.objective_running_label["bg"] = "green"
-        else:
-            self.objective_running_label["bg"] = "red"
-            self.objective_running_label["text"] = "No objective"
-            self.objectivelabel["text"] = "N/A"
+        # TODO: Leaving that as this has to adapt after the objective_list intro
+        #if objective_value != -1:
+        self.objective_running_label["text"] = "Objective"
+        self.objectivelabel["text"] = str(objective_value)
+        self.objective_running_label["bg"] = "green"
+#        else:
+#            self.objective_running_label["bg"] = "red"
+#            self.objective_running_label["text"] = "Objective"
+#            self.objectivelabel["text"] = "N/A"
+
+        # Utilities
+        #self.objective_list.insert(tk.END, "sth")
+
 
         # Draw
 
@@ -576,6 +598,17 @@ class SymbolicMapsPage(tk.Frame):
             self.frame, text="No objective", bg="red", fg="white"
         )
         self.objective_running_label.grid(column=3, row=0, sticky=tk.W + tk.E)
+
+        # Simply display all objectives there are
+        self.objective_list = tk.Listbox(self.frame)
+        self.olist_scrollbar = tk.Scrollbar(self.frame)
+
+        self.objective_list.config(yscrollcommand = self.olist_scrollbar.set, relief=tk.SUNKEN, border=2, height=3, width=200)
+        self.olist_scrollbar.config(command = self.objective_list.yview)
+        self.olist_scrollbar.grid(row=0, column=5, sticky='ns', rowspan=3)
+        self.objective_list.grid(row=0, column=4, sticky='w', rowspan=3)
+
+        self.objective_list.insert(tk.END, "minSum relPerc absPerc minRelNonZero minAbsNonZero coveredCircles")
 
         # Add canvas
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
