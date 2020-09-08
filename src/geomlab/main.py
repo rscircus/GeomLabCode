@@ -607,7 +607,7 @@ class SymbolicMapsPage(tk.Frame):
         self.objective_list = tk.Listbox(self.frame)
         self.olist_scrollbar = tk.Scrollbar(self.frame)
 
-        self.objective_list.config(yscrollcommand = self.olist_scrollbar.set, relief=tk.SUNKEN, border=2, height=3, width=200)
+        self.objective_list.config(yscrollcommand = self.olist_scrollbar.set, relief=tk.SUNKEN, border=2, height=3, width=115)
         self.olist_scrollbar.config(command = self.objective_list.yview)
         self.olist_scrollbar.grid(row=0, column=5, sticky='ns', rowspan=3)
         self.objective_list.grid(row=0, column=4, sticky='w', rowspan=3)
