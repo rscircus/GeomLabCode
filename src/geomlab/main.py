@@ -663,7 +663,7 @@ class SymbolicMapsPage(tk.Frame):
             y = int(y * h)
             return x, y
 
-        def changeSructureFromPanda(df):
+        def changeStructureFromPanda(df):
             myData = []
 
             for lat, lon, conf, dead in zip(
@@ -881,7 +881,7 @@ class SymbolicMapsPage(tk.Frame):
             for _, df in cl.cases_by_date.items():
 
                 # generate geomData
-                my_data = changeSructureFromPanda(df)
+                my_data = changeStructureFromPanda(df)
                 generateGeomData(my_data, cur_data_set_idx)
                 cur_data_set_idx = len(self.data_sets)
 
