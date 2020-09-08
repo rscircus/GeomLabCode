@@ -859,7 +859,7 @@ class SymbolicMapsPage(tk.Frame):
 
             # TODO: Catch errors on data acquisition level?
             if len(circles) == 0:
-                print("Error: circles array is empty for this 'myData'-dataset...")
+                print(f"Data quality issues: Circles array is empty for dataset no. {index} ...")
                 return
 
             self.data_sets[index] = circles
