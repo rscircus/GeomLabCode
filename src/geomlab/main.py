@@ -308,14 +308,14 @@ class SymbolicMapsPage(tk.Frame):
 
         # Objective update
         # TODO: Leaving that as this has to adapt after the objective_list intro
-        # if objective_value != -1:
-        self.objective_running_label["text"] = "Objective"
-        #self.objectivelabel["text"] = str(objective_value)
-        self.objective_running_label["bg"] = "green"
-        #        else:
-        #            self.objective_running_label["bg"] = "red"
-        #            self.objective_running_label["text"] = "Objective"
-        #            self.objectivelabel["text"] = "N/A"
+        if objective_value != -1:
+            self.objective_running_label["text"] = "Num. objective"
+            self.objectivelabel["text"] = str(objective_value)
+            self.objective_running_label["bg"] = "green"
+        else:
+            self.objective_running_label["bg"] = "red"
+            self.objective_running_label["text"] = "Objective"
+            self.objectivelabel["text"] = "N/A"
 
         # Utilities
         # self.objective_list.insert(1, "sth")
