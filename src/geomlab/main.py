@@ -208,6 +208,7 @@ class SymbolicMapsPage(tk.Frame):
         self.squares = self.square_sets[self.data.current()]
 
         algo = self.algorithm.current()
+        # TODO:
         # "Painter", #0
         # "Random", #1
         # "Pie stacking", #2
@@ -228,34 +229,36 @@ class SymbolicMapsPage(tk.Frame):
         # TODO: Assuming objective values are positive
         objective_value = -1
 
+        self.objective_list.delete(1)
+
         if algo == 0:
             self.circles = st.algorithmNestedDisksPainter(self.circles)
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
-            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 1:
             random.shuffle(self.circles)
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
-            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 2:
             self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
                 self.pies, self.piePieces
             )
             self.objective_list.insert(
-                tk.END, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
+                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
             )
 
         elif algo == 3:
             self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                tk.END, st.utilitysHawaiian(self.circles, 3)
-            ) 
+                1, st.utilitysHawaiian(self.circles, 3)
+            )
 
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
@@ -264,7 +267,7 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
-            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 5:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
@@ -273,7 +276,7 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
-            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 6:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
@@ -282,7 +285,7 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
-            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 7:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
@@ -291,14 +294,14 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
-            self.objective_list.insert(tk.END, st.utilitysNestedDisks(self.circles))
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 8:
             self.squares, m1, m2, m3 = st.algorithmSquaresStacking(self.squares)
             # TODO square utility is missing
 
         else:
-            logging.critical("You shouldn't see me.")
+            logging.critical("Algorithm not present. You shouldn't see me.")
 
         # Timer end
         self.timer_stop()
@@ -307,7 +310,7 @@ class SymbolicMapsPage(tk.Frame):
         # TODO: Leaving that as this has to adapt after the objective_list intro
         # if objective_value != -1:
         self.objective_running_label["text"] = "Objective"
-        self.objectivelabel["text"] = str(objective_value)
+        #self.objectivelabel["text"] = str(objective_value)
         self.objective_running_label["bg"] = "green"
         #        else:
         #            self.objective_running_label["bg"] = "red"
@@ -315,7 +318,7 @@ class SymbolicMapsPage(tk.Frame):
         #            self.objectivelabel["text"] = "N/A"
 
         # Utilities
-        # self.objective_list.insert(tk.END, "sth")
+        # self.objective_list.insert(1, "sth")
 
         # Draw
 
@@ -622,6 +625,9 @@ class SymbolicMapsPage(tk.Frame):
 
         self.objective_list.insert(
             tk.END, "minSum relPerc absPerc minRelNonZero minAbsNonZero coveredCircles"
+        )
+        self.objective_list.insert(
+            tk.END, "--- no run, yet ---"
         )
 
         # Add canvas
