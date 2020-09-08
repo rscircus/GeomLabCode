@@ -319,7 +319,7 @@ def caculateOneAnglePie(c, piePiecesC, N):
 # in the stacking returns the index of the circle in the list and the angle
 # of the first devidingline
 def calculateLowestPie(circles, piePieces):
-    
+
     locPiePieces = copy.deepcopy(piePieces)
 
     hasFound = False
@@ -1222,28 +1222,24 @@ def rotateTheSquares(squares, angles):
     return squares
 
 
-
 def heuristicRotationForStacking(squares):
     localCircles, localPiePieces, baseAngles = preparePies(squares)
     angle = 0
     resultAngles = []
-    for i in range(0,len(squares)):
+    for i in range(0, len(squares)):
         angle, value = caculateOneAnglePie(
-            localCircles[i], localPiePieces[i], localCircles[i+1:]
+            localCircles[i], localPiePieces[i], localCircles[i + 1 :]
         )
-        
-        if(angle==None):
-            angle=0
+
+        if angle == None:
+            angle = 0
 
         resultAngles.append(-baseAngles[i] + np.pi / 2 - angle)
-        
+
     # rotates Squares such that the heuristic is maximized
     squares = rotateTheSquares(squares, resultAngles)
 
     return squares
-
-    
-    
 
 
 def algorithmSquaresStacking(squares):
@@ -1255,9 +1251,9 @@ def algorithmSquaresStacking(squares):
     resultAnglesForPies = []
     resultOrderForPies = []
     resultPiecesForPies = []
-      
+
     while len(localCircles) > 0:
-        
+
         # calculate next glyph
         ind, angle = calculateLowestPie(localCircles, localPiePieces)
 
@@ -1273,8 +1269,6 @@ def algorithmSquaresStacking(squares):
         resultOrderForPies.append(tmpCircle)
         resultPiecesForPies.append(tmpPiece)
 
-
-    
     # rotates Squares such that the heuristic is maximized
     resultOrder = rotateTheSquares(resultOrder, resultAngles)
 

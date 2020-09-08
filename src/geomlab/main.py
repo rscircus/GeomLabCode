@@ -246,12 +246,16 @@ class SymbolicMapsPage(tk.Frame):
             self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
                 self.pies, self.piePieces
             )
-            self.objective_list.insert(tk.END, st.utilitysPieCharts(self.circles.self.piePieces, self.angles))
+            self.objective_list.insert(
+                tk.END, st.utilitysPieCharts(self.circles.self.piePieces, self.angles)
+            )
 
         elif algo == 3:
             self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
-            self.objective_list.insert(tk.END, st.utilitysHawaiian(self.circles, -1)) # TODO: number of nestings? like 2?
+            self.objective_list.insert(
+                tk.END, st.utilitysHawaiian(self.circles, -1)
+            )  # TODO: number of nestings? like 2?
 
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
@@ -293,7 +297,6 @@ class SymbolicMapsPage(tk.Frame):
             self.squares, m1, m2, m3 = st.algorithmSquaresStacking(self.squares)
             # TODO square utility is missing
 
-
         else:
             logging.critical("You shouldn't see me.")
 
@@ -302,18 +305,17 @@ class SymbolicMapsPage(tk.Frame):
 
         # Objective update
         # TODO: Leaving that as this has to adapt after the objective_list intro
-        #if objective_value != -1:
+        # if objective_value != -1:
         self.objective_running_label["text"] = "Objective"
         self.objectivelabel["text"] = str(objective_value)
         self.objective_running_label["bg"] = "green"
-#        else:
-#            self.objective_running_label["bg"] = "red"
-#            self.objective_running_label["text"] = "Objective"
-#            self.objectivelabel["text"] = "N/A"
+        #        else:
+        #            self.objective_running_label["bg"] = "red"
+        #            self.objective_running_label["text"] = "Objective"
+        #            self.objectivelabel["text"] = "N/A"
 
         # Utilities
-        #self.objective_list.insert(tk.END, "sth")
-
+        # self.objective_list.insert(tk.END, "sth")
 
         # Draw
 
@@ -607,12 +609,20 @@ class SymbolicMapsPage(tk.Frame):
         self.objective_list = tk.Listbox(self.frame)
         self.olist_scrollbar = tk.Scrollbar(self.frame)
 
-        self.objective_list.config(yscrollcommand = self.olist_scrollbar.set, relief=tk.SUNKEN, border=2, height=3, width=115)
-        self.olist_scrollbar.config(command = self.objective_list.yview)
-        self.olist_scrollbar.grid(row=0, column=5, sticky='ns', rowspan=3)
-        self.objective_list.grid(row=0, column=4, sticky='w', rowspan=3)
+        self.objective_list.config(
+            yscrollcommand=self.olist_scrollbar.set,
+            relief=tk.SUNKEN,
+            border=2,
+            height=3,
+            width=115,
+        )
+        self.olist_scrollbar.config(command=self.objective_list.yview)
+        self.olist_scrollbar.grid(row=0, column=5, sticky="ns", rowspan=3)
+        self.objective_list.grid(row=0, column=4, sticky="w", rowspan=3)
 
-        self.objective_list.insert(tk.END, "minSum relPerc absPerc minRelNonZero minAbsNonZero coveredCircles")
+        self.objective_list.insert(
+            tk.END, "minSum relPerc absPerc minRelNonZero minAbsNonZero coveredCircles"
+        )
 
         # Add canvas
         self.canvas = tk.Canvas(self, bg="white", width=1800, height=900)
@@ -626,7 +636,7 @@ class SymbolicMapsPage(tk.Frame):
 
         # Append all available covid data
         self.data["values"] = tuple(cl.dates_list)
-        self.data.current(193) # 193 is a good dataset
+        self.data.current(193)  # 193 is a good dataset
         print(self.data.current())
         self.data.grid(column=1, row=0)
         self.data.bind("<<ComboboxSelected>>", self.data_algo_change)
@@ -663,7 +673,7 @@ class SymbolicMapsPage(tk.Frame):
             "Pies",  # 2
             "Squares)",  # 3
         )
-        self.symbolic_maps.current(1) # Concentric circles as default
+        self.symbolic_maps.current(1)  # Concentric circles as default
         self.symbolic_maps.grid(column=1, row=2)
         self.symbolic_maps.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.symbolic_maps.bind("<<Configure>>", on_combo_configure)
@@ -685,7 +695,6 @@ class SymbolicMapsPage(tk.Frame):
 
         logging.info(self.screen_height)
         logging.info(self.screen_width)
-
 
     # This can be reworked but is held compatible to Philipp's
     # code due to early development state.
@@ -845,9 +854,7 @@ class SymbolicMapsPage(tk.Frame):
             for case in myData:
                 lat = case[2]
                 long = case[3]
-                x, y = latLongToPoint(
-                    lat, long, self.screen_height, self.screen_width
-                )
+                x, y = latLongToPoint(lat, long, self.screen_height, self.screen_width)
 
                 # making sure data makes sense
                 if case[4] < case[6]:
@@ -896,7 +903,9 @@ class SymbolicMapsPage(tk.Frame):
 
             # TODO: Catch errors on data acquisition level?
             if len(circles) == 0:
-                print(f"Data quality issues: Circles array is empty for dataset no. {index} ...")
+                print(
+                    f"Data quality issues: Circles array is empty for dataset no. {index} ..."
+                )
                 return
 
             self.data_sets[index] = circles
@@ -923,6 +932,7 @@ class SymbolicMapsPage(tk.Frame):
                 cur_data_set_idx = len(self.data_sets)
 
             len(self.pie_piece_sets)
+
 
 class PaintingProgramPage(tk.Frame):
     def __init__(self, parent, controller):

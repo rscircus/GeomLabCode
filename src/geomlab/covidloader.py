@@ -18,6 +18,7 @@ def reformat_dates(col_name: str) -> str:
     except ValueError:
         return col_name
 
+
 print()
 print("Downloading most recent COVID-19 data...")
 print()
