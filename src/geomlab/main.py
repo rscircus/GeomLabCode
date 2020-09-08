@@ -59,7 +59,7 @@ class GeomLabApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         # Configure self
-        self.geometry("1800x868")
+        self.geometry("1810x2000")
         self.title("Symbolic Maps")
 
         # Menu
