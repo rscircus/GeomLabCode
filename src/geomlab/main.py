@@ -311,10 +311,48 @@ class SymbolicMapsPage(tk.Frame):
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
+        elif algo == 8:
+            self.circlesToDraw = st.algorithmHawaiianRandom(self.circles)
+            self.numberOfFeatures = len(self.circles[0]) - 2
+            self.objective_list.insert(
+                1, st.utilitysHawaiian(self.circles, 3)
+            )
+        
+        elif algo == 9:
+            self.circlesToDraw = st.algorithmHawaiianLeftToRight(self.circles)
+            self.numberOfFeatures = len(self.circles[0]) - 2
+            self.objective_list.insert(
+                1, st.utilitysHawaiian(self.circles, 3)
+            )
+        elif algo == 10:
+            self.circlesToDraw = st.algorithmHawaiianRightToLeft(self.circles)
+            self.numberOfFeatures = len(self.circles[0]) - 2
+            self.objective_list.insert(
+                1, st.utilitysHawaiian(self.circles, 3)
+            )
+        
+        elif algo == 11:
+            self.circlesToDraw = st.algorithmHawaiianPainter(self.circles)
+            self.numberOfFeatures = len(self.circles[0]) - 2
+            self.objective_list.insert(
+                1, st.utilitysHawaiian(self.circles, 3)
+            )
+            
+        elif algo == 12:
+            self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
+            self.numberOfFeatures = len(self.circles[0]) - 2
+            self.objective_list.insert(
+                1, st.utilitysHawaiian(self.circles, 3)
+            )
+            
+
+            
         else:
             logging.critical("Algorithm not present. You shouldn't see me.")
             
-            
+        
+        
+        
         
         """
         elif algo == 2:
@@ -392,7 +430,7 @@ class SymbolicMapsPage(tk.Frame):
 
         # Draw
 
-        if algo in range(0, 8):
+        if algo in range(0, 13):
             self.draw_subcircle_stacking()
         """if algo == 2:
             self.draw_pie_stacking()
