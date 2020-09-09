@@ -915,11 +915,10 @@ def algorithmPieChartsRightToLeft(pies, piepieces):
 
 
 def formatChangeNestedDisks(circles):
+    
     n = len(circles[0]) - 2
     result = []
-
     for c in circles:
-
         for i in range(2, len(c)):
             result.append([c[0], c[1], c[i]])
 

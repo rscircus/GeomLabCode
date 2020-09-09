@@ -222,6 +222,30 @@ class SymbolicMapsPage(tk.Frame):
         # "random rotation painter square Stacking", #10
         # "random square Stacking", #11
         # "random rotation random square Stacking", #12
+        
+        
+        
+        """self.algorithm["values"] = (
+            "centered disks | random",  # 0
+            "centered disks | LeftToRight",  # 1
+            "centered disks | RightToLeft",  # 2
+            "centered disks | Painter",  # 3
+            "centered disks | MinMin-Stacking (abs)",  # 4
+            "centered disks | MinMin-Stacking (rel)",  # 5
+            "centered disks | MinSum-Stacking (abs)",  # 6
+            "centered disks | MinSum-Stacking (rel)",  # 7
+            "hawaiian disks | random",  # 8
+            "hawaiian disks | LeftToRight",  # 9
+            "hawaiian disks | RightToLeft",  # 10
+            "hawaiian disks | Painter",  # 11
+            "hawaiian disks | our Stacking",  # 12
+            "pie charts | random",  # 13
+            "pie charts | LeftToRight",  # 14
+            "pie charts | RightToLeft",  # 15
+            "pie charts | Painter",  # 16
+            "pie charts | our Stacking",  # 17
+            
+        )"""
 
         # Timer start
         self.timer_start()
@@ -232,19 +256,67 @@ class SymbolicMapsPage(tk.Frame):
         self.objective_list.delete(1)
 
         if algo == 0:
-            self.circles = st.algorithmNestedDisksPainter(self.circles)
+            self.circles = st.algorithmNestedDisksRandom(self.circles)
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 1:
-            random.shuffle(self.circles)
+            self.circles = st.algorithmNestedDisksLeftToRight(self.circles)
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
+        
+        elif algo == 2:
+            self.circles = st.algorithmNestedDisksRightToLeft(self.circles)
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
+        
+        elif algo == 3:
+            self.circles = st.algorithmNestedDisksPainter(self.circles)
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
+       
+        elif algo == 4:
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles,"absolute")
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
+        
+        elif algo == 5:
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles,"relative")
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
+        
+        elif algo == 6:
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles,"absolute")
+            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+                self.circles
+            )
+            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
+       
+        elif algo == 7:
+            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles,"relative")
             self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
+        else:
+            logging.critical("Algorithm not present. You shouldn't see me.")
+            
+            
+        
+        """
         elif algo == 2:
             self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
                 self.pies, self.piePieces
@@ -298,10 +370,8 @@ class SymbolicMapsPage(tk.Frame):
 
         elif algo == 8:
             self.squares, m1, m2, m3 = st.algorithmSquaresStacking(self.squares)
-            # TODO square utility is missing
+            # TODO square utility is missing"""
 
-        else:
-            logging.critical("Algorithm not present. You shouldn't see me.")
 
         # Timer end
         self.timer_stop()
@@ -322,13 +392,13 @@ class SymbolicMapsPage(tk.Frame):
 
         # Draw
 
-        if not algo in [2, 8]:
+        if algo in range(0, 8):
             self.draw_subcircle_stacking()
-        if algo == 2:
+        """if algo == 2:
             self.draw_pie_stacking()
 
         if algo == 8:
-            self.drawSquareSolution()
+            self.drawSquareSolution()"""
 
     def draw_circles(self):
 
@@ -654,15 +724,25 @@ class SymbolicMapsPage(tk.Frame):
 
         self.algorithm = ttk.Combobox(self.frame, width=50)
         self.algorithm["values"] = (
-            "Painter",  # 0
-            "Random",  # 1
-            "Pie stacking",  # 2
-            "hawaiian stacking",  # 3
-            "maxMinMinK Stacking (absolute)",  # 4
-            "maxMinMinK Stacking (relative)",  # 5
-            "maxMinSumK Stacking (absolute)",  # 6
-            "maxMinSumK Stacking (relative)",  # 7
-            "Squares",  # 8
+            "centered disks | random",  # 0
+            "centered disks | LeftToRight",  # 1
+            "centered disks | RightToLeft",  # 2
+            "centered disks | Painter",  # 3
+            "centered disks | MinMin-Stacking (abs)",  # 4
+            "centered disks | MinMin-Stacking (rel)",  # 5
+            "centered disks | MinSum-Stacking (abs)",  # 6
+            "centered disks | MinSum-Stacking (rel)",  # 7
+            "hawaiian disks | random",  # 8
+            "hawaiian disks | LeftToRight",  # 9
+            "hawaiian disks | RightToLeft",  # 10
+            "hawaiian disks | Painter",  # 11
+            "hawaiian disks | our Stacking",  # 12
+            "pie charts | random",  # 13
+            "pie charts | LeftToRight",  # 14
+            "pie charts | RightToLeft",  # 15
+            "pie charts | Painter",  # 16
+            "pie charts | our Stacking",  # 17
+            
         )
         self.algorithm.current(0)
         self.algorithm.grid(column=1, row=1)
