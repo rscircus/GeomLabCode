@@ -1275,12 +1275,12 @@ def algorithmSquaresStacking(squares):
 
 # optimal rotations but ordered by painter's algorithm
 def algorithmHeuristicPainterSquareStacking(squares):
-    squares.sort(key=sideLength, reversed=True)
+    squares.sort(key=sideLength, reverse=True)
     return heuristicRotationForStacking(squares)
 
 # random rotations and ordered by painter's algorithm
 def algorithmRandomPainterSquareStacking(squares):
-    squares.sort(key=sideLength, reversed=True)
+    squares.sort(key=sideLength, reverse=True)
     angles = randomAngles(len(squares))
     return rotateTheSquares(squares, angles)
 
@@ -1662,7 +1662,8 @@ def minDistanceToOcclusion(square, intervals):
 
 
 def sideLength(square):
-    a = square[0], b = square[1]
+    a = square[0] 
+    b = square[1]
     diff = [a[0] - b[0], a[1] - b[1]]
     return math.sqrt(diff[0] * diff[0] + diff[1] * diff[1])
 
