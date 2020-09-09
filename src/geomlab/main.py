@@ -208,23 +208,7 @@ class SymbolicMapsPage(tk.Frame):
         self.squares = self.square_sets[self.data.current()]
 
         algo = self.algorithm.current()
-        # TODO:
-        # "Painter", #0
-        # "Random", #1
-        # "Pie stacking", #2
-        # "hawaiian stacking", #3
-        # "maxMinMinK Stacking (absolute)", #4
-        # "maxMinMinK Stacking (relative)", #5
-        # "maxMinSumK Stacking (absolute)", #6
-        # "maxMinSumK Stacking (relative)", #7
-        # "heuristic square Stacking", #8
-        # "painter square Stacking", #9
-        # "random rotation painter square Stacking", #10
-        # "random square Stacking", #11
-        # "random rotation random square Stacking", #12
-        
-        
-        
+
         """
             "centered disks | random",  # 0
             "centered disks | LeftToRight",  # 1
@@ -969,14 +953,24 @@ class SymbolicMapsPage(tk.Frame):
 
             maximum = 1
             maximumsecond = 1
+            firstSet=True
             for case in myData:
                 if case[4] < 1:
                     tmp = 1
                 else:
                     tmp = case[4]
-                if tmp > maximum:
+                
+                
+                if(firstSet):
+                    maximumsecond=tmp
+                    maximum=tmp
+                    firstSet=False
+                        
+                if tmp > maximum:        
                     maximumsecond = maximum
                     maximum = tmp
+                    
+            
             multiplicativeconstant = self.maximalSize / np.log(1 + self.scalingFactor)
 
             circles = []
