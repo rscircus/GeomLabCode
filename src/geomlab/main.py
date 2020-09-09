@@ -134,8 +134,8 @@ class SymbolicMapsPage(tk.Frame):
 
         # geomDataGeneration (should be adapted by the user)
         self.maximalSize = 50
-        self.scalingFactor = 200
-        self.lowerBoundCases = 5000
+        self.scalingFactor = 2000
+        self.lowerBoundCases = 20000
 
         self.timer_running = False
         self.counter = 123456
@@ -319,34 +319,34 @@ class SymbolicMapsPage(tk.Frame):
             self.circlesToDraw = st.algorithmHawaiianRandom(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circles, 3)
+                1, st.utilitysHawaiian(self.circlesToDraw, 3)
             )
         
         elif algo == 9:
             self.circlesToDraw = st.algorithmHawaiianLeftToRight(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circles, 3)
+                1, st.utilitysHawaiian(self.circlesToDraw, 3)
             )
         elif algo == 10:
             self.circlesToDraw = st.algorithmHawaiianRightToLeft(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circles, 3)
+                1, st.utilitysHawaiian(self.circlesToDraw, 3)
             )
         
         elif algo == 11:
             self.circlesToDraw = st.algorithmHawaiianPainter(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circles, 3)
+                1, st.utilitysHawaiian(self.circlesToDraw, 3)
             )
             
         elif algo == 12:
             self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circles, 3)
+                1, st.utilitysHawaiian(self.circlesToDraw, 3)
             )
             
         elif algo == 13:
@@ -413,62 +413,6 @@ class SymbolicMapsPage(tk.Frame):
         
         
         
-        
-        """
-        elif algo == 2:
-            self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
-                self.pies, self.piePieces
-            )
-            self.objective_list.insert(
-                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
-            )
-
-        elif algo == 3:
-            self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
-            self.numberOfFeatures = len(self.circles[0]) - 2
-            self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circles, 3)
-            )
-
-        elif algo == 4:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
-                self.circles, "absolute"
-            )
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
-                self.circles
-            )
-            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
-
-        elif algo == 5:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(
-                self.circles, "relative"
-            )
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
-                self.circles
-            )
-            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
-
-        elif algo == 6:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
-                self.circles, "relative"
-            )
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
-                self.circles
-            )
-            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
-
-        elif algo == 7:
-            self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(
-                self.circles, "relative"
-            )
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
-                self.circles
-            )
-            self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
-
-        elif algo == 8:
-            self.squares, m1, m2, m3 = st.algorithmSquaresStacking(self.squares)
-            # TODO square utility is missing"""
 
 
         # Timer end
@@ -835,16 +779,16 @@ class SymbolicMapsPage(tk.Frame):
             "hawaiian disks | RightToLeft",  # 10
             "hawaiian disks | Painter",  # 11
             "hawaiian disks | our Stacking",  # 12
-            "pie charts     | random",  # 13
-            "pie charts     | LeftToRight",  # 14
-            "pie charts     | RightToLeft",  # 15
-            "pie charts     | Painter",  # 16
-            "pie charts     | our Stacking",  # 17
-            "squares        | Painter+heuristic", #18
-            "squares        | Painter+random rotations", #19
-            "squares        | random Stacking+heuristic rotations", #20
-            "squares        | random Stacking+heuristic rotations", #21
-            "squares        | our Stacking" #22
+            "pie charts | random",  # 13
+            "pie charts | LeftToRight",  # 14
+            "pie charts | RightToLeft",  # 15
+            "pie charts | Painter",  # 16
+            "pie charts | our Stacking",  # 17
+            "squares | Painter+heuristic", #18
+            "squares | Painter+random rotations", #19
+            "squares | random Stacking+heuristic rotations", #20
+            "squares | random Stacking+heuristic rotations", #21
+            "squares | our Stacking" #22
             
         )
         self.algorithm.current(0)
@@ -901,11 +845,12 @@ class SymbolicMapsPage(tk.Frame):
         def changeStructureFromPanda(df):
             myData = []
 
-            for lat, lon, conf, dead in zip(
-                df["latitude"], df["longitude"], df["confirmed_cases"], df["deaths"]
+            for lat, lon, conf, dead, rec in zip(
+                df["latitude"], df["longitude"], df["confirmed_cases"], df["deaths"], df["recovered"]
             ):
-                tmp = [0, 0, lat, lon, conf + 1, dead + 1, 1 + (conf - dead) / 2]
-                myData.append(tmp)
+                if(conf>0 and dead >0 and rec >0):
+                    tmp = [0, 0, lat, lon, conf + 1, dead + 1, 1 + rec]
+                    myData.append(tmp)
 
             return myData
 
@@ -1065,11 +1010,14 @@ class SymbolicMapsPage(tk.Frame):
                 confAdjusted = multiplicativeconstant * np.log(
                     1 + self.scalingFactor * conf / maximumsecond
                 )
+                
+                
+                
                 deadAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor * dead / maximumsecond
+                    1 + self.scalingFactor/2 * dead / maximumsecond
                 )
                 recAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor * (rec + dead) / maximumsecond
+                    1 + self.scalingFactor/2 * (rec + dead) / maximumsecond
                 )
 
                 r = confAdjusted
@@ -1091,7 +1039,7 @@ class SymbolicMapsPage(tk.Frame):
                 squares.append(tmpSquare)
 
             # TODO: Catch errors on data acquisition level?
-            if len(circles) == 0:
+            if len(circles) ==0:
                 print(
                     f"Data quality issues: Circles array is empty for dataset no. {index} ..."
                 )
