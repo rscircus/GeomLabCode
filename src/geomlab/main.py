@@ -225,7 +225,7 @@ class SymbolicMapsPage(tk.Frame):
         
         
         
-        """self.algorithm["values"] = (
+        """
             "centered disks | random",  # 0
             "centered disks | LeftToRight",  # 1
             "centered disks | RightToLeft",  # 2
@@ -244,8 +244,12 @@ class SymbolicMapsPage(tk.Frame):
             "pie charts | RightToLeft",  # 15
             "pie charts | Painter",  # 16
             "pie charts | our Stacking",  # 17
-            
-        )"""
+            "squares | Painter+heuristic" #18
+            "squares | Painter+random rotations" #19
+            "squares | random Stacking+heuristic rotations" #20
+            "squares | random Stacking+heuristic rotations" #21
+            "squares | our Stacking" #22
+        """
 
         # Timer start
         self.timer_start()
@@ -384,7 +388,21 @@ class SymbolicMapsPage(tk.Frame):
             self.objective_list.insert(
                 1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
             )
-            
+
+        elif algo == 18:
+            self.squares = st.algorithmHeuristicPainterSquareStacking(self.squares)
+
+        elif algo == 19:
+            self.squares = st.algorithmRandomPainterSquareStacking(self.squares)
+
+        elif algo == 20:
+            self.squares = st.algorithmHeuristicRandomSquareStacking(self.squares)
+
+        elif algo == 21:
+            self.squares = st.algorithmCompletelyRandomSquareStacking(self.squares)
+
+        elif algo == 22:
+            self.squares, _, _, _ = st.algorithmSquaresStacking(self.squares)            
         
             
 
@@ -476,9 +494,9 @@ class SymbolicMapsPage(tk.Frame):
             self.draw_subcircle_stacking()
         if algo in range(13,18):
             self.draw_pie_stacking()
-        """
-        if algo == 8:
-            self.drawSquareSolution()"""
+       
+        if algo in range(18,23):
+            self.drawSquareSolution()
 
     def draw_circles(self):
 
@@ -817,11 +835,16 @@ class SymbolicMapsPage(tk.Frame):
             "hawaiian disks | RightToLeft",  # 10
             "hawaiian disks | Painter",  # 11
             "hawaiian disks | our Stacking",  # 12
-            "pie charts | random",  # 13
-            "pie charts | LeftToRight",  # 14
-            "pie charts | RightToLeft",  # 15
-            "pie charts | Painter",  # 16
-            "pie charts | our Stacking",  # 17
+            "pie charts     | random",  # 13
+            "pie charts     | LeftToRight",  # 14
+            "pie charts     | RightToLeft",  # 15
+            "pie charts     | Painter",  # 16
+            "pie charts     | our Stacking",  # 17
+            "squares        | Painter+heuristic", #18
+            "squares        | Painter+random rotations", #19
+            "squares        | random Stacking+heuristic rotations", #20
+            "squares        | random Stacking+heuristic rotations", #21
+            "squares        | our Stacking" #22
             
         )
         self.algorithm.current(0)
