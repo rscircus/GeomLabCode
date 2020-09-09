@@ -345,6 +345,48 @@ class SymbolicMapsPage(tk.Frame):
                 1, st.utilitysHawaiian(self.circles, 3)
             )
             
+        elif algo == 13:
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsRandom(
+                self.pies, self.piePieces
+            )
+            self.objective_list.insert(
+                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
+            )
+            
+        elif algo == 14:
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsLeftToRight(
+                self.pies, self.piePieces
+            )
+            self.objective_list.insert(
+                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
+            )
+            
+        elif algo == 15:
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsRightToLeft(
+                self.pies, self.piePieces
+            )
+            self.objective_list.insert(
+                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
+            )
+            
+        elif algo == 16:
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsPainter(
+                self.pies, self.piePieces
+            )
+            self.objective_list.insert(
+                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
+            )
+            
+        elif algo == 17:
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsStacking(
+                self.pies, self.piePieces
+            )
+            self.objective_list.insert(
+                1, st.utilitysPieCharts(self.pies,self.piePieces, self.angles)
+            )
+            
+        
+            
 
             
         else:
@@ -432,9 +474,9 @@ class SymbolicMapsPage(tk.Frame):
 
         if algo in range(0, 13):
             self.draw_subcircle_stacking()
-        """if algo == 2:
+        if algo in range(13,18):
             self.draw_pie_stacking()
-
+        """
         if algo == 8:
             self.drawSquareSolution()"""
 

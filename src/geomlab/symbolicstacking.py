@@ -693,7 +693,6 @@ def algorithmHawaiianRandom(circles):
         angle = 0
 
         if visbleInt == None:
-            print("asd")
             onCircleX = stacking[i][0] + 2
             onCircleY = stacking[i][1] + 2
 
@@ -777,7 +776,6 @@ def algorithmPieChartsPainter(pies, piepieces):
     localPiePieces = []
     localAngles = []
     local = np.concatenate((pies, piepieces), axis=1)
-    print(type(local))
     local = sorted(local, key=lambda x: x[2], reverse=True)
     for l in local:
         localPies.append([l[0], l[1], l[2]])
@@ -797,7 +795,6 @@ def algorithmPieChartsPainter(pies, piepieces):
                     angle = 0
                     break
                 x.pop(len(x) - 1)
-                print(x)
                 angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
 
         localAngles.append(angle)
@@ -811,8 +808,10 @@ def algorithmPieChartsRandom(pies, piepieces):
     localPies = []
     localPiePieces = []
     localAngles = []
-    local = np.concatenate((pies, piepieces), axis=1)
+    localNp = np.concatenate((pies, piepieces), axis=1)
+    local=list(localNp)
     random.shuffle(local)
+    print(local)
     for l in local:
         localPies.append([l[0], l[1], l[2]])
         tmp = []
@@ -831,7 +830,6 @@ def algorithmPieChartsRandom(pies, piepieces):
                     angle = 0
                     break
                 x.pop(len(x) - 1)
-                print(x)
                 angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
 
         localAngles.append(angle)
@@ -845,7 +843,6 @@ def algorithmPieChartsLeftToRight(pies, piepieces):
     localPiePieces = []
     localAngles = []
     local = np.concatenate((pies, piepieces), axis=1)
-    print(type(local))
     local = sorted(local, key=lambda x: x[1], reverse=False)
     for l in local:
         localPies.append([l[0], l[1], l[2]])
@@ -865,7 +862,6 @@ def algorithmPieChartsLeftToRight(pies, piepieces):
                     angle = 0
                     break
                 x.pop(len(x) - 1)
-                print(x)
                 angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
 
         localAngles.append(angle)
@@ -884,7 +880,6 @@ def algorithmPieChartsRightToLeft(pies, piepieces):
     localPiePieces = []
     localAngles = []
     local = np.concatenate((pies, piepieces), axis=1)
-    print(type(local))
     local = sorted(local, key=lambda x: x[1], reverse=True)
     for l in local:
         localPies.append([l[0], l[1], l[2]])
@@ -904,7 +899,6 @@ def algorithmPieChartsRightToLeft(pies, piepieces):
                     angle = 0
                     break
                 x.pop(len(x) - 1)
-                print(x)
                 angle, value = caculateOneAnglePie(localPies[i], x, localPies[i + 1 :])
         localAngles.append(angle)
     return localPies, localPiePieces, localAngles
