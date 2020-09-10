@@ -1669,10 +1669,9 @@ def sideLength(square):
 
 
 def importantSquarePoints(square):
-    [a_index, a_param] = a_info = importantSquarePoint(square[5], square)
-    b_info = [(a_index + 2) % 4, 1 - a_param]
-    c_info = importantSquarePoint(square[6], square)
-    return [a_info, b_info, c_info]
+    A = importantSquarePoint(square[5], square)
+    B = importantSquarePoint(square[6], square)
+    return [A, B]
 
 
 def importantSquarePoint(point, square):
