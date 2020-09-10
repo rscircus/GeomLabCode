@@ -1658,7 +1658,7 @@ def minDistanceToOcclusion(square, intervals):
         if dist < minDist:
             minDist = dist
 
-    return min(minDist, 4) * sideLen
+    return min(minDist, 2) * sideLen
 
 
 def sideLength(square):
@@ -1712,7 +1712,7 @@ def pointDistanceToOcclusion(point, intervals):
         return 0
     else:
         if sum([len(sideIntervals) for sideIntervals in intervals]) == 0:
-            return 4
+            return 2
         else:
             wrapped_intervals = wrapIntervals(index, intervals)
             [a, b] = visibleRegion(param, wrapped_intervals)
