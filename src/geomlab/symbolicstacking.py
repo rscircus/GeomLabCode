@@ -1684,26 +1684,16 @@ def importantSquarePoint(point, square):
 
 def calculateStepParam(a, b, c):
     v = [], w = []
+
     v.insert(b[0] - a[0])
     v.insert(b[1] - a[1])
     w.insert(c[0] - a[0])
     w.insert(c[1] - a[1])
-    q_0 = quotient(v[0], w[0])
-    q_1 = quotient(v[1], w[1])
-    if float("inf") in [q_0, q_1]:
-        return None
-    if None in [q_0, q_1]:
-        return q_1 if q_0 == None else q_0
-    if not math.isclose(q_0, q_1):
-        return None
-    return q_1
 
-
-def quotient(a, b):
-    if b == 0:
-        return None if (a == 0) else float("inf")
-    else:
-        return a / b
+    if(v[0]==0 and v[1]==0): return 0
+    elif(math.isclose(v[0]*w[1], v[1]*w[0])):
+        return w[0]/v[0] if v[0]!=0 else w[1]/v[1]
+    else: return None
 
 
 def pointDistanceToOcclusion(point, intervals):
