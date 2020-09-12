@@ -1633,15 +1633,17 @@ def mergeAllIntervals(intervalArray):
 
 def mergeIntervals(intervals):
     newIntervals = []
-    intervals.sort(key=leftIntervalBoundary)
-    currentInterval = intervals[0]
-    for inter in enumerate(intervals):
-        if inter[0] <= currentInterval[1]:
-            currentInterval[1] = max(currentInterval[1], inter[1])
-        else:
-            newIntervals.append(currentInterval)
-            currentInterval = inter
-    newIntervals.append(currentInterval)
+
+    if(len(intervals)!=0):
+        intervals.sort(key=leftIntervalBoundary)
+        currentInterval = intervals[0]
+        for inter in intervals:
+            if inter[0] <= currentInterval[1]:
+                currentInterval[1] = max(currentInterval[1], inter[1])
+            else:
+                newIntervals.append(currentInterval)
+                currentInterval = inter
+        newIntervals.append(currentInterval)
     return newIntervals
 
 
@@ -1669,8 +1671,9 @@ def sideLength(square):
 
 
 def importantSquarePoints(square):
-    A = importantSquarePoint(square[5], square)
-    B = importantSquarePoint(square[6], square)
+    print(square)
+    A = importantSquarePoint(square[4], square)
+    B = importantSquarePoint(square[5], square)
     return [A, B]
 
 
@@ -1683,12 +1686,13 @@ def importantSquarePoint(point, square):
 
 
 def calculateStepParam(a, b, c):
-    v = [], w = []
+    v = []
+    w = []
 
-    v.insert(b[0] - a[0])
-    v.insert(b[1] - a[1])
-    w.insert(c[0] - a[0])
-    w.insert(c[1] - a[1])
+    v.append(b[0] - a[0])
+    v.append(b[1] - a[1])
+    w.append(c[0] - a[0])
+    w.append(c[1] - a[1])
 
     if(v[0]==0 and v[1]==0): return 0
     elif(math.isclose(v[0]*w[1], v[1]*w[0])):
