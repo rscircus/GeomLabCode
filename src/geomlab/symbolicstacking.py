@@ -1717,7 +1717,8 @@ def wrapIntervals(index, intervals):
     wrapped_intervals = []
     for i in range(-4, 5):
         wrapped_intervals.extend(shiftIntervals(i, intervals[(i + index) % 4]))
-    return wrapped_intervals.sort(key=leftIntervalBoundary)
+    wrapped_intervals.sort(key=leftIntervalBoundary)
+    return wrapped_intervals
 
 
 def shiftIntervals(i, intervals):
