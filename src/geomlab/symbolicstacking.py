@@ -1695,7 +1695,7 @@ def calculateStepParam(a, b, c):
     w.append(c[1] - a[1])
 
     if(v[0]==0 and v[1]==0): return 0
-    elif(abs(w[0]/v[0]-w[1]/v[1])<=0.02):
+    elif(abs(w[0]/v[0]-w[1]/v[1])<=0.05):
         return (w[0]/v[0] + w[1]/v[1])/2
     else: return None
 
