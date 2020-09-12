@@ -1308,7 +1308,7 @@ def distance(ax, ay, bx, by):
 def rotated_about(ax, ay, bx, by, angle):
     radius = distance(ax, ay, bx, by)
     angle += math.atan2(ay - by, ax - bx)
-    return (round(bx - radius * math.cos(angle)), round(by - radius * math.sin(angle)))
+    return (bx - radius * math.cos(angle), by - radius * math.sin(angle))
 
 
 #####dataPrep [should most likly be in main but can be used as refrence]######
