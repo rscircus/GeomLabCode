@@ -375,6 +375,7 @@ class SymbolicMapsPage(tk.Frame):
 
         elif algo == 18:
             self.squares = st.algorithmHeuristicPainterSquareStacking(self.squares)
+            print(st.valueOfSquareConfiguration(self.squares))
 
         elif algo == 19:
             self.squares = st.algorithmRandomPainterSquareStacking(self.squares)
