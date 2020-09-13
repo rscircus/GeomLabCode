@@ -1,10 +1,12 @@
 import matplotlib
 import random
 import logging
+import time
 import datetime
 import numpy as np
 import math
 import copy
+import csv
 
 matplotlib.use("TkAgg")
 
@@ -116,6 +118,9 @@ class GeomLabApp(tk.Tk):
 class SymbolicMapsPage(tk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent)
+        self.csv_filename = (
+            "./" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S") + "_utilities.csv"
+        )
         self.parent = parent
         self.controller = controller
         self.create_widgets()
@@ -146,6 +151,24 @@ class SymbolicMapsPage(tk.Frame):
         # Prepare inputs
         self.initialize_data()
         self.prepare_data()
+
+        # Write explanation line into csv
+        with open(self.csv_filename, mode="a") as utility_file:
+            utility_writer = csv.writer(
+                utility_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+            utility_writer.writerow(
+                [
+                    "Timestamp",
+                    "Unixtime (secs)",
+                    "Algorithm",
+                    "U1",
+                    "U2",
+                    "U3",
+                    "U4",
+                    "U5",
+                ]
+            )
 
         # Execute symbolic algo
         self.apply_algorithm()
@@ -422,6 +445,31 @@ class SymbolicMapsPage(tk.Frame):
             print("square utilitys: ", st.utilitysSquares(self.squares_for_drawing))
         else:
             logging.critical("Algorithm not present. You shouldn't see me.")
+
+        # Write results in to csv
+        #
+        # As the results are written into the 2nd line of objective_list, they
+        # are picked up there with an error check.
+        if self.objective_list.size() == 2:
+            print(f"Appending to {self.csv_filename}")
+            with open(self.csv_filename, mode="a") as utility_file:
+                utility_writer = csv.writer(
+                    utility_file,
+                    delimiter=",",
+                    quotechar='"',
+                    quoting=csv.QUOTE_MINIMAL,
+                )
+                obj = self.objective_list.get(1, 1)
+                obj_list = list(obj[0])
+                full_data = [
+                    datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
+                    time.mktime(datetime.datetime.now().timetuple()),
+                    self.algorithm.get(),
+                ]
+                full_data.extend(obj_list[1:])
+                utility_writer.writerow(full_data)
+        else:
+            logging.critical("Some utility function is still missing!")
 
         # Timer end
         self.timer_stop()
