@@ -377,23 +377,23 @@ class SymbolicMapsPage(tk.Frame):
 
         elif algo == 18:
             self.squares_for_drawing = st.algorithmHeuristicPainterSquareStacking(copy.deepcopy(self.squares))
-            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
+            print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 19:
             self.squares_for_drawing = st.algorithmRandomPainterSquareStacking(copy.deepcopy(self.squares))
-            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
+            print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 20:
             self.squares_for_drawing = st.algorithmHeuristicRandomSquareStacking(copy.deepcopy(self.squares))
-            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
+            print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 21:
             self.squares_for_drawing = st.algorithmCompletelyRandomSquareStacking(copy.deepcopy(self.squares))
-            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
+            print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 22:
             self.squares_for_drawing, _, _, _ = st.algorithmSquaresStacking(copy.deepcopy(self.squares)) 
-            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))          
+            print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))          
         else:
             logging.critical("Algorithm not present. You shouldn't see me.")
             
