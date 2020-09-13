@@ -1197,6 +1197,13 @@ def preparePies(squares):
         baseAngles.append(baseAngle)
         circles.append([center[0], center[1], radius])
         piePieces.append(tmpPiece)
+        
+    for i in range(0,len(piePieces)):
+            for j in range(0,len(piePieces[i])):
+                if(piePieces[i][j]<0):
+                    piePieces[i][j]=piePieces[i][j]+2*np.pi  
+            piePieces[i].sort()
+        
     return circles, piePieces, baseAngles
 
 
