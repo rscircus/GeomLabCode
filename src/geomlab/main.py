@@ -781,21 +781,6 @@ class SymbolicMapsPage(tk.Frame):
         self.algorithm.bind("<<ComboboxSelected>>", self.data_algo_change)
         self.algorithm.bind("<<Configure>>", on_combo_configure)
 
-        # Symbolic Maps selector
-        self.symbolic_mapslabel = tk.Label(self.frame, text="Choose symbolic maps: ")
-        self.symbolic_mapslabel.grid(column=0, row=2)
-        self.symbolic_maps = ttk.Combobox(self.frame, width=50)
-        self.symbolic_maps["values"] = (
-            "Plain circles",  # 0
-            "Concentric circles",  # 1
-            "Pies",  # 2
-            "Squares)",  # 3
-        )
-        self.symbolic_maps.current(1)  # Concentric circles as default
-        self.symbolic_maps.grid(column=1, row=2)
-        self.symbolic_maps.bind("<<ComboboxSelected>>", self.data_algo_change)
-        self.symbolic_maps.bind("<<Configure>>", on_combo_configure)
-
     # TODO: split this into {initialize, flush}
 
     def initialize_data(self):
