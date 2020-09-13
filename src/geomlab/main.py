@@ -4,6 +4,7 @@ import logging
 import datetime
 import numpy as np
 import math
+import copy
 
 matplotlib.use("TkAgg")
 
@@ -128,7 +129,8 @@ class SymbolicMapsPage(tk.Frame):
         self.pies = []
         self.piePieces = []
         self.squares = []
-        self.circlesToDraw = []  # for nested disks different structure
+        self.circles_for_drawing = []  # for nested disks different structure
+        self.squares_for_drawing = []  #
         self.numberOfFeatures = 0  # numberOffeatures eg, rec,dead,rest equal 3
         self.angles = []
 
@@ -245,92 +247,92 @@ class SymbolicMapsPage(tk.Frame):
 
         if algo == 0:
             self.circles = st.algorithmNestedDisksRandom(self.circles)
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 1:
             self.circles = st.algorithmNestedDisksLeftToRight(self.circles)
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
         
         elif algo == 2:
             self.circles = st.algorithmNestedDisksRightToLeft(self.circles)
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
         
         elif algo == 3:
             self.circles = st.algorithmNestedDisksPainter(self.circles)
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
        
         elif algo == 4:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles,"absolute")
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
         
         elif algo == 5:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinMin(self.circles,"relative")
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
         
         elif algo == 6:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles,"absolute")
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
        
         elif algo == 7:
             self.circles, objective_value = st.algorithmNestedDisksStackingMinSum(self.circles,"relative")
-            self.circlesToDraw, self.numberOfFeatures = st.formatChangeNestedDisks(
+            self.circles_for_drawing, self.numberOfFeatures = st.formatChangeNestedDisks(
                 self.circles
             )
             self.objective_list.insert(1, st.utilitysNestedDisks(self.circles))
 
         elif algo == 8:
-            self.circlesToDraw = st.algorithmHawaiianRandom(self.circles)
+            self.circles_for_drawing = st.algorithmHawaiianRandom(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circlesToDraw, 3)
+                1, st.utilitysHawaiian(self.circles_for_drawing, 3)
             )
         
         elif algo == 9:
-            self.circlesToDraw = st.algorithmHawaiianLeftToRight(self.circles)
+            self.circles_for_drawing = st.algorithmHawaiianLeftToRight(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circlesToDraw, 3)
+                1, st.utilitysHawaiian(self.circles_for_drawing, 3)
             )
         elif algo == 10:
-            self.circlesToDraw = st.algorithmHawaiianRightToLeft(self.circles)
+            self.circles_for_drawing = st.algorithmHawaiianRightToLeft(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circlesToDraw, 3)
+                1, st.utilitysHawaiian(self.circles_for_drawing, 3)
             )
         
         elif algo == 11:
-            self.circlesToDraw = st.algorithmHawaiianPainter(self.circles)
+            self.circles_for_drawing = st.algorithmHawaiianPainter(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circlesToDraw, 3)
+                1, st.utilitysHawaiian(self.circles_for_drawing, 3)
             )
             
         elif algo == 12:
-            self.circlesToDraw = st.algorithmHawaiianStacking(self.circles)
+            self.circles_for_drawing = st.algorithmHawaiianStacking(self.circles)
             self.numberOfFeatures = len(self.circles[0]) - 2
             self.objective_list.insert(
-                1, st.utilitysHawaiian(self.circlesToDraw, 3)
+                1, st.utilitysHawaiian(self.circles_for_drawing, 3)
             )
             
         elif algo == 13:
@@ -374,28 +376,27 @@ class SymbolicMapsPage(tk.Frame):
             )
 
         elif algo == 18:
-            self.squares = st.algorithmHeuristicPainterSquareStacking(self.squares)
-            print(st.valueOfSquareConfiguration(self.squares))
+            self.squares_for_drawing = st.algorithmHeuristicPainterSquareStacking(copy.deepcopy(self.squares))
+            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 19:
-            self.squares = st.algorithmRandomPainterSquareStacking(self.squares)
+            self.squares_for_drawing = st.algorithmRandomPainterSquareStacking(copy.deepcopy(self.squares))
+            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 20:
-            self.squares = st.algorithmHeuristicRandomSquareStacking(self.squares)
+            self.squares_for_drawing = st.algorithmHeuristicRandomSquareStacking(copy.deepcopy(self.squares))
+            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 21:
-            self.squares = st.algorithmCompletelyRandomSquareStacking(self.squares)
+            self.squares_for_drawing = st.algorithmCompletelyRandomSquareStacking(copy.deepcopy(self.squares))
+            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 22:
-            self.squares, _, _, _ = st.algorithmSquaresStacking(self.squares)            
-        
-            
-
-            
+            self.squares_for_drawing, _, _, _ = st.algorithmSquaresStacking(copy.deepcopy(self.squares)) 
+            #print("square utilitys: ",st.utilitysSquares(self.squares_for_drawing))          
         else:
             logging.critical("Algorithm not present. You shouldn't see me.")
             
-        
         
         
 
@@ -438,8 +439,8 @@ class SymbolicMapsPage(tk.Frame):
         return "#%02x%02x%02x" % rgb
 
     def drawSquareSolution(self):
-        for i in range(0, len(self.squares)):
-            self.drawSquare(self.squares[i])
+        for i in range(0, len(self.squares_for_drawing)):
+            self.drawSquare(self.squares_for_drawing[i])
 
     def drawSquare(self, square):
 
@@ -512,7 +513,7 @@ class SymbolicMapsPage(tk.Frame):
 
     def draw_subcircle_stacking_3Features(self):
         counter = 1
-        for c in self.circlesToDraw:
+        for c in self.circles_for_drawing:
             y = c[0]
             x = c[1]
             r = c[2]
@@ -530,7 +531,7 @@ class SymbolicMapsPage(tk.Frame):
     def draw_subcircle_stacking_arbitraryFeatures(self):
         counter = 0
         counterMax = self.numberOfFeatures - 1
-        for c in self.circlesToDraw:
+        for c in self.circles_for_drawing:
             y = c[0]
             x = c[1]
             r = c[2]
@@ -772,7 +773,7 @@ class SymbolicMapsPage(tk.Frame):
             "squares | Painter+heuristic", #18
             "squares | Painter+random rotations", #19
             "squares | random Stacking+heuristic rotations", #20
-            "squares | random Stacking+heuristic rotations", #21
+            "squares | random Stacking+random rotations", #21
             "squares | our Stacking" #22
             
         )
@@ -1017,6 +1018,7 @@ class SymbolicMapsPage(tk.Frame):
                     r, case, self.screen_height, self.screen_width
                 )
                 squares.append(tmpSquare)
+            
 
             # TODO: Catch errors on data acquisition level?
             if len(circles) ==0:

@@ -1525,7 +1525,7 @@ def createOneSquare(size, case, heightOfImage, widthOfImage):
 ############################# square functions #################################
 
 
-def valueOfSquareConfiguration(squares):
+def utilitysSquares(squares):
     minimum = float("inf")
     minGreaterZero = float("inf")
 
@@ -1535,8 +1535,10 @@ def valueOfSquareConfiguration(squares):
         minimum = min(value, minimum)
         if value > 0:
             minGreaterZero = min(value, minGreaterZero)
+            
+    occludedCounter=numberOfOccludedPointsIn(squares)
 
-    return [minimum, minGreaterZero]
+    return [minimum, minGreaterZero, occludedCounter]
 
 def numberOfOccludedPointsIn(squares):
     counter = 0
