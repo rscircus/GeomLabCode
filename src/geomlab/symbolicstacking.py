@@ -809,7 +809,7 @@ def algorithmPieChartsRandom(pies, piepieces):
     localPiePieces = []
     localAngles = []
     localNp = np.concatenate((pies, piepieces), axis=1)
-    local=list(localNp)
+    local = list(localNp)
     random.shuffle(local)
     print(local)
     for l in local:
@@ -909,7 +909,7 @@ def algorithmPieChartsRightToLeft(pies, piepieces):
 
 
 def formatChangeNestedDisks(circles):
-    
+
     n = len(circles[0]) - 2
     result = []
     for c in circles:
@@ -1197,13 +1197,13 @@ def preparePies(squares):
         baseAngles.append(baseAngle)
         circles.append([center[0], center[1], radius])
         piePieces.append(tmpPiece)
-        
-    for i in range(0,len(piePieces)):
-            for j in range(0,len(piePieces[i])):
-                if(piePieces[i][j]<0):
-                    piePieces[i][j]=piePieces[i][j]+2*np.pi  
-            piePieces[i].sort()
-        
+
+    for i in range(0, len(piePieces)):
+        for j in range(0, len(piePieces[i])):
+            if piePieces[i][j] < 0:
+                piePieces[i][j] = piePieces[i][j] + 2 * np.pi
+        piePieces[i].sort()
+
     return circles, piePieces, baseAngles
 
 
@@ -1285,16 +1285,19 @@ def algorithmHeuristicPainterSquareStacking(squares):
     squares.sort(key=sideLength, reverse=True)
     return heuristicRotationForStacking(squares)
 
+
 # random rotations and ordered by painter's algorithm
 def algorithmRandomPainterSquareStacking(squares):
     squares.sort(key=sideLength, reverse=True)
     angles = randomAngles(len(squares))
     return rotateTheSquares(squares, angles)
 
+
 # optimal rotations but ordered randomly
 def algorithmHeuristicRandomSquareStacking(squares):
     random.shuffle(squares)
     return heuristicRotationForStacking(squares)
+
 
 # random rotations and ordered randomly
 def algorithmCompletelyRandomSquareStacking(squares):
@@ -1302,9 +1305,11 @@ def algorithmCompletelyRandomSquareStacking(squares):
     angles = randomAngles(len(squares))
     return rotateTheSquares(squares, angles)
 
+
 # generate random angles
 def randomAngles(length):
-    return [random.random()*2*np.pi for i in range(length)]
+    return [random.random() * 2 * np.pi for i in range(length)]
+
 
 # euclidian distance
 def distance(ax, ay, bx, by):
@@ -1520,7 +1525,7 @@ def createOneSquare(size, case, heightOfImage, widthOfImage):
         square.append(last)
         return square
 """
-            
+
 ################################################################################
 ############################# square functions #################################
 
@@ -1535,15 +1540,16 @@ def utilitysSquares(squares):
         minimum = min(value, minimum)
         if value > 0:
             minGreaterZero = min(value, minGreaterZero)
-            
-    occludedCounter=numberOfOccludedPointsIn(squares)
+
+    occludedCounter = numberOfOccludedPointsIn(squares)
 
     return [minimum, minGreaterZero, occludedCounter]
+
 
 def numberOfOccludedPointsIn(squares):
     counter = 0
     for i, square in enumerate(squares):
-        squaresAbove = squares[i+1:]
+        squaresAbove = squares[i + 1 :]
         occludedIntervals = occludedIntervalsPerSide(square, squaresAbove)
         counter += numberOfOccludedPointsOf(square, occludedIntervals)
     return counter
@@ -1553,12 +1559,15 @@ def distanceToOcclusion(square, squares):
     occludingIntervals = occludedIntervalsPerSide(square, squares)
     return minDistanceToOcclusion(square, occludingIntervals)
 
+
 def numberOfOccludedPointsOf(square, occlusionsPerSide):
     counter = 0
     points = importantSquarePoints(square)
     for i, t in points:
-        if(isOccluded(t, occlusionsPerSide[i])): counter += 1
+        if isOccluded(t, occlusionsPerSide[i]):
+            counter += 1
     return counter
+
 
 def occludedIntervalsPerSide(square, squares):
     relevant_squares = removeDistantSquares(square, squares)
@@ -1657,7 +1666,7 @@ def mergeAllIntervals(intervalArray):
 def mergeIntervals(intervals):
     newIntervals = []
 
-    if(len(intervals)!=0):
+    if len(intervals) != 0:
         intervals.sort(key=leftIntervalBoundary)
         currentInterval = intervals[0]
         for inter in intervals:
@@ -1687,7 +1696,7 @@ def minDistanceToOcclusion(square, intervals):
 
 
 def sideLength(square):
-    a = square[0] 
+    a = square[0]
     b = square[1]
     diff = [a[0] - b[0], a[1] - b[1]]
     return math.sqrt(diff[0] * diff[0] + diff[1] * diff[1])
@@ -1718,10 +1727,12 @@ def calculateStepParam(a, b, c):
     w.append(c[0] - a[0])
     w.append(c[1] - a[1])
 
-    if(v[0]==0 and v[1]==0): return 0
-    elif(abs(v[0]*w[1] - v[1]*w[0])<=0.02):
-        return w[0]/v[0] if v[0]!=0 else w[1]/v[1]
-    else: return None
+    if v[0] == 0 and v[1] == 0:
+        return 0
+    elif abs(v[0] * w[1] - v[1] * w[0]) <= 0.02:
+        return w[0] / v[0] if v[0] != 0 else w[1] / v[1]
+    else:
+        return None
 
 
 def pointDistanceToOcclusion(point, intervals):
