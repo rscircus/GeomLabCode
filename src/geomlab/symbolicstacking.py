@@ -1538,11 +1538,25 @@ def valueOfSquareConfiguration(squares):
 
     return [minimum, minGreaterZero]
 
+def numberOfOccludedPointsIn(squares):
+    counter = 0
+    for i, square in enumerate(squares):
+        squaresAbove = squares[i+1:]
+        occludedIntervals = occludedIntervalsPerSide(square, squaresAbove)
+        counter += numberOfOccludedPointsOf(square, occludedIntervals)
+    return counter
+
 
 def distanceToOcclusion(square, squares):
     occludingIntervals = occludedIntervalsPerSide(square, squares)
     return minDistanceToOcclusion(square, occludingIntervals)
 
+def numberOfOccludedPointsOf(square, occlusionsPerSide):
+    counter = 0
+    points = importantSquarePoints(square)
+    for i, t in points:
+        if(isOccluded(t, occlusionsPerSide[i])): counter += 1
+    return counter
 
 def occludedIntervalsPerSide(square, squares):
     relevant_squares = removeDistantSquares(square, squares)
