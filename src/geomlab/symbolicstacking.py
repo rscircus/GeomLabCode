@@ -1020,12 +1020,12 @@ def utilitysHawaiian(circles, numberOfNestings):
     minAvgOnSingleGlyph = minAbsoluteAvg
 
     return (
-        minAvgOnSingleGlyph,
-        percentageRelative,
-        percentageAbsolute,
-        minRelativeNonZero,
-        minAbsoluteNonZero,
-        covered,
+        round(minAvgOnSingleGlyph,3),
+        round(percentageRelative,3),
+        round(percentageAbsolute,3),
+        round(minRelativeNonZero,3),
+        round(minAbsoluteNonZero,3),
+        covered
     )
 
 
@@ -1084,8 +1084,23 @@ def utilitysPieCharts(circles, piePieces, angles):
     print("smallestAvg: ", smallestAvg)
     print("numberOfOccLines: ", sumOccluded)
     print(" ")
+    
+    
+    minimumNonZero=smallestOverall
+    if(sumOccluded>0):
+        minimum=0
+    else:
+        minimum=smallestOverall
+       
 
-    return largestOverall, smallestOverall, largestAvg, smallestAvg, sumOccluded
+    minimum=round(minimum,3) 
+    minimumNonZero=round(minimumNonZero,3)
+    smallestAvg=round(smallestAvg,3)
+    largestAvg=round(largestAvg,3) 
+    sumOccluded=round(sumOccluded,3)
+
+    print([minimum, minimumNonZero, smallestAvg,largestAvg, sumOccluded])
+    return [minimum, minimumNonZero, smallestAvg,largestAvg, sumOccluded]
 
 
 def calculateAllPieDistances(circles, piePieces, angles):
@@ -1543,7 +1558,11 @@ def utilitysSquares(squares):
 
     occludedCounter = numberOfOccludedPointsIn(squares)
 
-    return [minimum, minGreaterZero, occludedCounter]
+    return [
+        round(minimum,3), 
+        round(minGreaterZero), 
+        round(occludedCounter)
+    ]
 
 
 def numberOfOccludedPointsIn(squares):
