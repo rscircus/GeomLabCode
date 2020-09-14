@@ -141,8 +141,8 @@ class SymbolicMapsPage(tk.Frame):
 
         # geomDataGeneration (should be adapted by the user)
         self.maximalSize = 50
-        self.scalingFactor = 2000
-        self.lowerBoundCases = 20000
+        self.scalingFactor = 3000
+        self.lowerBoundCases = 10000
 
         self.timer_running = False
         self.counter = 123456
@@ -464,9 +464,9 @@ class SymbolicMapsPage(tk.Frame):
                 full_data = [
                     datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
                     time.mktime(datetime.datetime.now().timetuple()),
-                    self.algorithm.get(),
+                    self.algorithm.get()
                 ]
-                full_data.extend(obj_list[1:])
+                full_data.extend(obj_list[0:])
                 utility_writer.writerow(full_data)
         else:
             logging.critical("Some utility function is still missing!")
