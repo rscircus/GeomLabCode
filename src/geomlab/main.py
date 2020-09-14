@@ -167,6 +167,7 @@ class SymbolicMapsPage(tk.Frame):
                     "U3",
                     "U4",
                     "U5",
+                    "U6",
                 ]
             )
 
@@ -466,7 +467,7 @@ class SymbolicMapsPage(tk.Frame):
                     time.mktime(datetime.datetime.now().timetuple()),
                     self.algorithm.get()
                 ]
-                full_data.extend(obj_list[0:])
+                full_data.extend(obj_list)
                 utility_writer.writerow(full_data)
         else:
             logging.critical("Some utility function is still missing!")
