@@ -510,17 +510,17 @@ def calculateLowestCircleMaxMinMinK(realCircles, mode):
             tmp = np.array(tmp)
             if not len(tmp) == 0:
                 tmp = tmp[:, :3]
-            tmpMin =float("inf")
+            tmpMin = float("inf")
             for k in range(0, len(Circles[0]) - 2):
-                                
+
                 tmpCircle = [Circles[i][0], Circles[i][1], Circles[i][2 + k]]
                 if mode == "absolute":
-                    tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp) 
+                    tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
                 else:
                     tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)
                 if tmpValue < tmpMin:
                     tmpMin = tmpValue
-                    
+
             if tmpMin > maximum:
                 index = i
                 maximum = tmpMin
@@ -536,8 +536,7 @@ def calculateLowestCircleMaxMinMinK(realCircles, mode):
             return index, maximum"""
         if maximum <= 0:
             for i in range(0, len(Circles)):
-                Circles[i].pop(len(Circles[i])-1)
-        
+                Circles[i].pop(len(Circles[i]) - 1)
 
 
 # calculates the lowest circle (for circles with subcircles)
@@ -804,6 +803,7 @@ def algorithmPieChartsPainter(pies, piepieces):
 
     return localPies, localPiePieces, localAngles
 
+
 def algorithmPieChartsPainterRandom(pies, piepieces):
     n = len(piepieces[0])
     localPies = []
@@ -817,13 +817,8 @@ def algorithmPieChartsPainterRandom(pies, piepieces):
         for i in range(1, n + 1):
             tmp.append(l[2 + i])
         localPiePieces.append(tmp)
-        
-        
-        
-        
-    localAngles = randomAngles(len(pies))
 
-  
+    localAngles = randomAngles(len(pies))
 
     return localPies, localPiePieces, localAngles
 
@@ -1046,12 +1041,12 @@ def utilitysHawaiian(circles, numberOfNestings):
     minAvgOnSingleGlyph = minAbsoluteAvg
 
     return (
-        round(minAvgOnSingleGlyph,3),
-        round(percentageRelative,3),
-        round(percentageAbsolute,3),
-        round(minRelativeNonZero,3),
-        round(minAbsoluteNonZero,3),
-        covered
+        round(minAvgOnSingleGlyph, 3),
+        round(percentageRelative, 3),
+        round(percentageAbsolute, 3),
+        round(minRelativeNonZero, 3),
+        round(minAbsoluteNonZero, 3),
+        covered,
     )
 
 
@@ -1110,23 +1105,21 @@ def utilitysPieCharts(circles, piePieces, angles):
     print("smallestAvg: ", smallestAvg)
     print("numberOfOccLines: ", sumOccluded)
     print(" ")
-    
-    
-    minimumNonZero=smallestOverall
-    if(sumOccluded>0):
-        minimum=0
+
+    minimumNonZero = smallestOverall
+    if sumOccluded > 0:
+        minimum = 0
     else:
-        minimum=smallestOverall
-       
+        minimum = smallestOverall
 
-    minimum=round(minimum,3) 
-    minimumNonZero=round(minimumNonZero,3)
-    smallestAvg=round(smallestAvg,3)
-    largestAvg=round(largestAvg,3) 
-    sumOccluded=round(sumOccluded,3)
+    minimum = round(minimum, 3)
+    minimumNonZero = round(minimumNonZero, 3)
+    smallestAvg = round(smallestAvg, 3)
+    largestAvg = round(largestAvg, 3)
+    sumOccluded = round(sumOccluded, 3)
 
-    print([minimum, minimumNonZero, smallestAvg,largestAvg, sumOccluded])
-    return [minimum, minimumNonZero, smallestAvg,largestAvg, sumOccluded]
+    print([minimum, minimumNonZero, smallestAvg, largestAvg, sumOccluded])
+    return [minimum, minimumNonZero, smallestAvg, largestAvg, sumOccluded]
 
 
 def calculateAllPieDistances(circles, piePieces, angles):
@@ -1584,11 +1577,7 @@ def utilitysSquares(squares):
 
     occludedCounter = numberOfOccludedPointsIn(squares)
 
-    return [
-        round(minimum,3), 
-        round(minGreaterZero), 
-        round(occludedCounter)
-    ]
+    return [round(minimum, 3), round(minGreaterZero), round(occludedCounter)]
 
 
 def numberOfOccludedPointsIn(squares):

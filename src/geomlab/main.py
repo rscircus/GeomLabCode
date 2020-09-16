@@ -465,7 +465,7 @@ class SymbolicMapsPage(tk.Frame):
                 full_data = [
                     datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
                     time.mktime(datetime.datetime.now().timetuple()),
-                    self.algorithm.get()
+                    self.algorithm.get(),
                 ]
                 full_data.extend(obj_list)
                 utility_writer.writerow(full_data)
@@ -1010,24 +1010,21 @@ class SymbolicMapsPage(tk.Frame):
                 if case[4] < self.lowerBoundCases:
                     my_data.remove(case)
 
-            valueList=[]
+            valueList = []
             for case in list(my_data):
                 valueList.append(case[4])
-            valueList = sorted(valueList,reverse=True)
-            
-            #sometimes use the 4th biggest confirmed value for scaling because of USA INDIA BRASIL
-            if(len(valueList)==1):
-                factor=valueList[0]
-            if(len(valueList)==0):
-                factor=1
-            if(len(valueList)<=50 and len(valueList)>1):
-                factor=valueList[1]         
-            if(len(valueList)>50):
-                factor=valueList[3]
-            
-                
-                
-                
+            valueList = sorted(valueList, reverse=True)
+
+            # sometimes use the 4th biggest confirmed value for scaling because of USA INDIA BRASIL
+            if len(valueList) == 1:
+                factor = valueList[0]
+            if len(valueList) == 0:
+                factor = 1
+            if len(valueList) <= 50 and len(valueList) > 1:
+                factor = valueList[1]
+            if len(valueList) > 50:
+                factor = valueList[3]
+
             multiplicativeconstant = self.maximalSize / np.log(1 + self.scalingFactor)
 
             circles = []
@@ -1072,11 +1069,10 @@ class SymbolicMapsPage(tk.Frame):
                 r = confAdjusted
                 rprime2 = deadAdjusted
                 rprime1 = recAdjusted
-                if(rprime2<1 or rprime1<1 or r<1):
-                    r=r+1
-                    rprime2=rprime2+1
-                    rprime1=rprime1+1
-                    
+                if rprime2 < 1 or rprime1 < 1 or r < 1:
+                    r = r + 1
+                    rprime2 = rprime2 + 1
+                    rprime1 = rprime1 + 1
 
                 circles.append([int(y), int(x), int(r), int(rprime1), int(rprime2)])
 
