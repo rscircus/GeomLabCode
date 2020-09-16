@@ -141,7 +141,7 @@ class SymbolicMapsPage(tk.Frame):
 
         # geomDataGeneration (should be adapted by the user)
         self.maximalSize = 50
-        self.scalingFactor = 3000
+        self.scalingFactor = 500
         self.lowerBoundCases = 10000
 
         self.timer_running = False
@@ -1010,24 +1010,24 @@ class SymbolicMapsPage(tk.Frame):
                 if case[4] < self.lowerBoundCases:
                     my_data.remove(case)
 
-            maximum = 1
-            maximumsecond = 1
-            firstSet = True
-            for case in myData:
-                if case[4] < 1:
-                    tmp = 1
-                else:
-                    tmp = case[4]
-
-                if firstSet:
-                    maximumsecond = tmp
-                    maximum = tmp
-                    firstSet = False
-
-                if tmp > maximum:
-                    maximumsecond = maximum
-                    maximum = tmp
-
+            valueList=[]
+            for case in list(my_data):
+                valueList.append(case[4])
+            valueList = sorted(valueList,reverse=True)
+            
+            #sometimes use the 4th biggest confirmed value for scaling because of USA INDIA BRASIL
+            if(len(valueList)==1):
+                factor=valueList[0]
+            if(len(valueList)==0):
+                factor=1
+            if(len(valueList)<=50 and len(valueList)>1):
+                factor=valueList[1]         
+            if(len(valueList)>50):
+                factor=valueList[3]
+            
+                
+                
+                
             multiplicativeconstant = self.maximalSize / np.log(1 + self.scalingFactor)
 
             circles = []
@@ -1059,14 +1059,14 @@ class SymbolicMapsPage(tk.Frame):
 
                 # nestedCircles
                 confAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor * conf / maximumsecond
+                    1 + self.scalingFactor * conf / factor
                 )
 
                 deadAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor / 2 * dead / maximumsecond
+                    1 + self.scalingFactor / 2 * dead / factor
                 )
                 recAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor / 2 * (rec + dead) / maximumsecond
+                    1 + self.scalingFactor / 2 * (rec + dead) / factor
                 )
 
                 r = confAdjusted
