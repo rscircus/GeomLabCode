@@ -1072,6 +1072,11 @@ class SymbolicMapsPage(tk.Frame):
                 r = confAdjusted
                 rprime2 = deadAdjusted
                 rprime1 = recAdjusted
+                if(rprime2<1 or rprime1<1 or r<1):
+                    r=r+1
+                    rprime2=rprime2+1
+                    rprime1=rprime1+1
+                    
 
                 circles.append([int(y), int(x), int(r), int(rprime1), int(rprime2)])
 

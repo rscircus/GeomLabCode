@@ -504,24 +504,23 @@ def calculateLowestCircleMaxMin(Circles, mode):
 def calculateLowestCircleMaxMinMinK(realCircles, mode):
     Circles = copy.deepcopy(realCircles)
     maximum = -1
-    maximumNonZero = -1
     while maximum <= 0:
         for i in range(0, len(Circles)):
             tmp = Circles[:i] + Circles[i + 1 :]
             tmp = np.array(tmp)
             if not len(tmp) == 0:
                 tmp = tmp[:, :3]
-            tmpMin = 100000000000
+            tmpMin =float("inf")
             for k in range(0, len(Circles[0]) - 2):
+                                
                 tmpCircle = [Circles[i][0], Circles[i][1], Circles[i][2 + k]]
                 if mode == "absolute":
-                    tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
+                    tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp) 
                 else:
                     tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)
-
                 if tmpValue < tmpMin:
                     tmpMin = tmpValue
-
+                    
             if tmpMin > maximum:
                 index = i
                 maximum = tmpMin
@@ -529,12 +528,16 @@ def calculateLowestCircleMaxMinMinK(realCircles, mode):
         if maximum > 0:
             return index, maximum
 
-        if maximum <= 0:
+        """if maximum <= 0:
             for i in range(0, len(Circles)):
                 if Circles[i][2] > maximum:
                     index = i
                     maximum = Circles[i][2]
-            return index, maximum
+            return index, maximum"""
+        if maximum <= 0:
+            for i in range(0, len(Circles)):
+                Circles[i].pop(len(Circles[i])-1)
+        
 
 
 # calculates the lowest circle (for circles with subcircles)
@@ -570,7 +573,7 @@ def calculateLowestCircleMaxMinSumK(Circles, mode):
 # output: nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
 # maximizes minimum of minimal subcircles
 def algorithmNestedDisksStackingMinMin(circles, mode):
-    local = circles.copy()
+    local = copy.deepcopy(circles)
     solution = []
     objective = 0
     cur_objective = 0
