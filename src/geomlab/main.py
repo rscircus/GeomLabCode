@@ -55,6 +55,21 @@ def on_combo_configure(event):
     style.configure("TCombobox", postoffset=(0, 0, width, 0))
 
 
+# Config object
+
+
+class Config:
+    """This object contains the configuration of the project."""
+
+    def __init__(self):
+
+        # geomDataGeneration (should be adapted by the user)
+        # default values
+        self.maximalSize = 50
+        self.scalingFactor = 500
+        self.lowerBoundCases = 10000
+
+
 # Main Window
 class GeomLabApp(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -70,6 +85,10 @@ class GeomLabApp(tk.Tk):
         file_menu = tk.Menu(menubar, tearoff=0)
         file_menu.add_command(
             label="Symbolic Maps", command=lambda: self.show_frame(SymbolicMapsPage)
+        )
+        file_menu.add_command(
+            label="Settings Page",
+            command=lambda: self.show_frame(SettingsPage),
         )
         file_menu.add_command(
             label="Painting Program",
@@ -89,22 +108,31 @@ class GeomLabApp(tk.Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        # Create config
+        self.symbolic_config = Config()
+
         # Create "pages"
         self.frames = {}
 
         # Create
-        for page in (SymbolicMapsPage, PaintingProgramPage, MatplotlibPage, AboutPage):
+        for page in (
+            SymbolicMapsPage,
+            SettingsPage,
+            PaintingProgramPage,
+            MatplotlibPage,
+            AboutPage,
+        ):
             frame = page(container, self)
             frame.grid(row=0, column=0, sticky="nswe")
             self.frames[page] = frame
 
-        # Add a second SymbolicMapsPage
+        # Add a second frame of type SymbolicMapsPage
         scnd_container = tk.Frame(self)
         scnd_container.pack(side="top", fill="both", expand=True)
         scnd_frame = SymbolicMapsPage(scnd_container, self)
         scnd_frame.grid(row=0, column=1, sticky="nswe")
 
-        # Display
+        # Display page in first frame
         self.show_frame(SymbolicMapsPage)
 
     def show_frame(self, container):
@@ -139,11 +167,6 @@ class SymbolicMapsPage(tk.Frame):
         self.numberOfFeatures = 0  # numberOffeatures eg, rec,dead,rest equal 3
         self.angles = []
 
-        # geomDataGeneration (should be adapted by the user)
-        self.maximalSize = 50
-        self.scalingFactor = 500
-        self.lowerBoundCases = 10000
-
         self.timer_running = False
         self.counter = 123456
         self.timer_start_timestamp = datetime.datetime.now()
@@ -173,6 +196,20 @@ class SymbolicMapsPage(tk.Frame):
 
         # Execute symbolic algo
         self.apply_algorithm()
+
+    def flush_everything(self):
+        self.pie_sets = {}
+        self.pie_piece_sets = {}
+        self.data_sets = {}
+        self.square_sets = {}
+        self.circles = []
+        self.pies = []
+        self.piePieces = []
+        self.squares = []
+        self.circles_for_drawing = []
+        self.squares_for_drawing = []
+        self.numberOfFeatures = 0
+        self.angles = []
 
     # TODO: Shift into own object
     # TODO: Timer is defunct - probably needs an own thread for display updates
@@ -722,7 +759,7 @@ class SymbolicMapsPage(tk.Frame):
                     extent=ext,
                 )
 
-            # last Piece (does depend on somthing which is not in piePieces)
+            # last Piece ( TODO: does depend on something which is not in piePieces)
             s = (angle + self.piePieces[i][len(self.piePieces[i]) - 1]) * 180 / np.pi
             e = (angle * 180 / np.pi) + 360
             ext = e - s
@@ -1006,8 +1043,18 @@ class SymbolicMapsPage(tk.Frame):
         def generateGeomData(myData, index):
             # calculate secondminimum and prepare scaling of the circles
 
+            # transport current values from config singleton
+            maximalSize = self.controller.symbolic_config.maximalSize
+            scalingFactor = self.controller.symbolic_config.scalingFactor
+            lowerBoundCases = self.controller.symbolic_config.lowerBoundCases
+
+            print("Current settings:")
+            print(maximalSize)
+            print(scalingFactor)
+            print(lowerBoundCases)
+
             for case in list(my_data):
-                if case[4] < self.lowerBoundCases:
+                if case[4] < lowerBoundCases:
                     my_data.remove(case)
 
             valueList = []
@@ -1025,7 +1072,7 @@ class SymbolicMapsPage(tk.Frame):
             if len(valueList) > 50:
                 factor = valueList[3]
 
-            multiplicativeconstant = self.maximalSize / np.log(1 + self.scalingFactor)
+            multiplicativeconstant = maximalSize / np.log(1 + scalingFactor)
 
             circles = []
             pies = []
@@ -1056,14 +1103,14 @@ class SymbolicMapsPage(tk.Frame):
 
                 # nestedCircles
                 confAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor * conf / factor
+                    1 + scalingFactor * conf / factor
                 )
 
                 deadAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor / 2 * dead / factor
+                    1 + scalingFactor / 2 * dead / factor
                 )
                 recAdjusted = multiplicativeconstant * np.log(
-                    1 + self.scalingFactor / 2 * (rec + dead) / factor
+                    1 + scalingFactor / 2 * (rec + dead) / factor
                 )
 
                 r = confAdjusted
@@ -1211,6 +1258,81 @@ class MatplotlibPage(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
         # self.canvas._tkcanvas.pack(side="top", fill="both", expand=True)
+
+
+class SettingsPage(tk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent)
+        self.parent = parent
+        self.controller = controller
+        self.create_widgets()
+
+    def create_widgets(self):
+
+        # Title
+        self.title_label = tk.Label(
+            self,
+            text="Settings of the current algorithms",
+        )
+        self.title_label.grid(column=0, row=0, sticky=tk.W + tk.E)
+
+        # Settings
+        self.frame = tk.Frame(self)
+        self.frame.grid(column=0, row=1, sticky=tk.W + tk.E)
+
+        self.maximalSize_label = tk.Label(self.frame, text="Maximal size:")
+        self.maximalSize_label.grid(column=0, row=1, sticky=tk.W)
+        self.maximalSize_entry = tk.Entry(self.frame, show=None)
+        self.maximalSize_entry.grid(column=1, row=1, sticky=tk.W)
+        self.maximalSize_entry.delete(0, tk.END)
+        self.maximalSize_entry.insert(
+            0, str(self.controller.symbolic_config.maximalSize)
+        )
+
+        self.scalingFactor_label = tk.Label(self.frame, text="Scaling factor:")
+        self.scalingFactor_label.grid(column=0, row=2, sticky=tk.W)
+        self.scalingFactor_entry = tk.Entry(self.frame, show=None)
+        self.scalingFactor_entry.grid(column=1, row=2, sticky=tk.W)
+        self.scalingFactor_entry.delete(0, tk.END)
+        self.scalingFactor_entry.insert(
+            0, str(self.controller.symbolic_config.scalingFactor)
+        )
+
+        self.lowerBoundCases_label = tk.Label(self.frame, text="Lower bound cases:")
+        self.lowerBoundCases_label.grid(column=0, row=3, sticky=tk.W)
+        self.lowerBoundCases_entry = tk.Entry(self.frame, show=None)
+        self.lowerBoundCases_entry.grid(column=1, row=3, sticky=tk.W)
+        self.lowerBoundCases_entry.delete(0, tk.END)
+        self.lowerBoundCases_entry.insert(
+            0, str(self.controller.symbolic_config.lowerBoundCases)
+        )
+
+        self.separator = tk.Label(self.frame, text="")
+        self.separator.grid(column=0, row=4, sticky=tk.W)
+
+        self.symbolic_button = tk.Button(
+            self,
+            text="Save & show first Symbolic Maps page",
+            command=lambda: self.save_and_to_symbolic_maps(),
+        )
+        self.symbolic_button.grid(column=0, row=2, sticky=tk.W + tk.E)
+
+    def save_and_to_symbolic_maps(self):
+        self.controller.symbolic_config.maximalSize = int(self.maximalSize_entry.get())
+        self.controller.symbolic_config.scalingFactor = int(
+            self.scalingFactor_entry.get()
+        )
+        self.controller.symbolic_config.lowerBoundCases = int(
+            self.lowerBoundCases_entry.get()
+        )
+
+        self.controller.frames[SymbolicMapsPage].flush_everything()
+        self.controller.frames[SymbolicMapsPage].initialize_data()
+        self.controller.frames[SymbolicMapsPage].prepare_data()
+
+        self.controller.show_frame(SymbolicMapsPage)
+
+        self.controller.frames[SymbolicMapsPage].data_algo_change(None)
 
 
 class AboutPage(tk.Frame):
