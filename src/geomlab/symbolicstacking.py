@@ -804,6 +804,29 @@ def algorithmPieChartsPainter(pies, piepieces):
 
     return localPies, localPiePieces, localAngles
 
+def algorithmPieChartsPainterRandom(pies, piepieces):
+    n = len(piepieces[0])
+    localPies = []
+    localPiePieces = []
+    localAngles = []
+    local = np.concatenate((pies, piepieces), axis=1)
+    local = sorted(local, key=lambda x: x[2], reverse=True)
+    for l in local:
+        localPies.append([l[0], l[1], l[2]])
+        tmp = []
+        for i in range(1, n + 1):
+            tmp.append(l[2 + i])
+        localPiePieces.append(tmp)
+        
+        
+        
+        
+    localAngles = randomAngles(len(pies))
+
+  
+
+    return localPies, localPiePieces, localAngles
+
 
 def algorithmPieChartsRandom(pies, piepieces):
 

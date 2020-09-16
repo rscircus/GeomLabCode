@@ -384,7 +384,7 @@ class SymbolicMapsPage(tk.Frame):
             )
 
         elif algo == 14:
-            self.pies, self.piePieces, self.angles = st.algorithmPieChartsLeftToRight(
+            self.pies, self.piePieces, self.angles = st.algorithmPieChartsPainterRandom(
                 self.pies, self.piePieces
             )
             self.objective_list.insert(
@@ -835,7 +835,7 @@ class SymbolicMapsPage(tk.Frame):
             "hawaiian disks | Painter",  # 11
             "hawaiian disks | our Stacking",  # 12
             "pie charts | random",  # 13
-            "pie charts | LeftToRight",  # 14
+            "pie charts | PainterRandom",  # 14
             "pie charts | RightToLeft",  # 15
             "pie charts | Painter",  # 16
             "pie charts | our Stacking",  # 17
