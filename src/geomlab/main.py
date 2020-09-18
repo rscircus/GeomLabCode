@@ -456,11 +456,17 @@ class SymbolicMapsPage(tk.Frame):
             self.squares_for_drawing = st.algorithmHeuristicPainterSquareStacking(
                 copy.deepcopy(self.squares)
             )
+            self.objective_list.insert(
+                1, st.utilitysSquares(self.squares_for_drawing)
+            )
             print("square utilitys: ", st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 19:
             self.squares_for_drawing = st.algorithmRandomPainterSquareStacking(
                 copy.deepcopy(self.squares)
+            )
+            self.objective_list.insert(
+                1, st.utilitysSquares(self.squares_for_drawing)
             )
             print("square utilitys: ", st.utilitysSquares(self.squares_for_drawing))
 
@@ -468,17 +474,26 @@ class SymbolicMapsPage(tk.Frame):
             self.squares_for_drawing = st.algorithmHeuristicRandomSquareStacking(
                 copy.deepcopy(self.squares)
             )
+            self.objective_list.insert(
+                1, st.utilitysSquares(self.squares_for_drawing)
+            )
             print("square utilitys: ", st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 21:
             self.squares_for_drawing = st.algorithmCompletelyRandomSquareStacking(
                 copy.deepcopy(self.squares)
             )
+            self.objective_list.insert(
+                1, st.utilitysSquares(self.squares_for_drawing)
+            )
             print("square utilitys: ", st.utilitysSquares(self.squares_for_drawing))
 
         elif algo == 22:
             self.squares_for_drawing, _, _, _ = st.algorithmSquaresStacking(
                 copy.deepcopy(self.squares)
+            )
+            self.objective_list.insert(
+                1, st.utilitysSquares(self.squares_for_drawing)
             )
             print("square utilitys: ", st.utilitysSquares(self.squares_for_drawing))
         else:
