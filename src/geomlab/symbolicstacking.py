@@ -1572,17 +1572,20 @@ def createOneSquare(size, case, heightOfImage, widthOfImage):
 def utilitysSquares(squares):
     minimum = float("inf")
     minGreaterZero = float("inf")
+    avg=0
 
     for i, currentSquare in enumerate(squares):
         squaresAbove = squares[i + 1 :]
         value = distanceToOcclusion(currentSquare, squaresAbove)
+        avg=avg+value
         minimum = min(value, minimum)
+        
         if value > 0:
             minGreaterZero = min(value, minGreaterZero)
 
     occludedCounter = numberOfOccludedPointsIn(squares)
-
-    return [round(minimum, 3), round(minGreaterZero), round(occludedCounter)]
+    avg=avg/len(squares)
+    return [round(occludedCounter),round(minimum, 3), round(minGreaterZero, 3), round(avg,3)]
 
 
 def numberOfOccludedPointsIn(squares):
