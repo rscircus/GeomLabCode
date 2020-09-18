@@ -1041,13 +1041,14 @@ def utilitysHawaiian(circles, numberOfNestings):
     minAvgOnSingleGlyph = minAbsoluteAvg
 
     return (
-        round(minAvgOnSingleGlyph, 3),
-        round(percentageRelative, 3),
-        round(percentageAbsolute, 3),
+        covered,
         round(minRelativeNonZero, 3),
         round(minAbsoluteNonZero, 3),
-        covered,
-    )
+        round(minAvgOnSingleGlyph, 3),
+        round(percentageRelative, 3),
+        round(percentageAbsolute, 3)
+        
+ )
 
 
 def utilitysPieCharts(circles, piePieces, angles):
@@ -1099,11 +1100,11 @@ def utilitysPieCharts(circles, piePieces, angles):
     sumOccluded = sum(occludedCounter)
 
     print("Some statistics:")
+    print("numberOfOccLines: ", sumOccluded)
     print("maxDist: ", largestOverall)
     print("minDist: ", smallestOverall)
-    print("AvgOfMax: ", largestAvg)
     print("smallestAvg: ", smallestAvg)
-    print("numberOfOccLines: ", sumOccluded)
+    print("AvgOfMax: ", largestAvg)
     print(" ")
 
     minimumNonZero = smallestOverall
@@ -1118,8 +1119,8 @@ def utilitysPieCharts(circles, piePieces, angles):
     largestAvg = round(largestAvg, 3)
     sumOccluded = round(sumOccluded, 3)
 
-    print([minimum, minimumNonZero, smallestAvg, largestAvg, sumOccluded])
-    return [minimum, minimumNonZero, smallestAvg, largestAvg, sumOccluded]
+    print([sumOccluded,minimum, minimumNonZero, smallestAvg, largestAvg])
+    return [sumOccluded,minimum, minimumNonZero, smallestAvg, largestAvg]
 
 
 def calculateAllPieDistances(circles, piePieces, angles):

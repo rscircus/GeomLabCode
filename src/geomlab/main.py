@@ -65,7 +65,7 @@ class Config:
 
         # geomDataGeneration (should be adapted by the user)
         # default values
-        self.maximalSize = 50
+        self.maximalSize = 40
         self.scalingFactor = 500
         self.lowerBoundCases = 10000
 
