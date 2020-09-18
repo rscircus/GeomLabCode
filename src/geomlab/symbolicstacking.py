@@ -1030,13 +1030,17 @@ def utilitysHawaiian(circles, numberOfNestings):
     )
     percentageAbsolute = percentageAbsolute / sumOfCirc
 
+
+
     print("Some statistics:")
-    print("minSum: ", minAbsoluteAvg)
-    print("relPerc: ", percentageRelative)
-    print("absPerc: ", percentageAbsolute)
+    print("coveredCircles: ", covered)
     print("minRelNonZero: ", minRelativeNonZero)
     print("minAbsNoneZero: ", minAbsoluteNonZero)
-    print("coveredCircles: ", covered)
+    print("minSumSingleGlyph: ", minAbsoluteAvg)
+    print("relPerc: ", percentageRelative)
+    print("absPerc: ", percentageAbsolute)
+    
+
     print(" ")
     minAvgOnSingleGlyph = minAbsoluteAvg
 
@@ -1101,7 +1105,7 @@ def utilitysPieCharts(circles, piePieces, angles):
 
     print("Some statistics:")
     print("numberOfOccLines: ", sumOccluded)
-    print("maxDist: ", largestOverall)
+    #print("maxDist: ", largestOverall)
     print("minDist: ", smallestOverall)
     print("smallestAvg: ", smallestAvg)
     print("AvgOfMax: ", largestAvg)
