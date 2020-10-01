@@ -185,12 +185,12 @@ class SymbolicMapsPage(tk.Frame):
                     "Timestamp",
                     "Unixtime (secs)",
                     "Algorithm",
-                    "U1",
-                    "U2",
-                    "U3",
-                    "U4",
-                    "U5",
-                    "U6",
+                    "covered",
+                    "minVis(r)/minDist",
+                    "minVis(a)/minDistAvg",
+                    "min1Gl/maxDistAvg",
+                    "avgRel",
+                    "abs%",
                 ]
             )
 
@@ -860,8 +860,8 @@ class SymbolicMapsPage(tk.Frame):
         self.data = ttk.Combobox(self.frame, width=50)
 
         # Append all available covid data
-        for i in range(0,10):
-            cl.dates_list[len(cl.dates_list)-1-i]="random {}".format(10-i)
+        for i in range(0,11):
+            cl.dates_list[len(cl.dates_list)-i-1]="random {}".format(10-i)
         
         
         self.data["values"] = tuple(cl.dates_list)
@@ -1061,13 +1061,29 @@ class SymbolicMapsPage(tk.Frame):
             
         def generateRandomData(numberOfCircles,maxRadius):
             circles=[]
+            pies=[]
+            piePieces=[]
+            squares=[]
             for i in range(0,numberOfCircles):
                 randomRadius=np.random.randint(maxRadius/3, maxRadius)
                 x=np.random.randint(0.1*self.screen_height,0.9*self.screen_height)
                 y=np.random.randint(0.33* self.screen_width,0.66* self.screen_width)
+                
+                
+                #appending everything
                 tmp=[x,y,randomRadius,2*randomRadius/3,4*randomRadius/9]
                 circles.append(tmp)
-            return circles                
+                pies.append([int(x), int(y), int(randomRadius)])
+                piePieces.append([2, 4])
+                tmpSquare = createOneSquare(
+                    randomRadius, 
+                    [0,0,np.random.randint(-45,45),np.random.randint(-45,45),randomRadius,randomRadius/4,2*randomRadius/4], 
+                    self.screen_height, self.screen_width
+                )
+                squares.append(tmpSquare)
+                
+            print(pies)
+            return circles,pies,piePieces,squares             
                 
                 
         def generateGeomData(myData, index):
@@ -1197,11 +1213,12 @@ class SymbolicMapsPage(tk.Frame):
                 generateGeomData(my_data, cur_data_set_idx)
                 cur_data_set_idx = len(self.data_sets)
 
-            for k in range(0,22):
-                self.data_sets[cur_data_set_idx]=generateRandomData(60, 50)
-                self.pie_piece_sets[cur_data_set_idx] = [0]
-                self.pie_sets[cur_data_set_idx] = [0]
-                self.square_sets[cur_data_set_idx] = [0]
+            for k in range(0,11):
+                circles,pies,piePieces,squares   = generateRandomData(60, 50)
+                self.data_sets[cur_data_set_idx]=     circles 
+                self.pie_piece_sets[cur_data_set_idx] = piePieces
+                self.pie_sets[cur_data_set_idx] = pies
+                self.square_sets[cur_data_set_idx] = squares
                 cur_data_set_idx=cur_data_set_idx+1
                 
                 
