@@ -845,7 +845,7 @@ class SymbolicMapsPage(tk.Frame):
         self.objective_list.grid(row=0, column=4, sticky="w", rowspan=3)
 
         self.objective_list.insert(
-            tk.END, "minSum relPerc absPerc minRelNonZero minAbsNonZero coveredCircles"
+            tk.END, "covered | minVis(r)/minDist | minVis(a)/minDistAvg | min1Gl/maxDistAvg | avgRel | abs%"
         )
         self.objective_list.insert(tk.END, "--- no run, yet ---")
 
@@ -860,6 +860,10 @@ class SymbolicMapsPage(tk.Frame):
         self.data = ttk.Combobox(self.frame, width=50)
 
         # Append all available covid data
+        for i in range(0,10):
+            cl.dates_list[len(cl.dates_list)-1-i]="random {}".format(10-i)
+        
+        
         self.data["values"] = tuple(cl.dates_list)
         self.data.current(193)  # 193 is a good dataset
         print(self.data.current())
@@ -1054,7 +1058,18 @@ class SymbolicMapsPage(tk.Frame):
                 square.append(center)
                 square.append(last)
                 return square
-
+            
+        def generateRandomData(numberOfCircles,maxRadius):
+            circles=[]
+            for i in range(0,numberOfCircles):
+                randomRadius=np.random.randint(maxRadius/3, maxRadius)
+                x=np.random.randint(0.1*self.screen_height,0.9*self.screen_height)
+                y=np.random.randint(0.33* self.screen_width,0.66* self.screen_width)
+                tmp=[x,y,randomRadius,2*randomRadius/3,4*randomRadius/9]
+                circles.append(tmp)
+            return circles                
+                
+                
         def generateGeomData(myData, index):
             # calculate secondminimum and prepare scaling of the circles
 
@@ -1156,6 +1171,8 @@ class SymbolicMapsPage(tk.Frame):
                     f"Data quality issues: Circles array is empty for dataset no. {index} ..."
                 )
                 return
+            
+            
 
             self.data_sets[index] = circles
             self.pie_piece_sets[index] = piePieces
@@ -1180,7 +1197,18 @@ class SymbolicMapsPage(tk.Frame):
                 generateGeomData(my_data, cur_data_set_idx)
                 cur_data_set_idx = len(self.data_sets)
 
-            len(self.pie_piece_sets)
+            for k in range(0,22):
+                self.data_sets[cur_data_set_idx]=generateRandomData(60, 50)
+                self.pie_piece_sets[cur_data_set_idx] = [0]
+                self.pie_sets[cur_data_set_idx] = [0]
+                self.square_sets[cur_data_set_idx] = [0]
+                cur_data_set_idx=cur_data_set_idx+1
+                
+                
+
+
+            
+        
 
 
 class PaintingProgramPage(tk.Frame):
