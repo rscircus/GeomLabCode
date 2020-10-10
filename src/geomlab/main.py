@@ -1187,9 +1187,8 @@ class SymbolicMapsPage(tk.Frame):
                     f"Data quality issues: Circles array is empty for dataset no. {index} ..."
                 )
                 return
-            
-            
-
+    
+    
             self.data_sets[index] = circles
             self.pie_piece_sets[index] = piePieces
             self.pie_sets[index] = pies

@@ -429,12 +429,16 @@ def algorithmHawaiianStacking(circles):
         maximum = -1
         angle = 0
 
-        for interval in visbleInt:
-            if interval[1] < interval[0]:
-                interval[1] = interval[1] + 2 * np.pi
-            tmp = np.absolute(interval[1] - interval[0])
-            if tmp > maximum:
-                maximum = tmp
+        if(visbleInt==None):
+            angle=0
+            
+        else:
+            for interval in visbleInt:
+                if interval[1] < interval[0]:
+                    interval[1] = interval[1] + 2 * np.pi
+                tmp = np.absolute(interval[1] - interval[0])
+                if tmp > maximum:
+                    maximum = tmp
 
                 angle = interval[0] + (interval[1] - interval[0]) / 2
 
