@@ -1,11 +1,7 @@
-from PIL import Image
 import numpy as np
-import time
-import cv2
 import math
 import random
 import copy
-from PIL import Image, ImageDraw
 
 color1PIL = "rgb(254, 201, 201)"  # blau
 color2PIL = "rgb(249, 102, 94)"  # rot
