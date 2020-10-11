@@ -1095,6 +1095,7 @@ def utilitysPieCharts(circles, piePieces, angles):
             largestAvg = largestAvg + tmp
             k = k + 1
     for s in smallestDist:
+        print(s)
         if type(s) == int:
             smallestAvg = smallestAvg + s
             j = j + 1
@@ -1157,6 +1158,7 @@ def calculateAllPieDistances(circles, piePieces, angles):
         for angle in adjustedAngles:
             isVisible = False
             if visibleInt == None:
+                tmpS.append(0)
                 tmpCounter = tmpCounter + 1
                 continue
             for interval in visibleInt:
@@ -1197,6 +1199,7 @@ def calculateAllPieDistances(circles, piePieces, angles):
                         tmpS.append(y)
                         tmpL.append(x)
             if isVisible == False:
+                tmpS.append(0)
                 tmpCounter = tmpCounter + 1
         largestDist.append(tmpL)
         smallestDist.append(tmpS)
