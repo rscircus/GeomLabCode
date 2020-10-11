@@ -1064,17 +1064,17 @@ def utilitysPieCharts(circles, piePieces, angles):
         circles, piePieces, angles
     )
 
-    largestOverall = 0
-    smallestOverall = 200
+    absoluteSmallestOverall = 2000
+    smallestOverall = 2000
 
     for l in largestDist:
         if len(l) == 0:
-            x = 0
+            x = 22222222222
         else:
-            x = max(l)
+            x = min(l)
 
-        if x > largestOverall:
-            largestOverall = x
+        if x < absoluteSmallestOverall:
+            absoluteSmallestOverall = x
     for s in smallestDist:
         if type(s) == int:
             x = s
@@ -1086,13 +1086,13 @@ def utilitysPieCharts(circles, piePieces, angles):
         if x < smallestOverall:
             smallestOverall = x
 
-    largestAvg = 0
+    absoluteSmallestAvg = 0
     smallestAvg = 0
     k = 0
     j = 0
     for l in largestDist:
         for tmp in l:
-            largestAvg = largestAvg + tmp
+            absoluteSmallestAvg = absoluteSmallestAvg + tmp
             k = k + 1
     for s in smallestDist:
         print(s)
@@ -1103,17 +1103,16 @@ def utilitysPieCharts(circles, piePieces, angles):
             for tmp in s:
                 smallestAvg = smallestAvg + tmp
                 j = j + 1
-    largestAvg = largestAvg / k
+    absoluteSmallestAvg = absoluteSmallestAvg / k
     smallestAvg = smallestAvg / j
 
     sumOccluded = sum(occludedCounter)
 
     print("Some statistics:")
     print("numberOfOccLines: ", sumOccluded)
-    #print("maxDist: ", largestOverall)
     print("minDist: ", smallestOverall)
     print("smallestAvg: ", smallestAvg)
-    print("AvgOfMax: ", largestAvg)
+    print("AvgOfMax: ", absoluteSmallestAvg)
     print(" ")
 
     minimumNonZero = smallestOverall
@@ -1125,15 +1124,14 @@ def utilitysPieCharts(circles, piePieces, angles):
     minimum = round(minimum, 3)
     minimumNonZero = round(minimumNonZero, 3)
     smallestAvg = round(smallestAvg, 3)
-    largestAvg = round(largestAvg, 3)
+    absoluteSmallestAvg = round(absoluteSmallestAvg, 3)
     sumOccluded = round(sumOccluded, 3)
 
-    print([sumOccluded,minimum, minimumNonZero, smallestAvg, largestAvg])
-    return [sumOccluded,minimum, minimumNonZero, smallestAvg, largestAvg]
+    print([sumOccluded,minimum, minimumNonZero, smallestAvg, absoluteSmallestAvg])
+    return [sumOccluded,minimum, minimumNonZero, smallestAvg, absoluteSmallestAvg]
 
 
 def calculateAllPieDistances(circles, piePieces, angles):
-
     largestDist = []
     smallestDist = []
     occludedCounter = []
@@ -1159,6 +1157,7 @@ def calculateAllPieDistances(circles, piePieces, angles):
             isVisible = False
             if visibleInt == None:
                 tmpS.append(0)
+                tmpL.append(0)
                 tmpCounter = tmpCounter + 1
                 continue
             for interval in visibleInt:
@@ -1194,12 +1193,13 @@ def calculateAllPieDistances(circles, piePieces, angles):
                     isVisible = True
                     if x <= y:
                         tmpS.append(x)
-                        tmpL.append(y)
+                        tmpL.append(x*circles[i][2])
                     else:
                         tmpS.append(y)
-                        tmpL.append(x)
+                        tmpL.append(y*circles[i][2])
             if isVisible == False:
                 tmpS.append(0)
+                tmpL.append(0)
                 tmpCounter = tmpCounter + 1
         largestDist.append(tmpL)
         smallestDist.append(tmpS)
