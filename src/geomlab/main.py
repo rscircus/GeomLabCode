@@ -26,6 +26,7 @@ logging.basicConfig(filename="log.txt", level=logging.DEBUG)
 
 # Expand TK's oval:
 def _create_circle(self, x, y, r, **kwargs):
+    """Private function to create circle from TK's create_oval function."""
     return self.create_oval(x - r, y - r, x + r, y + r, **kwargs)
 
 
@@ -33,6 +34,7 @@ tk.Canvas.create_circle = _create_circle
 
 # Expand TK's oval to support our pies:
 def _create_circle_arc(self, x, y, r, **kwargs):
+    """Private function to create circle arc from TK's create_arc function."""
     if "start" in kwargs and "end" in kwargs:
         kwargs["extent"] = kwargs["end"] - kwargs["start"]
         del kwargs["end"]
@@ -72,6 +74,7 @@ class Config:
 
 # Main Window
 class GeomLabApp(tk.Tk):
+    """Extends tk.Tk to GeomLabApp with all necessary frames. Manages the window."""
     def __init__(self, *args, **kwargs):
 
         tk.Tk.__init__(self, *args, **kwargs)
@@ -84,7 +87,7 @@ class GeomLabApp(tk.Tk):
         menubar = tk.Menu(self)
         file_menu = tk.Menu(menubar, tearoff=0)
         file_menu.add_command(
-            label="Symbolic Maps", command=lambda: self.show_frame(SymbolicMapsPage)
+            label="Symbolic Maps", command=lambda: self.show_frame(SymbolMapsPage)
         )
         file_menu.add_command(
             label="Settings Page",
@@ -116,11 +119,11 @@ class GeomLabApp(tk.Tk):
 
         # Create
         for page in (
-            SymbolicMapsPage,
-            SettingsPage,
-            PaintingProgramPage,
-            MatplotlibPage,
-            AboutPage,
+                SymbolMapsPage,
+                SettingsPage,
+                PaintingProgramPage,
+                MatplotlibPage,
+                AboutPage,
         ):
             frame = page(container, self)
             frame.grid(row=0, column=0, sticky="nswe")
@@ -129,11 +132,11 @@ class GeomLabApp(tk.Tk):
         # Add a second frame of type SymbolicMapsPage
         scnd_container = tk.Frame(self)
         scnd_container.pack(side="top", fill="both", expand=True)
-        scnd_frame = SymbolicMapsPage(scnd_container, self)
+        scnd_frame = SymbolMapsPage(scnd_container, self)
         scnd_frame.grid(row=0, column=1, sticky="nswe")
 
         # Display page in first frame
-        self.show_frame(SymbolicMapsPage)
+        self.show_frame(SymbolMapsPage)
 
     def show_frame(self, container):
         """Show a specific frame in the window."""
@@ -143,7 +146,8 @@ class GeomLabApp(tk.Tk):
 
 
 # Frames
-class SymbolicMapsPage(tk.Frame):
+class SymbolMapsPage(tk.Frame):
+    """Frmae for the visualization of the symbol maps using COVID-19 data."""
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.csv_filename = (
@@ -558,7 +562,7 @@ class SymbolicMapsPage(tk.Frame):
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
 
     def from_rgb(self, rgb):
-        """translates an rgb tuple of int to a tkinter friendly color code"""
+        """translates an rgb tuple of int to a tkinter friendly color code."""
         return "#%02x%02x%02x" % rgb
 
     def drawSquareSolution(self):
@@ -1228,6 +1232,7 @@ class SymbolicMapsPage(tk.Frame):
 
 
 class PaintingProgramPage(tk.Frame):
+    """A frame to demonstrate the custom TK functions."""
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.parent = parent
@@ -1273,7 +1278,7 @@ class PaintingProgramPage(tk.Frame):
         self.symbolic_button = tk.Button(
             self,
             text="Go to Symbolic Maps Page",
-            command=lambda: self.controller.show_frame(SymbolicMapsPage),
+            command=lambda: self.controller.show_frame(SymbolMapsPage),
         )
         self.symbolic_button.pack(side="bottom")
 
@@ -1298,6 +1303,7 @@ class PaintingProgramPage(tk.Frame):
 
 
 class MatplotlibPage(tk.Frame):
+    """Test the matplotlib instance here in case it is needed."""
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.parent = parent
@@ -1320,6 +1326,7 @@ class MatplotlibPage(tk.Frame):
 
 
 class SettingsPage(tk.Frame):
+    """A frame to configure the whole project using a singleton."""
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.parent = parent
@@ -1385,13 +1392,13 @@ class SettingsPage(tk.Frame):
             self.lowerBoundCases_entry.get()
         )
 
-        self.controller.frames[SymbolicMapsPage].flush_everything()
-        self.controller.frames[SymbolicMapsPage].initialize_data()
-        self.controller.frames[SymbolicMapsPage].prepare_data()
+        self.controller.frames[SymbolMapsPage].flush_everything()
+        self.controller.frames[SymbolMapsPage].initialize_data()
+        self.controller.frames[SymbolMapsPage].prepare_data()
 
-        self.controller.show_frame(SymbolicMapsPage)
+        self.controller.show_frame(SymbolMapsPage)
 
-        self.controller.frames[SymbolicMapsPage].data_algo_change(None)
+        self.controller.frames[SymbolMapsPage].data_algo_change(None)
 
 
 class AboutPage(tk.Frame):
@@ -1411,7 +1418,7 @@ class AboutPage(tk.Frame):
         self.symbolic_button = tk.Button(
             self,
             text="Go to Symbolic Maps Page",
-            command=lambda: self.controller.show_frame(SymbolicMapsPage),
+            command=lambda: self.controller.show_frame(SymbolMapsPage),
         )
         self.symbolic_button.pack(side="bottom")
 
@@ -1423,6 +1430,3 @@ def main():
 
     # Run application
     app.mainloop()
-
-
-# TODO: Convert solution drawings for pies and movable circles
