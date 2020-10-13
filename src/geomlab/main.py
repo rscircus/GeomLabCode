@@ -265,14 +265,17 @@ class SymbolMapsPage(tk.Frame):
         """Update Canvas upon algo change."""
 
         # Set current dataset
-        print("Current data set:")
-        print(self.data.current())
-
         self.circles = self.data_sets[self.data.current()]
         self.piePieces = self.pie_piece_sets[self.data.current()]
         self.pies = self.pie_sets[self.data.current()]
         self.angles = [0] * len(self.pies)
         self.squares = self.square_sets[self.data.current()]
+
+        print("Current data set:")
+        print(self.data.current())
+        print(f"Number of circles: {len(self.circles)}")
+        print(f"Number of pies: {len(self.pies)}")
+        print(f"Number of squares: {len(self.squares)}")
 
         algo = self.algorithm.current()
 
@@ -1086,7 +1089,9 @@ class SymbolMapsPage(tk.Frame):
                 )
                 squares.append(tmpSquare)
                 
-            print(pies)
+            print("generateRandomData:")
+            print(f"Number of pies: {len(pies)}")
+            print(f"Number of circles: {len(circles)}")
             return circles,pies,piePieces,squares             
                 
                 
@@ -1193,6 +1198,9 @@ class SymbolMapsPage(tk.Frame):
                 return
     
     
+            print("generateGeomData:")
+            print(f"Number of pies: {len(pies)}")
+            print(f"Number of circles: {len(circles)}")
             self.data_sets[index] = circles
             self.pie_piece_sets[index] = piePieces
             self.pie_sets[index] = pies
