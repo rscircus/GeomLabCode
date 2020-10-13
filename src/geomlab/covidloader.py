@@ -8,7 +8,7 @@ date_pattern = re.compile(r"\d{1,2}/\d{1,2}/\d{2}")
 
 
 def reformat_dates(col_name: str) -> str:
-    # for columns which are dates, I'd much rather they were in day/month/year format
+    """Date colums are rewritten to day/month/year format."""
     try:
         return date_pattern.sub(
             datetime.strptime(col_name, "%m/%d/%y").strftime("%d/%m/%Y"),
@@ -81,7 +81,6 @@ geo_data_df = geo_data_df.join(country_codes_df, how="left", on="country").set_i
 dates_list = deaths_df.filter(regex=r"(\d{2}/\d{2}/\d{4})", axis=1).columns.to_list()
 
 # create a mapping of date -> DataFrame, where each df holds the daily counts of cases and deaths per country
-# TODO: Shift all of this into one df later on
 for date in dates_list:
 
     confirmed_cases_day_df = confirmed_cases_df.filter(like=date, axis=1).rename(
@@ -143,6 +142,7 @@ dates_list = confirmed_cases_df.filter(
 # We'll use this data dict to connect to the symbolic page display
 cases_by_date = {}
 
+# Fill cases_by_date with current data
 for date in dates_list:
 
     confirmed_cases_day_df = confirmed_cases_df[["country", "location", date]].copy()
@@ -166,9 +166,6 @@ for date in dates_list:
     )
     cases_df = cases_df.merge(recovered_day_df, how="left", on=["country", "location"])
     cases_df = cases_df.merge(deaths_day_df, how="left", on=["country", "location"])
-
-    # TODO: collecting zeroes nevertheless, watch out when drawing
-    # cases_df = cases_df[cases_df["confirmed_cases"] > 0]
 
     # TODO: This is quite dangerous and might mask other errors
     cases_df.replace(np.nan, 0)
