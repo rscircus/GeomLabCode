@@ -2,6 +2,8 @@
 
 Code for the geomlab.
 
+Paper and Slides to this piece of software: https://github.com/rscircus/GeomLabTex
+
 ![](assets/screeny.png)
 
 # Installation
