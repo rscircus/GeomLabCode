@@ -1261,10 +1261,9 @@ def preparePies(squares):
         )
         radius = radius / 2
 
-        # we only want positive angles
-        for a in tmpPiece:
-            if a <= 0:
-                a = a + 2 * np.pi
+        # we want positive angles only
+        tmpPiece = [a + 2 * np.pi if a <= 0 else a for a in tmpPiece]
+
         baseAngles.append(baseAngle)
         circles.append([center[0], center[1], radius])
         piePieces.append(tmpPiece)
