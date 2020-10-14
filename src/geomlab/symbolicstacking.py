@@ -972,10 +972,10 @@ def circumferenceValuesNestedDisks(circles, numberOfNestings):
             tmp.append(0)
         else:
             # print(tmpvis)
-            for i in tmpvis:
-                if i[1] <= i[0]:
-                    i[1] = i[1] + 2 * np.pi
-                tmpValue = tmpValue + (i[1] - i[0])
+            for k in tmpvis:
+                if k[1] <= k[0]:
+                    k[1] = k[1] + 2 * np.pi
+                tmpValue = tmpValue + (k[1] - k[0])
             tmp.append(tmpValue)
         if j == numberOfNestings - 1:
             resultArray.append(tmp)
