@@ -944,6 +944,7 @@ def algorithmPieChartsRightToLeft(pies, piepieces):
 
 
 def formatChangeNestedDisks(circles):
+    """Extracts circles and number of nestings and returns them."""
     n = len(circles[0]) - 2
     result = []
     for c in circles:
@@ -954,19 +955,23 @@ def formatChangeNestedDisks(circles):
 
 
 def circumferenceValuesNestedDisks(circles, numberOfNestings):
+    """Return relative visibility and number of covered circles."""
     j = 0
     resultArray = []
     resultCovered = 0
     coverCircles = []
+    tmp = []
+
     for i in range(0, int(len(circles) / numberOfNestings)):
         coverCircles.append(circles[i * numberOfNestings])
-    tmp = []
+
     for i in range(0, len(circles)):
+
         tmpvis = caculateVisibleIntervall(
             circles[i], coverCircles[(math.floor(i / numberOfNestings) + 1):]
         )
+
         tmpValue = 0
-        # print(math.floor(i/3)+1)
         if tmpvis is None:
             resultCovered = resultCovered + 1
             tmp.append(0)
@@ -977,15 +982,18 @@ def circumferenceValuesNestedDisks(circles, numberOfNestings):
                     k[1] = k[1] + 2 * np.pi
                 tmpValue = tmpValue + (k[1] - k[0])
             tmp.append(tmpValue)
+
         if j == numberOfNestings - 1:
             resultArray.append(tmp)
             j = -1
             tmp = []
         j = j + 1
+
     return resultArray, resultCovered
 
 
 def utilitysNestedDisks(circles):
+    """Calculate utilities for nested disk case."""
     x, y = formatChangeNestedDisks(circles)
     (
         minAvgOnSingleGlyph,
@@ -1006,15 +1014,18 @@ def utilitysNestedDisks(circles):
 
 
 def utilitysHawaiian(circles, numberOfNestings):
-    relativeVis, covered = circumferenceValuesNestedDisks(circles, numberOfNestings)
-    absoluteVis = copy.deepcopy(relativeVis)
+    """Calculate utilities for hawaiian disk case."""
     percentageRelative = 0
     percentageAbsolute = 0
+
+    # TODO: Remarks on why these values, else I suggest sys.maxsize
     minRelativeNonZero = 200000000
     minAbsoluteNonZero = 200000000
     minAbsoluteAvg = 20000000
-
     sumOfCirc = 0
+
+    relativeVis, covered = circumferenceValuesNestedDisks(circles, numberOfNestings)
+    absoluteVis = copy.deepcopy(relativeVis)
 
     for i in range(0, len(absoluteVis)):
         for j in range(0, len(absoluteVis[0])):
@@ -1052,6 +1063,7 @@ def utilitysHawaiian(circles, numberOfNestings):
     print("absPerc: ", percentageAbsolute)
 
     print(" ")
+
     minAvgOnSingleGlyph = minAbsoluteAvg
 
     return (
@@ -1065,13 +1077,16 @@ def utilitysHawaiian(circles, numberOfNestings):
 
 
 def utilitysPieCharts(circles, piePieces, angles):
+    """Calculate utilities for pie chart disk case."""
+    # TODO: Remarks on why these values, else I suggest sys.maxsize
+    absoluteSmallestOverall = 2000
+    smallestOverall = 2000
+
     largestDist, smallestDist, occludedCounter = calculateAllPieDistances(
         circles, piePieces, angles
     )
 
-    absoluteSmallestOverall = 2000
-    smallestOverall = 2000
-
+    # Calculate absolute values
     for l in largestDist:
         if len(l) == 0:
             x = 22222222222
@@ -1095,6 +1110,8 @@ def utilitysPieCharts(circles, piePieces, angles):
     smallestAvg = 0
     k = 0
     j = 0
+
+    # Calculate averages
     for l in largestDist:
         for tmp in l:
             absoluteSmallestAvg = absoluteSmallestAvg + tmp
@@ -1108,6 +1125,7 @@ def utilitysPieCharts(circles, piePieces, angles):
             for tmp in s:
                 smallestAvg = smallestAvg + tmp
                 j = j + 1
+
     absoluteSmallestAvg = absoluteSmallestAvg / k
     smallestAvg = smallestAvg / j
 
@@ -1121,6 +1139,7 @@ def utilitysPieCharts(circles, piePieces, angles):
     print(" ")
 
     minimumNonZero = smallestOverall
+
     if sumOccluded > 0:
         minimum = 0
     else:
@@ -1133,18 +1152,21 @@ def utilitysPieCharts(circles, piePieces, angles):
     sumOccluded = round(sumOccluded, 3)
 
     print([sumOccluded, minimum, minimumNonZero, smallestAvg, absoluteSmallestAvg])
+
     return [sumOccluded, minimum, minimumNonZero, smallestAvg, absoluteSmallestAvg]
 
 
 def calculateAllPieDistances(circles, piePieces, angles):
+    """Calculate largest, smallest arc and number occluded lines per circle."""
     largestDist = []
     smallestDist = []
     occludedCounter = []
+
     for i in range(0, len(circles)):
         adjustedAngles = []
         c = circles[i]
         visibleInt = caculateVisibleIntervall(c, circles[(i + 1):])
-        if visibleInt == None:
+        if visibleInt is None:
             x = 2
         else:
             for Int in visibleInt:
@@ -1160,7 +1182,7 @@ def calculateAllPieDistances(circles, piePieces, angles):
 
         for angle in adjustedAngles:
             isVisible = False
-            if visibleInt == None:
+            if visibleInt is None:
                 tmpS.append(0)
                 tmpL.append(0)
                 tmpCounter = tmpCounter + 1
@@ -1170,24 +1192,20 @@ def calculateAllPieDistances(circles, piePieces, angles):
                 if (
                         (interval[0] <= angle and interval[1] > angle)
                         or (
-                        interval[0] <= -2 * np.pi + angle
-                        and interval[1] > -2 * np.pi + angle
+                        interval[0] <= -2 * np.pi + angle < interval[1]
                 )
                         or (
-                        interval[0] <= 2 * np.pi + angle
-                        and interval[1] > 2 * np.pi + angle
+                        interval[0] <= 2 * np.pi + angle < interval[1]
                 )
                 ):
                     if (
-                            interval[0] <= -2 * np.pi + angle
-                            and interval[1] > -2 * np.pi + angle
+                            interval[0] <= -2 * np.pi + angle < interval[1]
                     ):
                         x = np.absolute(-2 * np.pi + angle - interval[0])
                         y = np.absolute(-2 * np.pi + angle - interval[1])
                     else:
                         if (
-                                interval[0] <= 2 * np.pi + angle
-                                and interval[1] > 2 * np.pi + angle
+                                interval[0] <= 2 * np.pi + angle < interval[1]
                         ):
                             x = np.absolute(2 * np.pi + angle - interval[0])
                             y = np.absolute(2 * np.pi + angle - interval[1])
@@ -1202,13 +1220,15 @@ def calculateAllPieDistances(circles, piePieces, angles):
                     else:
                         tmpS.append(y)
                         tmpL.append(y * circles[i][2])
-            if isVisible == False:
+            if isVisible is False:
                 tmpS.append(0)
                 tmpL.append(0)
                 tmpCounter = tmpCounter + 1
+
         largestDist.append(tmpL)
         smallestDist.append(tmpS)
         occludedCounter.append(tmpCounter)
+
     return largestDist, smallestDist, occludedCounter
 
 
