@@ -167,7 +167,7 @@ class SymbolMapsPage(tk.Frame):
         self.piePieces = []
         self.squares = []
         self.circles_for_drawing = []  # for nested disks different structure
-        self.squares_for_drawing = []  #
+        self.squares_for_drawing = []  
         self.numberOfFeatures = 0  # numberOffeatures eg, rec,dead,rest equal 3
         self.angles = []
 
@@ -558,8 +558,8 @@ class SymbolMapsPage(tk.Frame):
         if algo in range(18, 23):
             self.drawSquareSolution()
 
-    def draw_circles(self):
 
+    def draw_circles(self):
         for c in self.circles:
             # x, y ,r
             self.canvas.create_circle(c[0], c[1], c[2], fill="#bbb", outline="#000")
@@ -581,6 +581,8 @@ class SymbolMapsPage(tk.Frame):
         tmp = [0, 0]
         tmp[1] = square[4][0] + (square[3][0] - square[0][0])
         tmp[0] = square[4][1] + (square[3][1] - square[0][1])
+        
+        #tuple for all of the mosaic parts of the square
         square1_vertices = (
             (square[0][1], square[0][0]),
             (square[4][1], square[4][0]),
@@ -605,6 +607,7 @@ class SymbolMapsPage(tk.Frame):
             (tmp[0], tmp[1]),
         )
 
+        #coloring the squares in the correct colors
         color1 = ""
         color2 = ""
         color3 = ""
@@ -665,6 +668,7 @@ class SymbolMapsPage(tk.Frame):
             y = c[0]
             x = c[1]
             r = c[2]
+            #colors are given by different greyvalues
             colorValue = int(200 - counter * (150 / counterMax))
             colorRGB = (colorValue, colorValue, colorValue)
             colorHEX = self.from_rgb(colorRGB)
@@ -681,8 +685,12 @@ class SymbolMapsPage(tk.Frame):
         else:
             self.draw_subcircle_stacking_arbitraryFeatures()
 
+
+    
     def draw_pie_stacking_3Features(self):
+        
         for i in range(0, len(self.pies)):
+            #first arc from imaginary zero line to the first line
             angle = self.angles[i]
             y = self.pies[i][0]
             x = self.pies[i][1]
@@ -703,6 +711,7 @@ class SymbolMapsPage(tk.Frame):
                 start=s - 90,
                 extent=ext,
             )
+            #inner piece
             s = e
             e = (angle + self.piePieces[i][1]) * 180 / np.pi
             ext = e - s
@@ -718,6 +727,7 @@ class SymbolMapsPage(tk.Frame):
                 start=s - 90,
                 extent=ext,
             )
+            #piece from the last line to the imaginary 0 line
             s = e
             e = angle * 180 / np.pi
             e = e + 360
@@ -781,7 +791,7 @@ class SymbolMapsPage(tk.Frame):
                     extent=ext,
                 )
 
-            # last Piece ( TODO: does depend on something which is not in piePieces)
+            # last Piece (does depend on something which is not in piePieces)
             s = (angle + self.piePieces[i][len(self.piePieces[i]) - 1]) * 180 / np.pi
             e = (angle * 180 / np.pi) + 360
             ext = e - s
@@ -931,9 +941,9 @@ class SymbolMapsPage(tk.Frame):
         logging.info(self.screen_height)
         logging.info(self.screen_width)
 
-    # This can be reworked but is held compatible to Philipp's
-    # code due to early development state.
+    #prepares the data for the proportional symbols
     def prepare_data(self):
+        #calculates coordinates from latitiude and longitude
         def latLongToPoint(lat, long, h, w):
             """Return (x,y) for lat, long inside a box."""
             lat = -lat + 90
@@ -943,7 +953,8 @@ class SymbolMapsPage(tk.Frame):
             x = int(x * w)
             y = int(y * h)
             return x, y
-
+        
+        #changes the dataframe structure to a list
         def changeStructureFromPanda(df):
             myData = []
 
@@ -959,7 +970,9 @@ class SymbolMapsPage(tk.Frame):
                     myData.append(tmp)
 
             return myData
-
+        
+        
+        #for a given data point generate a mosaic square
         def createOneSquare(size, case, heightOfImage, widthOfImage):
             square = []
             x, y = latLongToPoint(case[2], case[3], heightOfImage, widthOfImage)
@@ -1066,6 +1079,7 @@ class SymbolMapsPage(tk.Frame):
                 square.append(last)
                 return square
             
+        #generates some random data which has some nice properties
         def generateRandomData(numberOfCircles,maxRadius):
             circles=[]
             pies=[]
@@ -1093,20 +1107,16 @@ class SymbolMapsPage(tk.Frame):
             print(f"Number of pies: {len(pies)}")
             print(f"Number of circles: {len(circles)}")
             return circles,pies,piePieces,squares             
-                
+              
+        
                 
         def generateGeomData(myData, index):
-            # calculate secondminimum and prepare scaling of the circles
 
             # transport current values from config singleton
             maximalSize = self.controller.symbolic_config.maximalSize
             scalingFactor = self.controller.symbolic_config.scalingFactor
             lowerBoundCases = self.controller.symbolic_config.lowerBoundCases
 
-            print("Current settings:")
-            print(maximalSize)
-            print(scalingFactor)
-            print(lowerBoundCases)
 
             for case in list(my_data):
                 if case[4] < lowerBoundCases:
@@ -1190,7 +1200,7 @@ class SymbolMapsPage(tk.Frame):
                 )
                 squares.append(tmpSquare)
 
-            # TODO: Catch errors on data acquisition level?
+
             if len(circles) == 0:
                 print(
                     f"Data quality issues: Circles array is empty for dataset no. {index} ..."
@@ -1225,6 +1235,7 @@ class SymbolMapsPage(tk.Frame):
                 cur_data_set_idx = len(self.data_sets)
 
             for k in range(0,11):
+                #generate random data
                 circles,pies,piePieces,squares   = generateRandomData(60, 50)
                 self.data_sets[cur_data_set_idx]=     circles 
                 self.pie_piece_sets[cur_data_set_idx] = piePieces
