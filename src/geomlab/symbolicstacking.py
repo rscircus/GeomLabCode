@@ -117,20 +117,20 @@ def testCompletlyCovered(I):
 # all intervalls lie in [0,2pi]
 def findStartingPoint(I):
     c = 0
-    min = 0
+    minimum = float('inf')
     minindex = 0
     for i in range(0, len(I)):
         if I[i][1] == 0:
             c = c + 1
         else:
             c = c - 1
-            if c == min:
+            if c == minimum:
                 minindex = i
             else:
-                if c < min:
-                    min = c
+                if c < minimum:
+                    minimum = c
                     minindex = i
-    if min == 0:
+    if minimum == 0:
         return 0
 
     if minindex == len(I) - 1:
@@ -1092,14 +1092,13 @@ def utilitysPieCharts(circles, piePieces, angles):
 
         if x < absoluteSmallestOverall:
             absoluteSmallestOverall = x
+    
     for s in smallestDist:
-        if type(s) == int:
-            x = s
+
+        if len(s) == 0:
+            x = float('inf')
         else:
-            if len(s) == 0:
-                x = float('inf')
-            else:
-                x = min(s)
+            x = min(s)
         if x < smallestOverall:
             smallestOverall = x
 
@@ -1114,14 +1113,9 @@ def utilitysPieCharts(circles, piePieces, angles):
             absoluteSmallestAvg = absoluteSmallestAvg + tmp
             k = k + 1
     for s in smallestDist:
-        print(s)
-        if type(s) == int:
-            smallestAvg = smallestAvg + s
+        for tmp in s:
+            smallestAvg = smallestAvg + tmp
             j = j + 1
-        else:
-            for tmp in s:
-                smallestAvg = smallestAvg + tmp
-                j = j + 1
 
     absoluteSmallestAvg = absoluteSmallestAvg / k
     smallestAvg = smallestAvg / j
