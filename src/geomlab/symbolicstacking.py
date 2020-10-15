@@ -178,6 +178,7 @@ def calculateCoveredCircumference(c, N):
     CoverIntervals1D = []
     CoverIntervals2D = []
     for n in N:
+        #generate all covering intervalls (may not be disjoint)
         a, b, bo = calculateSingleCoverInterval(c, n)
         if bo is True:
             CoverIntervals2D.append([a, b])
@@ -189,6 +190,7 @@ def calculateCoveredCircumference(c, N):
     if len(CoverIntervals1D) == 0:
         return 0
     if not testCompletlyCovered(CoverIntervals2D):
+        #calculate the disjoint intervalls if not fully covered
         shift = findStartingPoint(CoverIntervals1D)
         CoverArray = calculateMaxIntervalsWithShift(CoverIntervals1D, shift)
         return calcCirc(CoverArray)
@@ -220,6 +222,7 @@ def calculateRelativeBoundaryUtility(circle, Neighbours):
 # circles that lie above the circle calculates all disjoint Intervals in which
 # the first deviding line can be positioned
 def caculateFeasibleIntervall(c, piePiecesC, N):
+    #calculate the cover intervals of the boundary
     CoverIntervals1D = []
     CoverIntervals2D = []
     for n in N:
@@ -235,6 +238,7 @@ def caculateFeasibleIntervall(c, piePiecesC, N):
         return [[0, 2 * np.pi]]
 
     if not testCompletlyCovered(CoverIntervals2D):
+        #if not completely covered we generate all the of the intervals discussed in the lab notes (Lemma1)
         shift = findStartingPoint(CoverIntervals1D)
         CoverArray = calculateMaxIntervalsWithShift(CoverIntervals1D, shift)
 
@@ -260,6 +264,7 @@ def caculateFeasibleIntervall(c, piePiecesC, N):
         CoverIntervals1D.sort()
         CoverIntervals2D.sort()
 
+        #calculate the visible intervals from the covered ones
         if not testCompletlyCovered(CoverIntervals2D):
             shift = findStartingPoint(CoverIntervals1D)
             CoverArray = calculateMaxIntervalsWithShift(CoverIntervals1D, shift)
@@ -296,7 +301,7 @@ def calculateAngle(intervals):
     return result, val
 
 
-# given a circle and devidinglines and the circles that lie above it
+# given a circle and dividinglines and the circles that lie above it
 # calculates the postion and value of the deviding line
 def caculateOneAnglePie(c, piePiecesC, N):
     tmp = caculateFeasibleIntervall(c, piePiecesC, N)
@@ -321,7 +326,8 @@ def calculateLowestPie(circles, piePieces):
     resultMax = -1
     resultAngle = 0
     while hasFound is False:
-
+        
+        #find the max value 
         for i in range(0, len(circles)):
             tmpC = circles[i]
             tmpPieces = locPiePieces[i]
@@ -341,6 +347,7 @@ def calculateLowestPie(circles, piePieces):
             break
         if len(locPiePieces) == 0:
             break
+        #heuristic just ignores the last line
         for p in locPiePieces:
             p.pop(len(p) - 1)
     return 0, 0
@@ -352,12 +359,12 @@ def calculateLowestPie(circles, piePieces):
 
 
 # calculates best pie stacking
-# input circles: [[x,y,r]...] piePieces [[p1,p2,...]...] 0 is always a deviding line is
+# input circles: [[x,y,r]...] piePieces [[p1,p2,...]...] 0 is always a deviding line 
 # every circle has to have at least 1 more deviding line!
 # output:
 # resultOrder new Stackingorder
 # resultPieces the pieces in the same order as the circles
-# for every pie the angle of the 0 devidingline
+# resultAngles for every pie the angle of the 0 devidingline
 def algorithmPieChartsStacking(circles, piePieces):
     resultAngles = []
     resultOrder = []
@@ -375,7 +382,7 @@ def algorithmPieChartsStacking(circles, piePieces):
     return resultOrder, resultPieces, resultAngles
 
 
-# used for Hawaiian
+# calculates the value largest visible CONTINUOUS Interval
 def calculateLargestContinousCirc(circle, neighbours):
     x = caculateVisibleIntervall(circle, neighbours)
     maximum = -1
@@ -391,7 +398,7 @@ def calculateLargestContinousCirc(circle, neighbours):
             maximum = tmpvalue
     return maximum
 
-
+#calculate maximum with respect to the largest visible CONTINUOUS Interval
 def calculateLowestHawaiian(Circles):
     maximum = -1
     index = -1
@@ -412,12 +419,15 @@ def algorithmHawaiianStacking(circles):
     local = circles.copy()
     stacking = []
     stackingAllCircles = []
+    
+    #calculate stacking
     for i in range(0, len(circles)):
         index, value = calculateLowestHawaiian(local)
-        # index,value=calculateLowestCircleMaxMin(local,"absolute")
         tmp = local.pop(index)
         stacking.append(tmp)
 
+    
+    #calculates the new postions
     for i in range(0, len(stacking)):
         N = stacking[i + 1:]
         visbleInt = caculateVisibleIntervall(stacking[i], N)
@@ -428,6 +438,7 @@ def algorithmHawaiianStacking(circles):
             angle = 0
 
         else:
+        #calculation of the anchor point
             for interval in visbleInt:
                 if interval[1] < interval[0]:
                     interval[1] = interval[1] + 2 * np.pi
@@ -437,15 +448,17 @@ def algorithmHawaiianStacking(circles):
 
                 angle = interval[0] + (interval[1] - interval[0]) / 2
 
+
         onCircleX, onCircleY = calculatePointOnCircle(
             [int(stacking[i][0]), int(stacking[i][1]), int(stacking[i][2])], angle
         )
 
         deltaX = stacking[i][0] - onCircleX
         deltaY = stacking[i][1] - onCircleY
-        deltaX = deltaX / stacking[i][2]  # (np.sqrt(deltaX*deltaX +deltaY*deltaY))
-        deltaY = deltaY / stacking[i][2]  # (np.sqrt(deltaX*deltaX +deltaY*deltaY))
+        deltaX = deltaX / stacking[i][2]  
+        deltaY = deltaY / stacking[i][2]  
 
+        #calculates the new centers of the subcircles
         for j in range(2, len(stacking[i])):
             offSet = 0
 
@@ -457,7 +470,8 @@ def algorithmHawaiianStacking(circles):
     return stackingAllCircles
 
 
-# [for hawaiian] calculates the visible parts of a circle und the circles N
+# [for hawaiian] calculates the visible parts of a circle and the circles N
+#which lie above it
 def caculateVisibleIntervall(c, N):
     CoverIntervals1D = []
     CoverIntervals2D = []
@@ -482,7 +496,7 @@ def caculateVisibleIntervall(c, N):
 
 
 # calculates the lowest circle (for circles without subcircles)
-# for the cost Max the Min of visible area
+# for the maximizing the minimum of the visible area
 def calculateLowestCircleMaxMin(Circles, mode):
     maximum = -1
     index = -1
@@ -499,7 +513,7 @@ def calculateLowestCircleMaxMin(Circles, mode):
 
 
 # calculates the lowest circle (for circles with subcircles)
-# for the cost: Max the Min of the minimal subcircle of visible area
+## for maximizing the minimum of the visible area of the minimal subcircle 
 # mode:"absolute" or "relative"
 def calculateLowestCircleMaxMinMinK(realCircles, mode):
     Circles = copy.deepcopy(realCircles)
@@ -529,19 +543,14 @@ def calculateLowestCircleMaxMinMinK(realCircles, mode):
         if maximum > 0:
             return index, maximum
 
-        """if maximum <= 0:
-            for i in range(0, len(Circles)):
-                if Circles[i][2] > maximum:
-                    index = i
-                    maximum = Circles[i][2]
-            return index, maximum"""
+        #heuristic just pops the innermost circles
         if maximum <= 0:
             for i in range(0, len(Circles)):
                 Circles[i].pop(len(Circles[i]) - 1)
 
 
 # calculates the lowest circle (for circles with subcircles)
-# for the cost: Max the Min of the sum of the subcircle of visible area
+# for maximizing the sum of the visible areas of the minimal subcircle 
 # mode:"absolute" or "relative"
 def calculateLowestCircleMaxMinSumK(Circles, mode):
     maximum = -1
@@ -558,16 +567,13 @@ def calculateLowestCircleMaxMinSumK(Circles, mode):
                 tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
                 tmpSum = tmpSum + tmpValue
             if mode == "relative":
-                tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)  # !!!!!!!!
-                tmpSum = tmpSum + tmpValue
-            if mode == "weighted":
-                tmpValue = calculateAbsoluteBoundaryUtility(tmpCircle, tmp)
-                tmpSum = tmpSum + (1 / (((len(Circles[0]) - 1) - k) ** 2) * tmpValue)
-
+                tmpValue = calculateRelativeBoundaryUtility(tmpCircle, tmp)  
+                tmpSum = tmpSum + tmpValue  
         if tmpSum > maximum:
             index = i
             maximum = tmpSum
     return index, maximum
+
 
 
 # input: circles nested-List [[x,y,r1,r2,r3....][x',y',r1',....],...]   r1>r2>...
@@ -740,6 +746,7 @@ def algorithmHawaiianPainter(circles):
     stacking = local
     stacking.sort(key=lambda x: x[2], reverse=True)
 
+    #moving the centers with respect to the anchorpoint
     for i in range(0, len(stacking)):
         N = stacking[i + 1:]
         visbleInt = caculateVisibleIntervall(stacking[i], N)
@@ -833,7 +840,7 @@ def algorithmPieChartsPainterRandom(pies, piepieces):
 
 
 def algorithmPieChartsRandom(pies, piepieces):
-    """Shuffles outer discs and moves all pie pieces randomly."""
+    """Shuffles outer discs and moves all pie pieces with respect to our algorithm."""
     n = len(piepieces[0])
     localPies = []
     localPiePieces = []
@@ -870,7 +877,7 @@ def algorithmPieChartsRandom(pies, piepieces):
 
 
 def algorithmPieChartsLeftToRight(pies, piepieces):
-    """Outer circles are sorted in ascending order and the inner according to heuristics."""
+    """Outer circles are sorted in ascending order and the pieces according to heuristics."""
     n = len(piepieces[0])
     localPies = []
     localPiePieces = []
@@ -903,7 +910,7 @@ def algorithmPieChartsLeftToRight(pies, piepieces):
 
 
 def algorithmPieChartsRightToLeft(pies, piepieces):
-    """Outer circles are sorted in descending order and the inner according to heuristics."""
+    """Outer circles are sorted in descending order and the pieces according to heuristics."""
     local = np.concatenate((pies, piepieces), axis=1)
     local = sorted(local, key=lambda x: x[1], reverse=True)
     n = len(piepieces[0])
@@ -1018,10 +1025,10 @@ def utilitysHawaiian(circles, numberOfNestings):
     percentageRelative = 0
     percentageAbsolute = 0
 
-    # TODO: Remarks on why these values, else I suggest sys.maxsize
-    minRelativeNonZero = 200000000
-    minAbsoluteNonZero = 200000000
-    minAbsoluteAvg = 20000000
+
+    minRelativeNonZero = float('inf')
+    minAbsoluteNonZero = float('inf')
+    minAbsoluteAvg = float('inf')
     sumOfCirc = 0
 
     relativeVis, covered = circumferenceValuesNestedDisks(circles, numberOfNestings)
@@ -1054,15 +1061,6 @@ def utilitysHawaiian(circles, numberOfNestings):
     )
     percentageAbsolute = percentageAbsolute / sumOfCirc
 
-    print("Some statistics:")
-    print("coveredCircles: ", covered)
-    print("minRelNonZero: ", minRelativeNonZero)
-    print("minAbsNoneZero: ", minAbsoluteNonZero)
-    print("minSumSingleGlyph: ", minAbsoluteAvg)
-    print("relPerc: ", percentageRelative)
-    print("absPerc: ", percentageAbsolute)
-
-    print(" ")
 
     minAvgOnSingleGlyph = minAbsoluteAvg
 
@@ -1078,9 +1076,8 @@ def utilitysHawaiian(circles, numberOfNestings):
 
 def utilitysPieCharts(circles, piePieces, angles):
     """Calculate utilities for pie chart disk case."""
-    # TODO: Remarks on why these values, else I suggest sys.maxsize
-    absoluteSmallestOverall = 2000
-    smallestOverall = 2000
+    absoluteSmallestOverall = float('inf')
+    smallestOverall = float('inf')
 
     largestDist, smallestDist, occludedCounter = calculateAllPieDistances(
         circles, piePieces, angles
@@ -1089,7 +1086,7 @@ def utilitysPieCharts(circles, piePieces, angles):
     # Calculate absolute values
     for l in largestDist:
         if len(l) == 0:
-            x = 22222222222
+            x = float('inf')
         else:
             x = min(l)
 
@@ -1100,7 +1097,7 @@ def utilitysPieCharts(circles, piePieces, angles):
             x = s
         else:
             if len(s) == 0:
-                x = 222222222
+                x = float('inf')
             else:
                 x = min(s)
         if x < smallestOverall:
@@ -1130,14 +1127,6 @@ def utilitysPieCharts(circles, piePieces, angles):
     smallestAvg = smallestAvg / j
 
     sumOccluded = sum(occludedCounter)
-
-    print("Some statistics:")
-    print("numberOfOccLines: ", sumOccluded)
-    print("minDist: ", smallestOverall)
-    print("smallestAvg: ", smallestAvg)
-    print("AvgOfMax: ", absoluteSmallestAvg)
-    print(" ")
-
     minimumNonZero = smallestOverall
 
     if sumOccluded > 0:
@@ -1244,7 +1233,7 @@ def preparePies(squares):
         radius = 0
         tmpPiece = []
         center = [s[6][0], s[6][1]]
-        baseLine = [s[2][0], s[2][1]]  # base piePiece devidinglineAt0
+        baseLine = [s[2][0], s[2][1]]  # base piePiece devidinglineAt 0
         baseAngle = calculateRelativeAngle(center, baseLine)  # angle in the square
 
         # init the three(four) deviding lines which must be visible
@@ -1292,6 +1281,7 @@ def rotateTheSquares(squares, angles):
     return squares
 
 
+#maximizes heuristic for a given stacking
 def heuristicRotationForStacking(squares):
     localCircles, localPiePieces, baseAngles = preparePies(squares)
     angle = 0
